@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 import torch
 
 from src.analysis.mechanism_discovery import (
@@ -103,3 +104,75 @@ def test_problem_discovery_matrix_uses_only_allowed_statuses():
         "A_STRONG_CANDIDATE", "B_PLAUSIBLE_CANDIDATE",
         "C_DESCRIPTIVE_ONLY", "D_NOT_SUPPORTED",
     }
+
+
+def test_order_source_aggregation_waits_for_all_three_seeds(monkeypatch):
+    import scripts.analyze_mechanism_discovery as analyzer
+
+    monkeypatch.setattr(analyzer, "DATASETS", ("Movies",))
+    monkeypatch.setattr(analyzer, "SEEDS", (42, 43, 44))
+    variant_names = ["terminal", "self_only", "self25_terminal75", "self50_terminal50",
+                     "self75_terminal25", "uniform", "propagated_uniform"]
+    monkeypatch.setattr(analyzer, "_checkpoint_path",
+                        lambda dataset, seed, variant: __import__("pathlib").Path(f"{dataset}-{seed}-{variant}"))
+
+    def metric_record(_path, dataset, seed, variant):
+        value = seed / 1000 + variant_names.index(variant) / 100
+        return {"dataset": dataset, "seed": seed, "variant": variant,
+                "best_epoch": 1, "val_accuracy": value, "val_macro_f1": value + 0.1,
+                "test_accuracy_descriptive": value + 0.2, "test_macro_f1_descriptive": value + 0.3}
+
+    monkeypatch.setattr(analyzer, "_metric_record", metric_record)
+    table, paired = analyzer._order_source_tables()
+
+    aggregated = [row for row in table if row.get("seed") == "mean±population_std"]
+    assert len(aggregated) == len(variant_names)
+    uniform = next(row for row in aggregated if row["variant"] == "uniform")
+    values = [metric_record(None, "Movies", seed, "uniform")["val_accuracy"] for seed in (42, 43, 44)]
+    assert uniform["val_accuracy"] == pytest.approx(sum(values) / 3)
+    assert uniform["val_accuracy_std"] == pytest.approx((2 / 3) ** 0.5 / 1000)
+    assert len(paired) == 6 * 3
+
+
+def test_existing_e1_summary_reads_preserved_step_a_metadata(tmp_path, monkeypatch):
+    import csv
+    import json
+    import scripts.analyze_mechanism_discovery as analyzer
+
+    root = tmp_path / "results"
+    e1 = root / "experiment1"
+    e1.mkdir(parents=True)
+    monkeypatch.setattr(analyzer, "RESULTS_ROOT", root)
+
+    def write_csv(name, fields, rows):
+        with (e1 / name).open("w", encoding="utf-8", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(rows)
+
+    write_csv("hop_task_probe.csv", ["dataset", "encoder_seed", "modality_mode", "order", "val_accuracy", "val_macro_f1"],
+              [{"dataset": "Movies", "encoder_seed": 42, "modality_mode": mode,
+                "order": 0, "val_accuracy": 0.5, "val_macro_f1": 0.4}
+               for mode in ("text", "visual", "concat")])
+    write_csv("incremental_probe.csv", ["dataset", "encoder_seed", "modality_mode", "order", "val_accuracy"],
+              [{"dataset": "Movies", "encoder_seed": 42, "modality_mode": mode,
+                "order": f"S0_plus_Delta1_to_{order}", "val_accuracy": 0.6}
+               for mode in ("text", "visual", "concat") for order in (1, 2, 3)])
+    write_csv("innovation_probe.csv", ["modality_mode", "order", "val_accuracy"],
+              [{"modality_mode": "text", "order": "1", "val_accuracy": 0.6}])
+    write_csv("representation_smoothing.csv", ["joint_smoothing_collapse_evidence"],
+              [{"joint_smoothing_collapse_evidence": "true"}])
+    write_csv("stability_audit.csv", ["readout", "perturbation", "val_acc_drop_mean"],
+              [{"readout": "terminal", "perturbation": "edge_dropout", "val_acc_drop_mean": 0.1}])
+    write_csv("spectral_response.csv", ["dataset"], [])
+    (e1 / "experiment1_summary.json").write_text(json.dumps({"stage": "final-output"}), encoding="utf-8")
+    (e1 / "step_a_summary.json").write_text(json.dumps({
+        "stage": "A_existing_checkpoint_zero_training_diagnostics",
+        "spectral_summary": [{"dataset": "from_step_a"}],
+        "spectral_response_summary": [{"mode": "preserved"}],
+        "stability_audit_rerun": {"rows": 405},
+    }), encoding="utf-8")
+
+    result = analyzer._summarize_existing_e1()
+    assert result["spectral_dataset_eigensolver"] == [{"dataset": "from_step_a"}]
+    assert result["stability_audit_correction"] == {"rows": 405}

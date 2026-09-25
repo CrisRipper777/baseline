@@ -72,7 +72,7 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         return
     fields = list(dict.fromkeys(key for row in rows for key in row))
     with path.open("w", encoding="utf-8", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fields, extrasaction="ignore")
+        writer = csv.DictWriter(file, fieldnames=fields, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -489,20 +489,20 @@ def _order_source_tables() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
                 row = _metric_record(path, dataset, seed, variant)
                 by_seed[seed][variant] = row
                 table.append(row)
-            for variant in variant_names:
-                values = [by_seed[seed][variant] for seed in SEEDS]
-                table.append({
-                    "dataset": dataset, "seed": "mean±population_std", "variant": variant,
-                    "val_accuracy": float(np.mean([r["val_accuracy"] for r in values])),
-                    "val_accuracy_std": float(np.std([r["val_accuracy"] for r in values], ddof=0)),
-                    "val_macro_f1": float(np.mean([r["val_macro_f1"] for r in values])),
-                    "val_macro_f1_std": float(np.std([r["val_macro_f1"] for r in values], ddof=0)),
-                    "test_accuracy_descriptive": float(np.mean([r["test_accuracy_descriptive"] for r in values])),
-                    "test_accuracy_descriptive_std": float(np.std([r["test_accuracy_descriptive"] for r in values], ddof=0)),
-                    "test_macro_f1_descriptive": float(np.mean([r["test_macro_f1_descriptive"] for r in values])),
-                    "test_macro_f1_descriptive_std": float(np.std([r["test_macro_f1_descriptive"] for r in values], ddof=0)),
-                    "aggregation": "mean ± population std (ddof=0)",
-                })
+        for variant in variant_names:
+            values = [by_seed[seed][variant] for seed in SEEDS]
+            table.append({
+                "dataset": dataset, "seed": "mean±population_std", "variant": variant,
+                "val_accuracy": float(np.mean([r["val_accuracy"] for r in values])),
+                "val_accuracy_std": float(np.std([r["val_accuracy"] for r in values], ddof=0)),
+                "val_macro_f1": float(np.mean([r["val_macro_f1"] for r in values])),
+                "val_macro_f1_std": float(np.std([r["val_macro_f1"] for r in values], ddof=0)),
+                "test_accuracy_descriptive": float(np.mean([r["test_accuracy_descriptive"] for r in values])),
+                "test_accuracy_descriptive_std": float(np.std([r["test_accuracy_descriptive"] for r in values], ddof=0)),
+                "test_macro_f1_descriptive": float(np.mean([r["test_macro_f1_descriptive"] for r in values])),
+                "test_macro_f1_descriptive_std": float(np.std([r["test_macro_f1_descriptive"] for r in values], ddof=0)),
+                "aggregation": "mean ± population std (ddof=0)",
+            })
         contrasts = [
             ("G_self_25", "self25_terminal75", "terminal"),
             ("G_mid", "uniform", "self25_terminal75"),
@@ -607,9 +607,10 @@ def _safe_percentile_bins(values: torch.Tensor, n_bins: int = 4) -> torch.Tensor
     return out
 
 
-def _load_on_existing_data(dataset: str, seed: int, readout: str, mode: str, data):
+def _load_on_existing_data(dataset: str, seed: int, readout: str, mode: str, data,
+                          checkpoint_name: str | None = None):
     cfg = _compose(dataset, seed, readout, mode)
-    path = _checkpoint_path(dataset, seed, readout)
+    path = _checkpoint_path(dataset, seed, checkpoint_name or readout)
     payload = torch.load(path, map_location="cpu", weights_only=False)
     info = {"input_dim": data.input_dim, "num_nodes": data.num_nodes,
             "num_classes": data.num_classes,
@@ -895,7 +896,9 @@ def _final_analysis() -> dict[str, Any]:
                 ("text_uniform", "uniform", "text"), ("visual_self", "self_only", "visual"),
                 ("visual_uniform", "uniform", "visual"),
             ):
-                local_cfg, payload, model, head = _load_on_existing_data(dataset, seed, readout, mode, data)
+                checkpoint_name = "self_only" if name == "self" else name
+                local_cfg, payload, model, head = _load_on_existing_data(
+                    dataset, seed, readout, mode, data, checkpoint_name=checkpoint_name)
                 ctx = _forward_context(model, head, data)
                 model_outputs[name] = _prediction_splits(ctx["logits"], data, train, val)
                 if name == "gpr":
@@ -1399,7 +1402,14 @@ def _summarize_existing_e1() -> dict[str, Any]:
             if vals:
                 stability_summary[readout][kind] = {"mean_validation_accuracy_drop": float(np.mean(vals)), "rows": len(vals)}
     spectral = read("spectral_response.csv")
-    stage_a_summary_path = root / "experiment1_summary.json"
+    stage_a_summary_path = root / "step_a_summary.json"
+    if not stage_a_summary_path.is_file():
+        # Preserve the original Step A summary before the final report reuses its canonical filename.
+        initial_path = root / "experiment1_summary.json"
+        if initial_path.is_file():
+            initial_summary = json.loads(initial_path.read_text(encoding="utf-8"))
+            if initial_summary.get("stage") == "A_existing_checkpoint_zero_training_diagnostics":
+                stage_a_summary_path.write_text(json.dumps(initial_summary, indent=2, allow_nan=True), encoding="utf-8")
     stage_a_summary = json.loads(stage_a_summary_path.read_text(encoding="utf-8")) if stage_a_summary_path.is_file() else {}
     return {
         "checkpoint_diagnostic_rows": {"hop_task_probe": len(hop), "incremental_probe": len(incremental),

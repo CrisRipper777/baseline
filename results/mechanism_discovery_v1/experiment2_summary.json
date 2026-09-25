@@ -1,0 +1,51 @@
+{
+  "phase": "D_final_dependent_analyses",
+  "datasets": [
+    "Movies",
+    "Toys",
+    "Grocery",
+    "ele-fashion",
+    "Reddit-S"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "formal_new_training_runs_expected": 135,
+  "order_source_runs_expected": 75,
+  "unimodal_runs_expected": 60,
+  "formal_jobs_validated": {
+    "order_source": 25,
+    "unimodal": 20
+  },
+  "formal_runs_validated": 135,
+  "test_usage": "No test labels used for discovery. Test metrics on frozen formal controls are descriptive only.",
+  "probe_config": {
+    "name": "FrozenProbeProtocolV1",
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.0001,
+    "epochs": 200,
+    "early_stopping": false,
+    "scheduler": null,
+    "seed": 0,
+    "fit_split": "train",
+    "report_split": "validation",
+    "test_access": false
+  },
+  "probe_config_sha256": "485314720bf7e0d54ce3b2ce98b77148d2e6a9674c92dcf42abcb6a4ba3779d7",
+  "node_table_files": 15,
+  "node_table_rows": 71532,
+  "problem_status_counts": {
+    "B_PLAUSIBLE_CANDIDATE": 8,
+    "A_STRONG_CANDIDATE": 2,
+    "C_DESCRIPTIVE_ONLY": 2
+  },
+  "report_boundaries": [
+    "DESCRIPTIVE_ONLY, TASK_RELEVANT, and INTERVENTION_SUPPORTED are evidence levels, not paper claims.",
+    "No node-independence p-values are reported.",
+    "No topology rewiring training was run.",
+    "The original results/nc_benchmark_v1/ and outputs/nc_benchmark_v1/ were read-only inputs."
+  ]
+}
