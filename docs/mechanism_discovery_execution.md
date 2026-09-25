@@ -1,5 +1,14 @@
 # Mechanism discovery execution plan
 
+## Source and completion record
+
+- Baseline input: branch `multi_order_bank`, commit `31468c5a1439b3561487936bf5d83749b502f61e`.
+- Upstream model source: `/hdd1/DataInHere/YHF/MoPF_IAMOC`, ref `V3`, commit `9f4514ed9eec4d14795a8aadbc125616880c3c9d`.
+- Discovery implementation/preflight checkpoint: `9ae5db82a93277b9e3423705bfc1e66eeba4497b`.
+- Completed analysis and result tables: `4573ae60f90c4fbd7f7703b9bfedddfc07d654c8`.
+- Formal discovery training completed: 25 order-source jobs (75 runs) and 20 unimodal jobs (60 runs), each job internally uses seeds 42/43/44. The separate full 5-dataset × 3-readout benchmark was not started.
+
+
 All commands run from the repository root on branch `mechanism_discovery`. Formal jobs use the shared dynamic GPU scheduler (`--gpus 0,1`), one active job per GPU, and each individual dataset/variant command sets `seed=42,num_runs=3` so the task executes seeds 42, 43, and 44 internally.
 
 ## Step A: existing-checkpoint diagnostics
