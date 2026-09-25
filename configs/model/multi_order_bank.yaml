@@ -4,5 +4,6 @@ hidden_dim: 256
 max_order: 3
 num_layers: 3
 dropout: 0.2
-readout: terminal # terminal | uniform | gpr
+readout: terminal # terminal | uniform | gpr | fixed order-source controls
+modality_mode: both # both | text | visual
 fusion_mode: plain_mlp # plain_mlp | residual | linear

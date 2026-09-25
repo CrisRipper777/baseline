@@ -85,3 +85,24 @@ def test_baseline_resume_requires_protocol_metrics_and_metadata(tmp_path) -> Non
     metrics_path.write_text(json.dumps(metrics), encoding="utf-8")
     assert not _valid_run_metrics(metrics)
     assert not _can_resume(marker_path, metrics_path, "Movies", "gcn")
+
+
+def test_mechanism_discovery_launcher_job_counts_keep_three_internal_seeds():
+    from scripts.run_mechanism_discovery_nc import _jobs
+    order = list(_jobs("order", ("Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S")))
+    unimodal = list(_jobs("unimodal", ("Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S")))
+    preflight = list(_jobs("preflight", ()))
+    assert len(order) == 25 and len(unimodal) == 20 and len(preflight) == 15
+    assert all(job[0] == "order" for job in order)
+    assert {job[1] for job in order + unimodal} == {"Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S"}
+
+
+def test_preflight_checkpoint_validation_does_not_require_test_metrics(tmp_path):
+    import torch
+    from scripts.run_mechanism_discovery_nc import _checkpoint_errors
+    path = tmp_path / "best.pt"
+    torch.save({"task": "nc", "protocol_version": "unified_full_graph_nc_v1",
+                "seed": 42, "selection": "best_val_accuracy", "epoch": 1,
+                "metrics": {"val_acc": .5, "val_macro_f1": .4}}, path)
+    assert _checkpoint_errors([path], (42,), require_test_metrics=False) == []
+    assert _checkpoint_errors([path], (42,), require_test_metrics=True)

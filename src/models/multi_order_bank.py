@@ -14,7 +14,12 @@ class Model(nn.Module):
     """Simple independent-modal multi-order propagation readout backbone."""
 
     MAX_ORDER = 3
-    READOUTS = {"terminal", "uniform", "gpr"}
+    READOUTS = {
+        "terminal", "uniform", "gpr", "self_only",
+        "self25_terminal75", "self50_terminal50", "self75_terminal25",
+        "propagated_uniform",
+    }
+    MODALITY_MODES = {"both", "text", "visual"}
     FUSION_MODES = {"plain_mlp", "residual", "linear"}
     requires_full_lp_sampler_depth = True
 
@@ -57,6 +62,14 @@ class Model(nn.Module):
                 "model.fusion_mode must be one of "
                 f"{sorted(self.FUSION_MODES)}, got {self.fusion_mode!r}"
             )
+        self.modality_mode = str(
+            cfg.model.get("modality_mode", "both")
+        ).strip().lower()
+        if self.modality_mode not in self.MODALITY_MODES:
+            raise ValueError(
+                "model.modality_mode must be one of "
+                f"{sorted(self.MODALITY_MODES)}, got {self.modality_mode!r}"
+            )
 
         self.text_projector = nn.Sequential(
             nn.Linear(self.text_dim, self.hidden_dim),
@@ -70,7 +83,10 @@ class Model(nn.Module):
             nn.ReLU(),
             nn.Dropout(self.dropout),
         )
-        if self.fusion_mode == "plain_mlp":
+        if self.modality_mode != "both":
+            # Unimodal controls return their selected readout directly.
+            pass
+        elif self.fusion_mode == "plain_mlp":
             self.plain_fusion = nn.Sequential(
                 nn.Linear(2 * self.hidden_dim, self.hidden_dim),
                 nn.ReLU(),
@@ -108,6 +124,7 @@ class Model(nn.Module):
         self.out_dim = self.hidden_dim
 
         self._operator_cache_key = None
+        self._operator_cache_edge_index: torch.Tensor | None = None
         self._operator_cache: torch.Tensor | None = None
 
     def _build_propagation_operator(
@@ -148,6 +165,10 @@ class Model(nn.Module):
             return self._operator_cache
         operator = self._build_propagation_operator(edge_index, num_nodes, dtype)
         self._operator_cache_key = key
+        # Keep the exact input tensor alive: otherwise a short-lived sampled or
+        # perturbed edge tensor can be freed and its data_ptr reused for a
+        # different graph with the same shape/version.
+        self._operator_cache_edge_index = edge_index
         self._operator_cache = operator
         return operator
 
@@ -163,10 +184,22 @@ class Model(nn.Module):
     def _readout(
         self, states: list[torch.Tensor], gamma: nn.Parameter | None = None
     ) -> torch.Tensor:
+        if self.readout == "self_only":
+            return states[0]
         if self.readout == "terminal":
             return states[3]
         if self.readout == "uniform":
             return sum(states) / 4.0
+        if self.readout == "self25_terminal75":
+            return 0.25 * states[0] + 0.75 * states[3]
+        if self.readout == "self50_terminal50":
+            return 0.50 * states[0] + 0.50 * states[3]
+        if self.readout == "self75_terminal25":
+            return 0.75 * states[0] + 0.25 * states[3]
+        if self.readout == "propagated_uniform":
+            return (states[1] + states[2] + states[3]) / 3.0
+        if self.readout != "gpr":
+            raise RuntimeError(f"Unsupported readout {self.readout!r}")
         if gamma is None:
             raise RuntimeError("GPR readout requires modality-specific gamma parameters")
         return sum(gamma[k] * states[k] for k in range(4))
@@ -207,21 +240,33 @@ class Model(nn.Module):
         operator = self._get_propagation_operator(
             edge_index, int(x.size(0)), x.dtype
         )
-        h0_text = self.text_projector(x[:, : self.text_dim])
-        h0_visual = self.visual_projector(
-            x[:, self.text_dim : self.text_dim + self.visual_dim]
+        use_text = self.modality_mode in {"both", "text"}
+        use_visual = self.modality_mode in {"both", "visual"}
+        h0_text = self.text_projector(x[:, : self.text_dim]) if use_text else None
+        h0_visual = (
+            self.visual_projector(x[:, self.text_dim : self.text_dim + self.visual_dim])
+            if use_visual else None
         )
-        states_text = self._propagate(h0_text, operator, self.max_order)
-        states_visual = self._propagate(h0_visual, operator, self.max_order)
-        z_text = self._readout(
-            states_text, getattr(self, "gamma_text", None)
+        states_text = self._propagate(h0_text, operator, self.max_order) if use_text else None
+        states_visual = self._propagate(h0_visual, operator, self.max_order) if use_visual else None
+        z_text = (
+            self._readout(states_text, getattr(self, "gamma_text", None))
+            if use_text else None
         )
-        z_visual = self._readout(
-            states_visual, getattr(self, "gamma_visual", None)
+        z_visual = (
+            self._readout(states_visual, getattr(self, "gamma_visual", None))
+            if use_visual else None
         )
-        refined_text, refined_visual, fusion_input, fused = self._fuse_modalities(
-            z_text, z_visual
-        )
+        if self.modality_mode == "both":
+            refined_text, refined_visual, fusion_input, fused = self._fuse_modalities(
+                z_text, z_visual
+            )
+        elif self.modality_mode == "text":
+            refined_text, refined_visual = z_text, None
+            fusion_input, fused = None, z_text
+        else:
+            refined_text, refined_visual = None, z_visual
+            fusion_input, fused = None, z_visual
         return {
             "H0_text": h0_text,
             "H0_visual": h0_visual,
