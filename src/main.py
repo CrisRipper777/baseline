@@ -4,6 +4,8 @@ import json
 import sys
 from pathlib import Path
 
+import torch
+
 if __package__ is None or __package__ == "":
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -51,6 +53,10 @@ def main(cfg: DictConfig) -> None:
     output_dir = Path(HydraConfig.get().runtime.output_dir)
     logger = setup_logger(output_dir, cfg.logging.level)
     logger.info("Resolved config:\n%s", OmegaConf.to_yaml(cfg, resolve=True))
+
+    torch_threads = cfg.task.get("torch_threads")
+    if torch_threads is not None:
+        torch.set_num_threads(int(torch_threads))
 
     device = get_device(str(cfg.device))
     logger.info("Device: %s", device)

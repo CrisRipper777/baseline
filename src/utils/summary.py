@@ -9,7 +9,7 @@ def mean_std(values: list[float]) -> tuple[float, float]:
         return float("nan"), float("nan")
     if arr.size == 1:
         return float(arr[0]), 0.0
-    return float(arr.mean()), float(arr.std(ddof=1))
+    return float(arr.mean()), float(arr.std(ddof=0))
 
 
 def count_parameters(model) -> int:

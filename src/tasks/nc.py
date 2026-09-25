@@ -1,23 +1,20 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader as TorchDataLoader
-from torch_geometric.data import Data
-from torch_geometric.loader import NeighborLoader
 from sklearn.metrics import f1_score
+from torch.utils.data import DataLoader as TorchDataLoader
 
 from src.data import MAGData
 from src.models import build_model
 from src.tasks.common import (
+    build_optimizer,
     clone_state_dict,
-    format_aux_info_stats,
     load_state_dict_cpu,
-    resolve_num_neighbors,
-    summarize_aux_info_stats,
-    update_aux_info_stats,
+    scheduler_step,
 )
 from src.tasks.inference import infer_all_embeddings, resolve_inference_mode
 from src.utils.metrics import format_pct
@@ -29,20 +26,49 @@ def _uses_graph_encoder(cfg) -> bool:
     return str(cfg.model.name).lower() != "mlp"
 
 
-def _uses_full_graph_training(model, cfg) -> bool:
-    if "full_graph_training" in cfg.model:
-        return bool(cfg.model.full_graph_training)
-    return bool(getattr(model, "requires_full_graph_training", False))
+def _resolve_training_mode(cfg, model=None) -> str:
+    """Resolve the frozen NC path independently of model capability flags."""
+    mode = str(cfg.task.get("training_mode", "full_graph")).strip().lower()
+    if mode != "full_graph":
+        raise ValueError(
+            "unified_full_graph_nc_v1 requires task.training_mode='full_graph'; "
+            f"got {mode!r}"
+        )
+    # MLP has no graph computation; it uses feature-only node minibatches.
+    # Graph models always use one full graph forward, even if a model preset
+    # advertises full_graph_training=False.
+    return "full_graph" if _uses_graph_encoder(cfg) else "feature_only"
+
+
+def _resolve_nc_eval_labels(data: MAGData) -> list[int]:
+    """Use one stable Macro-F1 label set across the supervised task splits."""
+    if data.y is None:
+        raise ValueError("NC data must contain labels")
+    if data.num_classes is None:
+        raise ValueError("NC data must define num_classes")
+    split_indices = [
+        idx for idx in (data.train_idx, data.val_idx, data.test_idx) if idx is not None
+    ]
+    if not split_indices:
+        raise ValueError("NC data must contain at least one supervised split")
+    all_indices = torch.cat([idx.reshape(-1) for idx in split_indices]).to(data.y.device)
+    observed = data.y[all_indices].detach().cpu()
+    valid = observed[(observed >= 0) & (observed < int(data.num_classes))]
+    labels = sorted({int(value) for value in valid.tolist()})
+    if not labels:
+        raise ValueError("NC supervised splits contain no valid class labels")
+    return labels
 
 
 @torch.no_grad()
 def _evaluate_split(
-    classifier,
+    classifier: nn.Module,
     z: torch.Tensor,
     labels: torch.Tensor,
     idx: torch.Tensor,
     device: torch.device,
     batch_size: int,
+    eval_labels: list[int] | tuple[int, ...],
 ) -> dict[str, float]:
     classifier.eval()
     preds: list[torch.Tensor] = []
@@ -51,20 +77,40 @@ def _evaluate_split(
         logits = classifier(z[batch_idx].to(device))
         preds.append(logits.argmax(dim=-1).cpu())
         targets.append(labels[batch_idx].cpu())
-
     pred = torch.cat(preds, dim=0)
     target = torch.cat(targets, dim=0)
     return {
         "acc": float((pred == target).float().mean().item()),
-        "macro_f1": float(f1_score(target.numpy(), pred.numpy(), average="macro", zero_division=0)),
+        "macro_f1": float(
+            f1_score(
+                target.numpy(),
+                pred.numpy(),
+                labels=list(eval_labels),
+                average="macro",
+                zero_division=0,
+            )
+        ),
     }
 
 
-def _run_single_nc(cfg, data: MAGData, device: torch.device, logger: logging.Logger, run_id: int) -> dict[str, float]:
-    seed = int(cfg.seed) + run_id
-    set_seed(seed)
-    inference_mode = resolve_inference_mode(cfg)
+def _checkpoint_path_for_run(path_like: str | Path, cfg, run_id: int) -> Path:
+    path = Path(str(path_like))
+    if int(cfg.num_runs) > 1:
+        path = path.with_name(f"{path.stem}_run{run_id + 1}{path.suffix}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return path
 
+
+def _run_single_nc(
+    cfg,
+    data: MAGData,
+    device: torch.device,
+    logger: logging.Logger,
+    run_id: int,
+    seed: int,
+    eval_labels: list[int],
+) -> dict[str, float]:
+    inference_mode = resolve_inference_mode(cfg)
     data_info = {
         "input_dim": data.input_dim,
         "num_nodes": data.num_nodes,
@@ -74,41 +120,27 @@ def _run_single_nc(cfg, data: MAGData, device: torch.device, logger: logging.Log
     }
     model = build_model(cfg, data_info).to(device)
     classifier = nn.Linear(model.out_dim, int(data.num_classes)).to(device)
-    optimizer = torch.optim.Adam(
-        list(model.parameters()) + list(classifier.parameters()),
-        lr=float(cfg.task.lr),
-        weight_decay=float(cfg.task.weight_decay),
+    optimizer = build_optimizer(
+        list(model.parameters()) + list(classifier.parameters()), cfg, model=model
     )
     criterion = nn.CrossEntropyLoss()
+    training_mode = _resolve_training_mode(cfg, model)
     uses_graph = _uses_graph_encoder(cfg)
-    full_graph_training = uses_graph and _uses_full_graph_training(model, cfg)
+    full_graph_training = training_mode == "full_graph"
 
-    num_neighbors = None
-    if full_graph_training:
-        loader = None
-        loader_name = "FullGraph"
-    elif uses_graph:
-        pyg_data = Data(x=data.x, edge_index=data.edge_index, y=data.y)
-        num_neighbors = resolve_num_neighbors(cfg)
-        loader = NeighborLoader(
-            pyg_data,
-            input_nodes=data.train_idx,
-            num_neighbors=num_neighbors,
+    # Graph encoders use the entire graph every epoch. Only MLP receives
+    # feature-only minibatches.
+    x_all = data.x.to(device)
+    y_all = data.y.to(device)
+    edge_index_all = data.edge_index.to(device) if uses_graph else None
+    train_idx_all = data.train_idx.to(device)
+    train_loader = None
+    if not uses_graph:
+        train_loader = TorchDataLoader(
+            data.train_idx.cpu(),
             batch_size=int(cfg.task.batch_size),
             shuffle=True,
         )
-        loader_name = "NeighborLoader"
-    else:
-        loader = TorchDataLoader(
-            data.train_idx,
-            batch_size=int(cfg.task.batch_size),
-            shuffle=True,
-        )
-        loader_name = "NodeDataLoader"
-    x_all = data.x.to(device) if (not uses_graph or full_graph_training) else None
-    y_all = data.y.to(device) if (not uses_graph or full_graph_training) else None
-    edge_index_all = data.edge_index.to(device) if full_graph_training else None
-    train_idx_all = data.train_idx.to(device) if full_graph_training else None
 
     logger.info(
         "[Run %d/%d] seed=%d | model params=%d",
@@ -117,176 +149,215 @@ def _run_single_nc(cfg, data: MAGData, device: torch.device, logger: logging.Log
         seed,
         count_parameters(model) + count_parameters(classifier),
     )
-    logger.info("Loader: %s", loader_name)
-    if full_graph_training:
-        logger.info("Train full graph: enabled for global pseudo-node pathways")
-    elif uses_graph:
-        logger.info("Train neighbor sampling: %s", num_neighbors)
+    logger.info("Protocol: %s", str(cfg.task.protocol_version))
+    logger.info("Training mode: %s", training_mode)
+    logger.info("Loader: %s", "FullGraph" if uses_graph else "NodeDataLoader")
     logger.info("Inference mode: %s", inference_mode)
-    logger.info("Training...")
 
     best_val = -1.0
-    best_test: dict[str, float] = {}
+    best_metrics: dict[str, float] = {}
     best_model_state = None
     best_head_state = None
+    best_epoch: int | None = None
     patience_total = int(cfg.task.patience)
     patience_left = patience_total
-    max_train_batches = cfg.task.get("max_train_batches")
+    min_epoch = int(cfg.task.get("early_stop_min_epoch", 1))
+    min_delta = float(cfg.task.get("early_stop_min_delta", 0.0))
+    grad_clip = float(cfg.task.get("grad_clip", 1.0))
+    aux_weight = float(cfg.task.loss.aux_weight)
     inference_batch_size = int(cfg.task.inference_batch_size)
+    eval_every = int(cfg.task.eval_every)
+    if eval_every < 1:
+        raise ValueError("task.eval_every must be >= 1")
 
     for epoch in range(1, int(cfg.task.epochs) + 1):
         model.train()
+        classifier.train()
         if hasattr(model, "set_epoch"):
             model.set_epoch(epoch)
-        classifier.train()
-        total_loss = 0.0
-        total_examples = 0
-        aux_sums: dict[str, float] = {}
-        aux_counts: dict[str, float] = {}
+        optimizer.zero_grad(set_to_none=True)
         if full_graph_training:
-            optimizer.zero_grad(set_to_none=True)
-            z, _, _, aux_loss, aux_info = model(x_all, edge_index_all)
-            labels = y_all[train_idx_all]
+            if hasattr(model, "_batch_n_id"):
+                model._batch_n_id = None
+            z, _, _, aux_loss, _ = model(x_all, edge_index_all)
             logits = classifier(z[train_idx_all])
-            loss = criterion(logits, labels) + float(cfg.task.loss.aux_weight) * aux_loss
+            labels = y_all[train_idx_all]
+            loss = nn.functional.cross_entropy(logits, labels) + aux_weight * aux_loss
             loss.backward()
             torch.nn.utils.clip_grad_norm_(
-                list(model.parameters()) + list(classifier.parameters()), max_norm=1.0
+                list(model.parameters()) + list(classifier.parameters()),
+                max_norm=grad_clip,
+                error_if_nonfinite=True,
             )
             optimizer.step()
-            total_loss += float(loss.item()) * int(labels.numel())
-            total_examples += int(labels.numel())
-            update_aux_info_stats(aux_sums, aux_counts, aux_info, weight=float(labels.numel()))
+            train_loss = float(loss.detach().item())
             del z
         else:
-            for step, batch in enumerate(loader):
-                if max_train_batches is not None and step >= int(max_train_batches):
-                    break
+            total_loss = 0.0
+            total_examples = 0
+            for batch_idx in train_loader:
+                batch_idx = batch_idx.to(device)
+                labels = y_all[batch_idx]
+                z, _, _, aux_loss, _ = model(x_all[batch_idx], None)
+                logits = classifier(z)
+                loss = nn.functional.cross_entropy(logits, labels) + aux_weight * aux_loss
                 optimizer.zero_grad(set_to_none=True)
-                if uses_graph:
-                    batch = batch.to(device)
-                    if hasattr(model, "_batch_n_id"):
-                        model._batch_n_id = batch.n_id
-                    z, _, _, aux_loss, aux_info = model(batch.x, batch.edge_index)
-                    logits = classifier(z[: batch.batch_size])
-                    labels = batch.y[: batch.batch_size]
-                else:
-                    batch_idx = batch.to(device)
-                    x_batch = x_all[batch_idx]
-                    labels = y_all[batch_idx]
-                    z, _, _, aux_loss, aux_info = model(x_batch, None)
-                    logits = classifier(z)
-                loss = criterion(logits, labels) + float(cfg.task.loss.aux_weight) * aux_loss
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(
-                    list(model.parameters()) + list(classifier.parameters()), max_norm=1.0
+                    list(model.parameters()) + list(classifier.parameters()),
+                    max_norm=grad_clip,
+                    error_if_nonfinite=True,
                 )
                 optimizer.step()
-                total_loss += float(loss.item()) * int(labels.numel())
+                total_loss += float(loss.detach().item()) * int(labels.numel())
                 total_examples += int(labels.numel())
-                update_aux_info_stats(aux_sums, aux_counts, aux_info, weight=float(labels.numel()))
-                if hasattr(model, "_batch_n_id"):
-                    model._batch_n_id = None
+            train_loss = total_loss / max(total_examples, 1)
 
-        train_loss = total_loss / max(total_examples, 1)
-        aux_stats = summarize_aux_info_stats(aux_sums, aux_counts)
-        if epoch % int(cfg.task.eval_every) != 0:
+        scheduler_step(cfg, optimizer, epoch, int(cfg.task.epochs))
+        if epoch % eval_every != 0:
             logger.info("Epoch %05d | Train Loss %.4f", epoch, train_loss)
-            if aux_stats:
-                logger.info("Aux %s", format_aux_info_stats(aux_stats))
             continue
 
-        z = infer_all_embeddings(model, data, device, uses_graph, inference_batch_size, inference_mode)
-        val_metrics = _evaluate_split(classifier, z, data.y, data.val_idx, device, inference_batch_size)
-        logger.info("Epoch %05d | Train Loss %.4f", epoch, train_loss)
-        if aux_stats:
-            logger.info("Aux %s", format_aux_info_stats(aux_stats))
+        z = infer_all_embeddings(
+            model, data, device, uses_graph, inference_batch_size, inference_mode
+        )
+        val_metrics = _evaluate_split(
+            classifier,
+            z,
+            data.y,
+            data.val_idx,
+            device,
+            inference_batch_size,
+            eval_labels,
+        )
         logger.info(
-            "Val Acc %.2f | Val F1 %.2f",
+            "Epoch %05d | Train Loss %.4f | Val Acc %.2f | Val Macro-F1 %.2f",
+            epoch,
+            train_loss,
             format_pct(val_metrics["acc"]),
             format_pct(val_metrics["macro_f1"]),
         )
 
+        improved = val_metrics["acc"] > best_val + min_delta
         stop_early = False
-        if val_metrics["acc"] > best_val:
+        if improved:
             best_val = val_metrics["acc"]
-            best_test = {
+            best_epoch = epoch
+            best_metrics = {
                 "val_acc": val_metrics["acc"],
                 "val_macro_f1": val_metrics["macro_f1"],
             }
             best_model_state = clone_state_dict(model)
             best_head_state = clone_state_dict(classifier)
             patience_left = patience_total
-        else:
+        elif epoch >= min_epoch:
             patience_left -= 1
-            patience_used = patience_total - patience_left
-            logger.info("Patience %d/%d | Best Val Acc %.2f", patience_used, patience_total, format_pct(best_val))
-            if patience_left <= 0:
-                logger.info("Early stopping at epoch %03d", epoch)
-                stop_early = True
+            logger.info(
+                "Patience %d/%d | Best Val Acc %.2f",
+                patience_total - patience_left,
+                patience_total,
+                format_pct(best_val),
+            )
+            stop_early = patience_left <= 0
         del z
-        torch.cuda.empty_cache()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
         if stop_early:
+            logger.info("Early stopping at epoch %03d", epoch)
             break
 
-    if best_model_state is not None and best_head_state is not None:
-        load_state_dict_cpu(model, best_model_state)
-        load_state_dict_cpu(classifier, best_head_state)
-        z = infer_all_embeddings(model, data, device, uses_graph, inference_batch_size, inference_mode)
-        test_metrics = _evaluate_split(classifier, z, data.y, data.test_idx, device, inference_batch_size)
-        best_test["test_acc"] = test_metrics["acc"]
-        best_test["test_macro_f1"] = test_metrics["macro_f1"]
+    if best_model_state is None or best_head_state is None:
+        raise RuntimeError("NC training finished without a validation-selected checkpoint")
+    load_state_dict_cpu(model, best_model_state)
+    load_state_dict_cpu(classifier, best_head_state)
+
+    if bool(cfg.task.get("evaluate_test", True)):
+        z = infer_all_embeddings(
+            model, data, device, uses_graph, inference_batch_size, inference_mode
+        )
+        test_metrics = _evaluate_split(
+            classifier,
+            z,
+            data.y,
+            data.test_idx,
+            device,
+            inference_batch_size,
+            eval_labels,
+        )
+        best_metrics["test_acc"] = test_metrics["acc"]
+        best_metrics["test_macro_f1"] = test_metrics["macro_f1"]
         del z
 
-    if not best_test:
-        z = infer_all_embeddings(model, data, device, uses_graph, inference_batch_size, inference_mode)
-        val_metrics = _evaluate_split(classifier, z, data.y, data.val_idx, device, inference_batch_size)
-        test_metrics = _evaluate_split(classifier, z, data.y, data.test_idx, device, inference_batch_size)
-        best_test = {
-            "test_acc": test_metrics["acc"],
-            "test_macro_f1": test_metrics["macro_f1"],
-            "val_acc": val_metrics["acc"],
-            "val_macro_f1": val_metrics["macro_f1"],
-        }
-        del z
-
-    if hasattr(model, "_batch_n_id"):
-        model._batch_n_id = None
+    save_ckpt_path = cfg.task.get("save_ckpt_path")
+    if save_ckpt_path:
+        path = _checkpoint_path_for_run(save_ckpt_path, cfg, run_id)
+        torch.save(
+            {
+                "task": "nc",
+                "protocol_version": str(cfg.task.protocol_version),
+                "seed": seed,
+                "selection": "best_val_accuracy",
+                "epoch": best_epoch,
+                "metrics": dict(best_metrics),
+                "model_state": clone_state_dict(model),
+                "head_state": clone_state_dict(classifier),
+                "data_info": data_info,
+            },
+            path,
+        )
+        logger.info("Saved checkpoint: %s | best_epoch=%s", path, best_epoch)
 
     logger.info(
-        "[Run %d] Best Val Acc %.2f",
+        "[Run %d] Best Val Acc %.2f | Val Macro-F1 %.2f | epoch=%d",
         run_id + 1,
-        format_pct(best_test["val_acc"]),
+        format_pct(best_metrics["val_acc"]),
+        format_pct(best_metrics["val_macro_f1"]),
+        int(best_epoch),
     )
-    logger.info(
-        "[Run %d] Final Test Acc %.2f | Final Test F1 %.2f",
-        run_id + 1,
-        format_pct(best_test["test_acc"]),
-        format_pct(best_test["test_macro_f1"]),
-    )
-    return best_test
+    if "test_acc" in best_metrics:
+        logger.info(
+            "[Run %d] Test Acc %.2f | Test Macro-F1 %.2f",
+            run_id + 1,
+            format_pct(best_metrics["test_acc"]),
+            format_pct(best_metrics["test_macro_f1"]),
+        )
+    return best_metrics
 
 
-def run_nc(cfg, data: MAGData, device: torch.device, logger: logging.Logger) -> dict[str, tuple[float, float]]:
+def run_nc(
+    cfg,
+    data: MAGData,
+    device: torch.device,
+    logger: logging.Logger,
+) -> dict[str, tuple[float, float]]:
     if data.y is None or data.train_idx is None or data.val_idx is None or data.test_idx is None:
         raise ValueError("NC data must contain y/train_idx/val_idx/test_idx")
+    _resolve_training_mode(cfg)
+    eval_labels = _resolve_nc_eval_labels(data)
 
-    run_results = [_run_single_nc(cfg, data, device, logger, run_id) for run_id in range(int(cfg.num_runs))]
-    test_acc = [item["test_acc"] for item in run_results]
-    test_f1 = [item["test_macro_f1"] for item in run_results]
-    val_acc = [item["val_acc"] for item in run_results]
-    val_mean, val_std = mean_std(val_acc)
-    acc_mean, acc_std = mean_std(test_acc)
-    f1_mean, f1_std = mean_std(test_f1)
+    run_results = []
+    for run_id in range(int(cfg.num_runs)):
+        seed = int(cfg.seed) + run_id
+        set_seed(seed)
+        run_results.append(
+            _run_single_nc(cfg, data, device, logger, run_id, seed, eval_labels)
+        )
+
+    output: dict[str, tuple[float, float]] = {}
+    keys = ["val_acc", "val_macro_f1"]
+    if bool(cfg.task.get("evaluate_test", True)):
+        keys.extend(["test_acc", "test_macro_f1"])
+    names = {
+        "val_acc": "Val Accuracy",
+        "val_macro_f1": "Val Macro-F1",
+        "test_acc": "Test Accuracy",
+        "test_macro_f1": "Test Macro-F1",
+    }
     logger.info("============================================================")
     logger.info("Final Results over %d runs", int(cfg.num_runs))
+    for key in keys:
+        mean, std = mean_std([item[key] for item in run_results])
+        output[key] = (mean, std)
+        logger.info("%s: %.2f ± %.2f", names[key], format_pct(mean), format_pct(std))
     logger.info("============================================================")
-    logger.info("Highest Valid Acc: %.2f ± %.2f", format_pct(val_mean), format_pct(val_std))
-    logger.info("Test Acc: %.2f ± %.2f", format_pct(acc_mean), format_pct(acc_std))
-    logger.info("Test Macro-F1: %.2f ± %.2f", format_pct(f1_mean), format_pct(f1_std))
-    logger.info("============================================================")
-    return {
-        "val_acc": (val_mean, val_std),
-        "test_acc": (acc_mean, acc_std),
-        "test_macro_f1": (f1_mean, f1_std),
-    }
+    return output
