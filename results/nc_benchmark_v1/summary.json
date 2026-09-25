@@ -15,8 +15,8 @@
   "aggregation": "mean \u00b1 population std (ddof=0)",
   "factorial_jobs": 30,
   "factorial_runs": 90,
-  "baseline_jobs": 0,
-  "baseline_runs": 0,
+  "baseline_jobs": 45,
+  "baseline_runs": 135,
   "factorial": {
     "Movies": {
       "mob_terminal_plain": {
@@ -1679,7 +1679,4443 @@
       }
     }
   },
-  "baselines": {},
+  "baselines": {
+    "Movies": {
+      "mlp": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5205958882967631,
+            "std": 0.0014761890543923027
+          },
+          "val_macro_f1": {
+            "mean": 0.38747321202192536,
+            "std": 0.014308001904073176
+          },
+          "test_acc": {
+            "mean": 0.5180409749348959,
+            "std": 0.0013484198736345787
+          },
+          "test_macro_f1": {
+            "mean": 0.4026061684302891,
+            "std": 0.012123111844707869
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5203959345817566,
+              "val_macro_f1": 0.3790049951310061,
+              "test_acc": 0.5196402072906494,
+              "test_macro_f1": 0.40428412696129906
+            },
+            "metadata": {
+              "best_epoch": 10,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5224955081939697,
+              "val_macro_f1": 0.3757920650579766,
+              "test_acc": 0.5163418054580688,
+              "test_macro_f1": 0.38699075175331377
+            },
+            "metadata": {
+              "best_epoch": 8,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.518896222114563,
+              "val_macro_f1": 0.40762257587679346,
+              "test_acc": 0.5181409120559692,
+              "test_macro_f1": 0.4165436265762546
+            },
+            "metadata": {
+              "best_epoch": 23,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "gcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5274945100148519,
+            "std": 0.0012567164830663967
+          },
+          "val_macro_f1": {
+            "mean": 0.4375446898192326,
+            "std": 0.006175891280488508
+          },
+          "test_acc": {
+            "mean": 0.5320339997609457,
+            "std": 0.001978898901223572
+          },
+          "test_macro_f1": {
+            "mean": 0.4616953045220094,
+            "std": 0.0022449221284649014
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5278944373130798,
+              "val_macro_f1": 0.4327086173392568,
+              "test_acc": 0.5316342115402222,
+              "test_macro_f1": 0.46318926930928334
+            },
+            "metadata": {
+              "best_epoch": 102,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5287942290306091,
+              "val_macro_f1": 0.43366417448850714,
+              "test_acc": 0.534632682800293,
+              "test_macro_f1": 0.45852230379474507
+            },
+            "metadata": {
+              "best_epoch": 81,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5257948637008667,
+              "val_macro_f1": 0.44626127762993395,
+              "test_acc": 0.5298351049423218,
+              "test_macro_f1": 0.4633743404619999
+            },
+            "metadata": {
+              "best_epoch": 88,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "sage": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5283943216005961,
+            "std": 0.02283530830645777
+          },
+          "val_macro_f1": {
+            "mean": 0.4096889027398296,
+            "std": 0.10736929749776804
+          },
+          "test_acc": {
+            "mean": 0.5280359983444214,
+            "std": 0.021888387335842575
+          },
+          "test_macro_f1": {
+            "mean": 0.40915330287660784,
+            "std": 0.11672358229482566
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5446910858154297,
+              "val_macro_f1": 0.49285636108524783,
+              "test_acc": 0.5376312136650085,
+              "test_macro_f1": 0.4812485833922756
+            },
+            "metadata": {
+              "best_epoch": 82,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.4961007833480835,
+              "val_macro_f1": 0.2580841325248786,
+              "test_acc": 0.4977511167526245,
+              "test_macro_f1": 0.2445043605603158
+            },
+            "metadata": {
+              "best_epoch": 31,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5443910956382751,
+              "val_macro_f1": 0.47812621460936233,
+              "test_acc": 0.5487256646156311,
+              "test_macro_f1": 0.5017069646772321
+            },
+            "metadata": {
+              "best_epoch": 109,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mmgcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5486902793248495,
+            "std": 0.0029011363129960335
+          },
+          "val_macro_f1": {
+            "mean": 0.3998410290769539,
+            "std": 0.029856167073806186
+          },
+          "test_acc": {
+            "mean": 0.5546226898829142,
+            "std": 0.001157012002178781
+          },
+          "test_macro_f1": {
+            "mean": 0.4228236930492262,
+            "std": 0.032990262761310785
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5527894496917725,
+              "val_macro_f1": 0.43778497538605404,
+              "test_acc": 0.5562219023704529,
+              "test_macro_f1": 0.4633894838592381
+            },
+            "metadata": {
+              "best_epoch": 69,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5467906594276428,
+              "val_macro_f1": 0.39690896777932017,
+              "test_acc": 0.5535232424736023,
+              "test_macro_f1": 0.4224994703846419
+            },
+            "metadata": {
+              "best_epoch": 64,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5464907288551331,
+              "val_macro_f1": 0.3648291440654877,
+              "test_acc": 0.5541229248046875,
+              "test_macro_f1": 0.3825821249037984
+            },
+            "metadata": {
+              "best_epoch": 59,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mgat": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5353929201761881,
+            "std": 0.002004604080197194
+          },
+          "val_macro_f1": {
+            "mean": 0.35094906890069694,
+            "std": 0.019566885183016913
+          },
+          "test_acc": {
+            "mean": 0.5316341718037924,
+            "std": 0.005982010650326411
+          },
+          "test_macro_f1": {
+            "mean": 0.3716509818424836,
+            "std": 0.01350811873403877
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5359928011894226,
+              "val_macro_f1": 0.32530473377892355,
+              "test_acc": 0.5400300025939941,
+              "test_macro_f1": 0.35382644591648305
+            },
+            "metadata": {
+              "best_epoch": 174,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5374925136566162,
+              "val_macro_f1": 0.37277515509569426,
+              "test_acc": 0.5283358097076416,
+              "test_macro_f1": 0.3865145813259397
+            },
+            "metadata": {
+              "best_epoch": 193,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5326934456825256,
+              "val_macro_f1": 0.35476731782747317,
+              "test_acc": 0.5265367031097412,
+              "test_macro_f1": 0.37461191828502793
+            },
+            "metadata": {
+              "best_epoch": 189,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dip": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5648870269457499,
+            "std": 0.002222152132034071
+          },
+          "val_macro_f1": {
+            "mean": 0.4778557548488315,
+            "std": 0.014360417568709937
+          },
+          "test_acc": {
+            "mean": 0.5528235832850138,
+            "std": 0.0018699019065871424
+          },
+          "test_macro_f1": {
+            "mean": 0.47252772086483336,
+            "std": 0.006482568464326318
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5617876648902893,
+              "val_macro_f1": 0.4584018378568725,
+              "test_acc": 0.5553223490715027,
+              "test_macro_f1": 0.468837088267472
+            },
+            "metadata": {
+              "best_epoch": 71,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5668866038322449,
+              "val_macro_f1": 0.49263159682277385,
+              "test_acc": 0.5508245825767517,
+              "test_macro_f1": 0.4816407716190021
+            },
+            "metadata": {
+              "best_epoch": 69,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5659868121147156,
+              "val_macro_f1": 0.4825338298668481,
+              "test_acc": 0.5523238182067871,
+              "test_macro_f1": 0.46710530270802614
+            },
+            "metadata": {
+              "best_epoch": 93,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          }
+        ]
+      },
+      "dgf": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5179964105288187,
+            "std": 0.00042419398131264476
+          },
+          "val_macro_f1": {
+            "mean": 0.26106717956522946,
+            "std": 0.008507245073277157
+          },
+          "test_acc": {
+            "mean": 0.5176411668459574,
+            "std": 0.002729923080471592
+          },
+          "test_macro_f1": {
+            "mean": 0.2899215044134127,
+            "std": 0.0010102147446150365
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5182963609695435,
+              "val_macro_f1": 0.27308441581849247,
+              "test_acc": 0.5163418054580688,
+              "test_macro_f1": 0.2903947917947778
+            },
+            "metadata": {
+              "best_epoch": 139,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5173965096473694,
+              "val_macro_f1": 0.2555579137492397,
+              "test_acc": 0.521439254283905,
+              "test_macro_f1": 0.29085225099009443
+            },
+            "metadata": {
+              "best_epoch": 117,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5182963609695435,
+              "val_macro_f1": 0.25455920912795615,
+              "test_acc": 0.5151424407958984,
+              "test_macro_f1": 0.28851747045536585
+            },
+            "metadata": {
+              "best_epoch": 119,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dmgc": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.4703059395154317,
+            "std": 0.011494647455938917
+          },
+          "val_macro_f1": {
+            "mean": 0.22124842232270456,
+            "std": 0.02552467559082489
+          },
+          "test_acc": {
+            "mean": 0.47696151336034137,
+            "std": 0.009830739324979602
+          },
+          "test_macro_f1": {
+            "mean": 0.23467982824787934,
+            "std": 0.024737489653701834
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.4772045612335205,
+              "val_macro_f1": 0.24201835286723067,
+              "test_acc": 0.48755621910095215,
+              "test_macro_f1": 0.24195985042758927
+            },
+            "metadata": {
+              "best_epoch": 125,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.45410919189453125,
+              "val_macro_f1": 0.18529548714849292,
+              "test_acc": 0.46386805176734924,
+              "test_macro_f1": 0.20140595056340485
+            },
+            "metadata": {
+              "best_epoch": 92,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.4796040654182434,
+              "val_macro_f1": 0.2364314269523901,
+              "test_acc": 0.4794602692127228,
+              "test_macro_f1": 0.2606736837526439
+            },
+            "metadata": {
+              "best_epoch": 129,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "lgmrec": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.5591881473859152,
+            "std": 0.0012326458264953493
+          },
+          "val_macro_f1": {
+            "mean": 0.4850135940525662,
+            "std": 0.0076892009303568
+          },
+          "test_acc": {
+            "mean": 0.5559220512708029,
+            "std": 0.002968346344824252
+          },
+          "test_macro_f1": {
+            "mean": 0.4919928008484567,
+            "std": 0.0008979665540664071
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.5605878829956055,
+              "val_macro_f1": 0.4835537398490148,
+              "test_acc": 0.5538231134414673,
+              "test_macro_f1": 0.49246422166004955
+            },
+            "metadata": {
+              "best_epoch": 169,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.5575884580612183,
+              "val_macro_f1": 0.476411461590699,
+              "test_acc": 0.5601199269294739,
+              "test_macro_f1": 0.49277828470044416
+            },
+            "metadata": {
+              "best_epoch": 138,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.5593881011009216,
+              "val_macro_f1": 0.4950755807179849,
+              "test_acc": 0.5538231134414673,
+              "test_macro_f1": 0.49073589618487645
+            },
+            "metadata": {
+              "best_epoch": 158,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      }
+    },
+    "Toys": {
+      "mlp": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7648385365804037,
+            "std": 0.0014270779928866372
+          },
+          "val_macro_f1": {
+            "mean": 0.7403093058311317,
+            "std": 0.0057970221621679325
+          },
+          "test_acc": {
+            "mean": 0.7477651635805765,
+            "std": 0.0016854782266389522
+          },
+          "test_macro_f1": {
+            "mean": 0.7185033494108163,
+            "std": 0.0016808992682763096
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7668519020080566,
+              "val_macro_f1": 0.7463602775929591,
+              "test_acc": 0.7458323240280151,
+              "test_macro_f1": 0.7184077765946415
+            },
+            "metadata": {
+              "best_epoch": 74,
+              "model_parameters": 459776,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7639526724815369,
+              "val_macro_f1": 0.7324934645901038,
+              "test_acc": 0.7499396204948425,
+              "test_macro_f1": 0.7164941275780975
+            },
+            "metadata": {
+              "best_epoch": 12,
+              "model_parameters": 459776,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7637110352516174,
+              "val_macro_f1": 0.7420741753103322,
+              "test_acc": 0.7475235462188721,
+              "test_macro_f1": 0.7206081440597096
+            },
+            "metadata": {
+              "best_epoch": 85,
+              "model_parameters": 459776,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "gcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7944752971331278,
+            "std": 0.0015822533264647136
+          },
+          "val_macro_f1": {
+            "mean": 0.7617196914290328,
+            "std": 0.0028684792846027088
+          },
+          "test_acc": {
+            "mean": 0.7857775688171387,
+            "std": 0.0011558924734550904
+          },
+          "test_macro_f1": {
+            "mean": 0.7511122756350944,
+            "std": 0.004447541048693892
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7963275909423828,
+              "val_macro_f1": 0.7580032694496925,
+              "test_acc": 0.7847306132316589,
+              "test_macro_f1": 0.744925459769482
+            },
+            "metadata": {
+              "best_epoch": 73,
+              "model_parameters": 526080,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7946363687515259,
+              "val_macro_f1": 0.7621695644397716,
+              "test_acc": 0.787388265132904,
+              "test_macro_f1": 0.7551872201966009
+            },
+            "metadata": {
+              "best_epoch": 72,
+              "model_parameters": 526080,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7924619317054749,
+              "val_macro_f1": 0.7649862403976341,
+              "test_acc": 0.785213828086853,
+              "test_macro_f1": 0.7532241469392005
+            },
+            "metadata": {
+              "best_epoch": 65,
+              "model_parameters": 526080,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "sage": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7968913515408834,
+            "std": 0.0024978978222970987
+          },
+          "val_macro_f1": {
+            "mean": 0.7712545566600975,
+            "std": 0.0055318070001082915
+          },
+          "test_acc": {
+            "mean": 0.785213828086853,
+            "std": 0.0031003036828243916
+          },
+          "test_macro_f1": {
+            "mean": 0.7607942533012736,
+            "std": 0.004989143519030303
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7963275909423828,
+              "val_macro_f1": 0.7704676995452674,
+              "test_acc": 0.7893210649490356,
+              "test_macro_f1": 0.7671784226701117
+            },
+            "metadata": {
+              "best_epoch": 159,
+              "model_parameters": 1050368,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8001933097839355,
+              "val_macro_f1": 0.7783886806519837,
+              "test_acc": 0.7844890356063843,
+              "test_macro_f1": 0.7602039210421854
+            },
+            "metadata": {
+              "best_epoch": 167,
+              "model_parameters": 1050368,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7941531538963318,
+              "val_macro_f1": 0.7649072897830412,
+              "test_acc": 0.7818313837051392,
+              "test_macro_f1": 0.7550004161915237
+            },
+            "metadata": {
+              "best_epoch": 98,
+              "model_parameters": 1050368,
+              "classifier_parameters": 4626,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mmgcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7943142453829447,
+            "std": 0.0014936888876987305
+          },
+          "val_macro_f1": {
+            "mean": 0.7606663396212742,
+            "std": 0.001697734735329557
+          },
+          "test_acc": {
+            "mean": 0.7828783194224039,
+            "std": 0.005190592486962809
+          },
+          "test_macro_f1": {
+            "mean": 0.7520818451984358,
+            "std": 0.007052926476824289
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7922203540802002,
+              "val_macro_f1": 0.76162768509213,
+              "test_acc": 0.7755496501922607,
+              "test_macro_f1": 0.7422078842700804
+            },
+            "metadata": {
+              "best_epoch": 116,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7956027984619141,
+              "val_macro_f1": 0.7620910057038957,
+              "test_acc": 0.7861802577972412,
+              "test_macro_f1": 0.758241253378357
+            },
+            "metadata": {
+              "best_epoch": 87,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.79511958360672,
+              "val_macro_f1": 0.758280328067797,
+              "test_acc": 0.78690505027771,
+              "test_macro_f1": 0.7557963979468698
+            },
+            "metadata": {
+              "best_epoch": 73,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mgat": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7829588452974955,
+            "std": 0.002286408831801285
+          },
+          "val_macro_f1": {
+            "mean": 0.7378185605617542,
+            "std": 0.007912601838837463
+          },
+          "test_acc": {
+            "mean": 0.7782073020935059,
+            "std": 0.0009863338593043222
+          },
+          "test_macro_f1": {
+            "mean": 0.7402038325172468,
+            "std": 0.002733693450996328
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7815897464752197,
+              "val_macro_f1": 0.7455090140703644,
+              "test_acc": 0.776999294757843,
+              "test_macro_f1": 0.7434034270938096
+            },
+            "metadata": {
+              "best_epoch": 188,
+              "model_parameters": 441304,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7861802577972412,
+              "val_macro_f1": 0.7410129783591216,
+              "test_acc": 0.7782073020935059,
+              "test_macro_f1": 0.7404832812839703
+            },
+            "metadata": {
+              "best_epoch": 138,
+              "model_parameters": 441304,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7811065316200256,
+              "val_macro_f1": 0.7269336892557768,
+              "test_acc": 0.7794153094291687,
+              "test_macro_f1": 0.7367247891739601
+            },
+            "metadata": {
+              "best_epoch": 142,
+              "model_parameters": 441304,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dip": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8074414134025574,
+            "std": 0.0005219133022056549
+          },
+          "val_macro_f1": {
+            "mean": 0.7748428379371536,
+            "std": 0.0017916005046278828
+          },
+          "test_acc": {
+            "mean": 0.7923008799552917,
+            "std": 0.0034526867260966224
+          },
+          "test_macro_f1": {
+            "mean": 0.7608756306941649,
+            "std": 0.006033917382884058
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8079246282577515,
+              "val_macro_f1": 0.7737902042016367,
+              "test_acc": 0.7922203540802002,
+              "test_macro_f1": 0.7577797467314245
+            },
+            "metadata": {
+              "best_epoch": 59,
+              "model_parameters": 8160360,
+              "classifier_parameters": 9234,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.807682991027832,
+              "val_macro_f1": 0.777365080709452,
+              "test_acc": 0.7965692281723022,
+              "test_macro_f1": 0.769310071447926
+            },
+            "metadata": {
+              "best_epoch": 56,
+              "model_parameters": 8160360,
+              "classifier_parameters": 9234,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8067166209220886,
+              "val_macro_f1": 0.7733732289003724,
+              "test_acc": 0.7881130576133728,
+              "test_macro_f1": 0.7555370739031443
+            },
+            "metadata": {
+              "best_epoch": 68,
+              "model_parameters": 8160360,
+              "classifier_parameters": 9234,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          }
+        ]
+      },
+      "dgf": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7927840948104858,
+            "std": 0.0004964431777979931
+          },
+          "val_macro_f1": {
+            "mean": 0.7579374230549565,
+            "std": 0.0020181100497503224
+          },
+          "test_acc": {
+            "mean": 0.7844084699948629,
+            "std": 0.0009929121399336951
+          },
+          "test_macro_f1": {
+            "mean": 0.7511424880143086,
+            "std": 0.0036592657415057527
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.793428361415863,
+              "val_macro_f1": 0.7566417450031002,
+              "test_acc": 0.7832809686660767,
+              "test_macro_f1": 0.746003600415097
+            },
+            "metadata": {
+              "best_epoch": 229,
+              "model_parameters": 98432,
+              "classifier_parameters": 1170,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7922203540802002,
+              "val_macro_f1": 0.7607875486309975,
+              "test_acc": 0.7842473983764648,
+              "test_macro_f1": 0.7542403391685547
+            },
+            "metadata": {
+              "best_epoch": 261,
+              "model_parameters": 98432,
+              "classifier_parameters": 1170,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7927035689353943,
+              "val_macro_f1": 0.7563829755307716,
+              "test_acc": 0.7856970429420471,
+              "test_macro_f1": 0.7531835244592742
+            },
+            "metadata": {
+              "best_epoch": 220,
+              "model_parameters": 98432,
+              "classifier_parameters": 1170,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dmgc": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7277925411860148,
+            "std": 0.015129828745009176
+          },
+          "val_macro_f1": {
+            "mean": 0.6946946733953779,
+            "std": 0.007245702860736355
+          },
+          "test_acc": {
+            "mean": 0.7125714818636576,
+            "std": 0.013330391619894657
+          },
+          "test_macro_f1": {
+            "mean": 0.6745149507430509,
+            "std": 0.0027298323603013775
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7397922277450562,
+              "val_macro_f1": 0.6959488340295292,
+              "test_acc": 0.7240879535675049,
+              "test_macro_f1": 0.6782678282878692
+            },
+            "metadata": {
+              "best_epoch": 124,
+              "model_parameters": 296194,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.737134575843811,
+              "val_macro_f1": 0.7028750118685573,
+              "test_acc": 0.7197390794754028,
+              "test_macro_f1": 0.6734226737353444
+            },
+            "metadata": {
+              "best_epoch": 154,
+              "model_parameters": 296194,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7064508199691772,
+              "val_macro_f1": 0.6852601742880476,
+              "test_acc": 0.6938874125480652,
+              "test_macro_f1": 0.6718543502059391
+            },
+            "metadata": {
+              "best_epoch": 300,
+              "model_parameters": 296194,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "lgmrec": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8030119935671488,
+            "std": 0.0009928895787245148
+          },
+          "val_macro_f1": {
+            "mean": 0.7718955928651888,
+            "std": 0.0011295170541366
+          },
+          "test_acc": {
+            "mean": 0.7918176452318827,
+            "std": 0.0002277896672518786
+          },
+          "test_macro_f1": {
+            "mean": 0.7651899812085116,
+            "std": 0.0013438410396221555
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8028509020805359,
+              "val_macro_f1": 0.7705317442551479,
+              "test_acc": 0.7919787168502808,
+              "test_macro_f1": 0.7665048205459382
+            },
+            "metadata": {
+              "best_epoch": 109,
+              "model_parameters": 204928,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8043005466461182,
+              "val_macro_f1": 0.773297691378332,
+              "test_acc": 0.7919787168502808,
+              "test_macro_f1": 0.7633441755556896
+            },
+            "metadata": {
+              "best_epoch": 125,
+              "model_parameters": 204928,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8018845319747925,
+              "val_macro_f1": 0.7718573429620864,
+              "test_acc": 0.7914955019950867,
+              "test_macro_f1": 0.7657209475239066
+            },
+            "metadata": {
+              "best_epoch": 117,
+              "model_parameters": 204928,
+              "classifier_parameters": 2322,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      }
+    },
+    "Grocery": {
+      "mlp": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.7876037160555521,
+            "std": 0.0023588133125063424
+          },
+          "val_macro_f1": {
+            "mean": 0.7157560705158131,
+            "std": 0.007265205517454857
+          },
+          "test_acc": {
+            "mean": 0.7845778465270996,
+            "std": 0.001947291354560637
+          },
+          "test_macro_f1": {
+            "mean": 0.703908067344604,
+            "std": 0.0060000808141025255
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.7862371802330017,
+              "val_macro_f1": 0.7159041748463507,
+              "test_acc": 0.7862371802330017,
+              "test_macro_f1": 0.7095472788435914
+            },
+            "metadata": {
+              "best_epoch": 53,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7909224033355713,
+              "val_macro_f1": 0.7245791170712929,
+              "test_acc": 0.7818447947502136,
+              "test_macro_f1": 0.706579447382372
+            },
+            "metadata": {
+              "best_epoch": 82,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.7856515645980835,
+              "val_macro_f1": 0.7067849196297962,
+              "test_acc": 0.7856515645980835,
+              "test_macro_f1": 0.6955974758078488
+            },
+            "metadata": {
+              "best_epoch": 32,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "gcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8062469561894735,
+            "std": 0.0008396694127176394
+          },
+          "val_macro_f1": {
+            "mean": 0.7195405761194262,
+            "std": 0.002620730615711037
+          },
+          "test_acc": {
+            "mean": 0.8118106126785278,
+            "std": 0.001826089065248074
+          },
+          "test_macro_f1": {
+            "mean": 0.715260099356423,
+            "std": 0.0022466251259267715
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8052708506584167,
+              "val_macro_f1": 0.7212684432334053,
+              "test_acc": 0.8093703985214233,
+              "test_macro_f1": 0.7176896480638311
+            },
+            "metadata": {
+              "best_epoch": 97,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8073206543922424,
+              "val_macro_f1": 0.7215162199724593,
+              "test_acc": 0.8137627840042114,
+              "test_macro_f1": 0.7158184455551397
+            },
+            "metadata": {
+              "best_epoch": 72,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8061493635177612,
+              "val_macro_f1": 0.7158370651524143,
+              "test_acc": 0.8122986555099487,
+              "test_macro_f1": 0.7122722044502982
+            },
+            "metadata": {
+              "best_epoch": 69,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "sage": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8328940868377686,
+            "std": 0.0012269168599014092
+          },
+          "val_macro_f1": {
+            "mean": 0.7685623109253265,
+            "std": 0.002938132725005754
+          },
+          "test_acc": {
+            "mean": 0.8281112710634867,
+            "std": 0.00352202775477588
+          },
+          "test_macro_f1": {
+            "mean": 0.745794021239754,
+            "std": 0.0033828719464944106
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8345534205436707,
+              "val_macro_f1": 0.768782835864794,
+              "test_acc": 0.8234260678291321,
+              "test_macro_f1": 0.7411141243221753
+            },
+            "metadata": {
+              "best_epoch": 99,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8316251635551453,
+              "val_macro_f1": 0.7648586569617628,
+              "test_acc": 0.8289897441864014,
+              "test_macro_f1": 0.7472739362455921
+            },
+            "metadata": {
+              "best_epoch": 110,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8325036764144897,
+              "val_macro_f1": 0.7720454399494227,
+              "test_acc": 0.8319180011749268,
+              "test_macro_f1": 0.7489940031514949
+            },
+            "metadata": {
+              "best_epoch": 110,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mmgcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.818448026974996,
+            "std": 0.0028188364449167115
+          },
+          "val_macro_f1": {
+            "mean": 0.7411533941308236,
+            "std": 0.004176687614542896
+          },
+          "test_acc": {
+            "mean": 0.821766714255015,
+            "std": 0.002033432227857548
+          },
+          "test_macro_f1": {
+            "mean": 0.7251082534204206,
+            "std": 0.006911278252662434
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8193265199661255,
+              "val_macro_f1": 0.7356844772346045,
+              "test_acc": 0.8243045210838318,
+              "test_macro_f1": 0.7334371223990236
+            },
+            "metadata": {
+              "best_epoch": 122,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8213762640953064,
+              "val_macro_f1": 0.7419551627096311,
+              "test_acc": 0.8216691017150879,
+              "test_macro_f1": 0.7165142470803038
+            },
+            "metadata": {
+              "best_epoch": 97,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8146412968635559,
+              "val_macro_f1": 0.7458205424482348,
+              "test_acc": 0.8193265199661255,
+              "test_macro_f1": 0.7253733907819343
+            },
+            "metadata": {
+              "best_epoch": 140,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mgat": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8071254293123881,
+            "std": 0.0010781171761458008
+          },
+          "val_macro_f1": {
+            "mean": 0.6852016992456343,
+            "std": 0.009006999562362464
+          },
+          "test_acc": {
+            "mean": 0.805954118569692,
+            "std": 0.003797978435272214
+          },
+          "test_macro_f1": {
+            "mean": 0.6783417036264628,
+            "std": 0.013673477482307315
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8058565258979797,
+              "val_macro_f1": 0.674590790089435,
+              "test_acc": 0.8005856275558472,
+              "test_macro_f1": 0.6591545684693748
+            },
+            "metadata": {
+              "best_epoch": 124,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8084919452667236,
+              "val_macro_f1": 0.6844042433022074,
+              "test_acc": 0.8084919452667236,
+              "test_macro_f1": 0.6858528776215367
+            },
+            "metadata": {
+              "best_epoch": 187,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8070278167724609,
+              "val_macro_f1": 0.6966100643452606,
+              "test_acc": 0.8087847828865051,
+              "test_macro_f1": 0.6900176647884768
+            },
+            "metadata": {
+              "best_epoch": 211,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dip": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8370912671089172,
+            "std": 0.0026659902460753697
+          },
+          "val_macro_f1": {
+            "mean": 0.7743763059299901,
+            "std": 0.00576190786748648
+          },
+          "test_acc": {
+            "mean": 0.8371888796488444,
+            "std": 0.002995803534382058
+          },
+          "test_macro_f1": {
+            "mean": 0.7542672231800799,
+            "std": 0.00433047614188472
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8395314812660217,
+              "val_macro_f1": 0.7821476324061654,
+              "test_acc": 0.8409956097602844,
+              "test_macro_f1": 0.7603913578253273
+            },
+            "metadata": {
+              "best_epoch": 155,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8383601903915405,
+              "val_macro_f1": 0.7726129614734776,
+              "test_acc": 0.833674967288971,
+              "test_macro_f1": 0.751177469068012
+            },
+            "metadata": {
+              "best_epoch": 88,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8333821296691895,
+              "val_macro_f1": 0.7683683239103273,
+              "test_acc": 0.8368960618972778,
+              "test_macro_f1": 0.7512328426469005
+            },
+            "metadata": {
+              "best_epoch": 70,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          }
+        ]
+      },
+      "dgf": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.807613472143809,
+            "std": 0.0010956714932003502
+          },
+          "val_macro_f1": {
+            "mean": 0.6858135410214072,
+            "std": 0.007646319241081672
+          },
+          "test_acc": {
+            "mean": 0.8130795558293661,
+            "std": 0.0038354186226333548
+          },
+          "test_macro_f1": {
+            "mean": 0.688773787460751,
+            "std": 0.009258996541112756
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8073206543922424,
+              "val_macro_f1": 0.6884039181281968,
+              "test_acc": 0.8081991076469421,
+              "test_macro_f1": 0.6875342938536955
+            },
+            "metadata": {
+              "best_epoch": 252,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8090776205062866,
+              "val_macro_f1": 0.6936104785526128,
+              "test_acc": 0.8175695538520813,
+              "test_macro_f1": 0.7006825230197457
+            },
+            "metadata": {
+              "best_epoch": 272,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.806442141532898,
+              "val_macro_f1": 0.6754262263834122,
+              "test_acc": 0.8134700059890747,
+              "test_macro_f1": 0.6781045455088118
+            },
+            "metadata": {
+              "best_epoch": 179,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dmgc": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.731478750705719,
+            "std": 0.029224932730078323
+          },
+          "val_macro_f1": {
+            "mean": 0.6143122280156662,
+            "std": 0.02172861779334944
+          },
+          "test_acc": {
+            "mean": 0.7179111838340759,
+            "std": 0.038036043188011334
+          },
+          "test_macro_f1": {
+            "mean": 0.5955203220920829,
+            "std": 0.03522547866730773
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.772767186164856,
+              "val_macro_f1": 0.645028799045425,
+              "test_acc": 0.7715958952903748,
+              "test_macro_f1": 0.6453338565557266
+            },
+            "metadata": {
+              "best_epoch": 179,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.7092239856719971,
+              "val_macro_f1": 0.5981999896212706,
+              "test_acc": 0.6881405711174011,
+              "test_macro_f1": 0.5710722041717988
+            },
+            "metadata": {
+              "best_epoch": 179,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.712445080280304,
+              "val_macro_f1": 0.599707895380303,
+              "test_acc": 0.6939970850944519,
+              "test_macro_f1": 0.5701549055487237
+            },
+            "metadata": {
+              "best_epoch": 188,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "lgmrec": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8318204085032145,
+            "std": 0.0011298919186511819
+          },
+          "val_macro_f1": {
+            "mean": 0.7723898685144895,
+            "std": 0.002951438944923797
+          },
+          "test_acc": {
+            "mean": 0.828794538974762,
+            "std": 0.0008396717224174164
+          },
+          "test_macro_f1": {
+            "mean": 0.7533290731878827,
+            "std": 0.0021463244687622935
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8307467103004456,
+              "val_macro_f1": 0.7727819678634427,
+              "test_acc": 0.8298682570457458,
+              "test_macro_f1": 0.7535498656238174
+            },
+            "metadata": {
+              "best_epoch": 171,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8333821296691895,
+              "val_macro_f1": 0.7685950438617971,
+              "test_acc": 0.8286969065666199,
+              "test_macro_f1": 0.7505969406916091
+            },
+            "metadata": {
+              "best_epoch": 163,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8313323855400085,
+              "val_macro_f1": 0.7757925938182287,
+              "test_acc": 0.8278184533119202,
+              "test_macro_f1": 0.7558404132482216
+            },
+            "metadata": {
+              "best_epoch": 180,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      }
+    },
+    "ele-fashion": {
+      "mlp": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8810473680496216,
+            "std": 0.00044190689080826
+          },
+          "val_macro_f1": {
+            "mean": 0.774038962276738,
+            "std": 0.005845733182402749
+          },
+          "test_acc": {
+            "mean": 0.8811910549799601,
+            "std": 0.0007440137495602309
+          },
+          "test_macro_f1": {
+            "mean": 0.7782402214628023,
+            "std": 0.003191164636257498
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.881661057472229,
+              "val_macro_f1": 0.770099261223206,
+              "test_acc": 0.8807705640792847,
+              "test_macro_f1": 0.7741688645920561
+            },
+            "metadata": {
+              "best_epoch": 39,
+              "model_parameters": 328704,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8806382417678833,
+              "val_macro_f1": 0.7697145327520313,
+              "test_acc": 0.8822365999221802,
+              "test_macro_f1": 0.7785896800053909
+            },
+            "metadata": {
+              "best_epoch": 33,
+              "model_parameters": 328704,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8808428049087524,
+              "val_macro_f1": 0.7823030928549766,
+              "test_acc": 0.8805660009384155,
+              "test_macro_f1": 0.7819621197909598
+            },
+            "metadata": {
+              "best_epoch": 74,
+              "model_parameters": 328704,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "gcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8539770245552063,
+            "std": 0.0008772131382123999
+          },
+          "val_macro_f1": {
+            "mean": 0.7241782470513115,
+            "std": 0.007142449909169072
+          },
+          "test_acc": {
+            "mean": 0.8510967095692953,
+            "std": 0.0010524861438512801
+          },
+          "test_macro_f1": {
+            "mean": 0.7295137537706461,
+            "std": 0.0027557998770167988
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8529201149940491,
+              "val_macro_f1": 0.7222767912576207,
+              "test_acc": 0.8515512943267822,
+              "test_macro_f1": 0.7293976687509317
+            },
+            "metadata": {
+              "best_epoch": 132,
+              "model_parameters": 395008,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.855068027973175,
+              "val_macro_f1": 0.7337202632948465,
+              "test_acc": 0.8496419787406921,
+              "test_macro_f1": 0.7329454504780162
+            },
+            "metadata": {
+              "best_epoch": 151,
+              "model_parameters": 395008,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8539429306983948,
+              "val_macro_f1": 0.7165376866014674,
+              "test_acc": 0.8520968556404114,
+              "test_macro_f1": 0.7261981420829902
+            },
+            "metadata": {
+              "best_epoch": 140,
+              "model_parameters": 395008,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "sage": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.877365231513977,
+            "std": 0.0011047672270206499
+          },
+          "val_macro_f1": {
+            "mean": 0.7624382262033323,
+            "std": 0.004821957889040333
+          },
+          "test_acc": {
+            "mean": 0.878690759340922,
+            "std": 0.0012548796308762939
+          },
+          "test_macro_f1": {
+            "mean": 0.7727798659424981,
+            "std": 0.003466305049289238
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8778766393661499,
+              "val_macro_f1": 0.7638105470950898,
+              "test_acc": 0.8796454071998596,
+              "test_macro_f1": 0.7756696484811756
+            },
+            "metadata": {
+              "best_epoch": 128,
+              "model_parameters": 788224,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8783880472183228,
+              "val_macro_f1": 0.7675369139277216,
+              "test_acc": 0.8795090317726135,
+              "test_macro_f1": 0.7747642273179
+            },
+            "metadata": {
+              "best_epoch": 131,
+              "model_parameters": 788224,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8758310079574585,
+              "val_macro_f1": 0.7559672175871858,
+              "test_acc": 0.876917839050293,
+              "test_macro_f1": 0.7679057220284192
+            },
+            "metadata": {
+              "best_epoch": 90,
+              "model_parameters": 788224,
+              "classifier_parameters": 3084,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mmgcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8768197298049927,
+            "std": 0.0007531579139031306
+          },
+          "val_macro_f1": {
+            "mean": 0.754531520277208,
+            "std": 0.006131064142802949
+          },
+          "test_acc": {
+            "mean": 0.875735878944397,
+            "std": 0.0012416350161590852
+          },
+          "test_macro_f1": {
+            "mean": 0.7584509359659064,
+            "std": 0.007953664180289508
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8777743577957153,
+              "val_macro_f1": 0.762926276481695,
+              "test_acc": 0.8774633407592773,
+              "test_macro_f1": 0.7688014638421227
+            },
+            "metadata": {
+              "best_epoch": 206,
+              "model_parameters": 755456,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8759332895278931,
+              "val_macro_f1": 0.7522132303807617,
+              "test_acc": 0.8745993971824646,
+              "test_macro_f1": 0.7494623938643301
+            },
+            "metadata": {
+              "best_epoch": 116,
+              "model_parameters": 755456,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8767515420913696,
+              "val_macro_f1": 0.7484550539691672,
+              "test_acc": 0.875144898891449,
+              "test_macro_f1": 0.7570889501912664
+            },
+            "metadata": {
+              "best_epoch": 156,
+              "model_parameters": 755456,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mgat": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8662166396776835,
+            "std": 0.0005079590226637847
+          },
+          "val_macro_f1": {
+            "mean": 0.7071872541881535,
+            "std": 0.006394522978441395
+          },
+          "test_acc": {
+            "mean": 0.8671667178471884,
+            "std": 0.0013362251743961088
+          },
+          "test_macro_f1": {
+            "mean": 0.7117877920906744,
+            "std": 0.012765675200825414
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8669325709342957,
+              "val_macro_f1": 0.714745247304604,
+              "test_acc": 0.8688032627105713,
+              "test_macro_f1": 0.7254152767754761
+            },
+            "metadata": {
+              "best_epoch": 251,
+              "model_parameters": 350168,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8658075332641602,
+              "val_macro_f1": 0.6991079737763335,
+              "test_acc": 0.8655301928520203,
+              "test_macro_f1": 0.6947191757425348
+            },
+            "metadata": {
+              "best_epoch": 217,
+              "model_parameters": 350168,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8659098148345947,
+              "val_macro_f1": 0.707708541483523,
+              "test_acc": 0.8671666979789734,
+              "test_macro_f1": 0.7152289237540119
+            },
+            "metadata": {
+              "best_epoch": 281,
+              "model_parameters": 350168,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dip": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8800586462020874,
+            "std": 0.0013500478515009577
+          },
+          "val_macro_f1": {
+            "mean": 0.7547280877701718,
+            "std": 0.009767784818057922
+          },
+          "test_acc": {
+            "mean": 0.8796567718187968,
+            "std": 0.0016041112855689175
+          },
+          "test_macro_f1": {
+            "mean": 0.7644232861405446,
+            "std": 0.008047723349246133
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8791040182113647,
+              "val_macro_f1": 0.7518636941370018,
+              "test_acc": 0.877770185470581,
+              "test_macro_f1": 0.7575839870837733
+            },
+            "metadata": {
+              "best_epoch": 85,
+              "model_parameters": 7636072,
+              "classifier_parameters": 6156,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8791040182113647,
+              "val_macro_f1": 0.7444572564652184,
+              "test_acc": 0.8795090317726135,
+              "test_macro_f1": 0.7599646891655489
+            },
+            "metadata": {
+              "best_epoch": 86,
+              "model_parameters": 7636072,
+              "classifier_parameters": 6156,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8819679021835327,
+              "val_macro_f1": 0.767863312708295,
+              "test_acc": 0.8816910982131958,
+              "test_macro_f1": 0.7757211821723113
+            },
+            "metadata": {
+              "best_epoch": 133,
+              "model_parameters": 7636072,
+              "classifier_parameters": 6156,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          }
+        ]
+      },
+      "dgf": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.868910014629364,
+            "std": 0.00024107997348231386
+          },
+          "val_macro_f1": {
+            "mean": 0.7194054980504384,
+            "std": 0.002667429083637413
+          },
+          "test_acc": {
+            "mean": 0.8682577610015869,
+            "std": 0.0003375119628752394
+          },
+          "test_macro_f1": {
+            "mean": 0.7251614913598585,
+            "std": 0.0038409592886092885
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8690804839134216,
+              "val_macro_f1": 0.7230687489262467,
+              "test_acc": 0.8687009811401367,
+              "test_macro_f1": 0.7305387703817082
+            },
+            "metadata": {
+              "best_epoch": 281,
+              "model_parameters": 65664,
+              "classifier_parameters": 780,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8690804839134216,
+              "val_macro_f1": 0.7183537518596097,
+              "test_acc": 0.8678827285766602,
+              "test_macro_f1": 0.7231385132688852
+            },
+            "metadata": {
+              "best_epoch": 270,
+              "model_parameters": 65664,
+              "classifier_parameters": 780,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8685690760612488,
+              "val_macro_f1": 0.7167939933654587,
+              "test_acc": 0.8681895732879639,
+              "test_macro_f1": 0.721807190428982
+            },
+            "metadata": {
+              "best_epoch": 263,
+              "model_parameters": 65664,
+              "classifier_parameters": 780,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dmgc": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8662848273913065,
+            "std": 0.0004748453729561612
+          },
+          "val_macro_f1": {
+            "mean": 0.706700540871935,
+            "std": 0.013086218796339963
+          },
+          "test_acc": {
+            "mean": 0.8658824761708578,
+            "std": 0.0010932784404630923
+          },
+          "test_macro_f1": {
+            "mean": 0.7145354294117352,
+            "std": 0.00915583147054564
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8661143779754639,
+              "val_macro_f1": 0.6886326734609718,
+              "test_acc": 0.8643368482589722,
+              "test_macro_f1": 0.7016371992242866
+            },
+            "metadata": {
+              "best_epoch": 178,
+              "model_parameters": 230658,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8658075332641602,
+              "val_macro_f1": 0.7122649199960023,
+              "test_acc": 0.8666893839836121,
+              "test_macro_f1": 0.7199993448306523
+            },
+            "metadata": {
+              "best_epoch": 212,
+              "model_parameters": 230658,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8669325709342957,
+              "val_macro_f1": 0.7192040291588309,
+              "test_acc": 0.866621196269989,
+              "test_macro_f1": 0.721969744180267
+            },
+            "metadata": {
+              "best_epoch": 234,
+              "model_parameters": 230658,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "lgmrec": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.8581705292065939,
+            "std": 0.0017721968795897756
+          },
+          "val_macro_f1": {
+            "mean": 0.7040298815911387,
+            "std": 0.010454484464399338
+          },
+          "test_acc": {
+            "mean": 0.8567678332328796,
+            "std": 0.003134618419682886
+          },
+          "test_macro_f1": {
+            "mean": 0.7128531385620208,
+            "std": 0.015214577170756484
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.8591592311859131,
+              "val_macro_f1": 0.7108745500014247,
+              "test_acc": 0.8589158058166504,
+              "test_macro_f1": 0.7253289674254852
+            },
+            "metadata": {
+              "best_epoch": 282,
+              "model_parameters": 139392,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.8556817173957825,
+              "val_macro_f1": 0.6892582190406936,
+              "test_acc": 0.852335512638092,
+              "test_macro_f1": 0.6914333168603004
+            },
+            "metadata": {
+              "best_epoch": 157,
+              "model_parameters": 139392,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.8596706390380859,
+              "val_macro_f1": 0.7119568757312975,
+              "test_acc": 0.8590521812438965,
+              "test_macro_f1": 0.7217971314002765
+            },
+            "metadata": {
+              "best_epoch": 268,
+              "model_parameters": 139392,
+              "classifier_parameters": 1548,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      }
+    },
+    "Reddit-S": {
+      "mlp": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9267065127690634,
+            "std": 0.0013345940070469632
+          },
+          "val_macro_f1": {
+            "mean": 0.8772284089230816,
+            "std": 0.0011522062679341783
+          },
+          "test_acc": {
+            "mean": 0.9274404843648275,
+            "std": 0.0005346590599953447
+          },
+          "test_macro_f1": {
+            "mean": 0.8723280768613176,
+            "std": 0.0029393906221610723
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9276502132415771,
+              "val_macro_f1": 0.8788018290631248,
+              "test_acc": 0.9267064929008484,
+              "test_macro_f1": 0.8688210391294048
+            },
+            "metadata": {
+              "best_epoch": 10,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9276502132415771,
+              "val_macro_f1": 0.8768086194479852,
+              "test_acc": 0.9279647469520569,
+              "test_macro_f1": 0.8760143503947571
+            },
+            "metadata": {
+              "best_epoch": 14,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9248191118240356,
+              "val_macro_f1": 0.876074778258135,
+              "test_acc": 0.9276502132415771,
+              "test_macro_f1": 0.8721488410597908
+            },
+            "metadata": {
+              "best_epoch": 11,
+              "model_parameters": 459776,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "gcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9425395925839742,
+            "std": 0.001548159548284746
+          },
+          "val_macro_f1": {
+            "mean": 0.906036401629036,
+            "std": 0.0006800430393181987
+          },
+          "test_acc": {
+            "mean": 0.9356191754341125,
+            "std": 0.00039234025054393296
+          },
+          "test_macro_f1": {
+            "mean": 0.8902433332067902,
+            "std": 0.0010302247099617436
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9443221092224121,
+              "val_macro_f1": 0.9066958284936705,
+              "test_acc": 0.9361434578895569,
+              "test_macro_f1": 0.8916195656383963
+            },
+            "metadata": {
+              "best_epoch": 38,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9405473470687866,
+              "val_macro_f1": 0.9051004250849954,
+              "test_acc": 0.9355143308639526,
+              "test_macro_f1": 0.8891410519874314
+            },
+            "metadata": {
+              "best_epoch": 60,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9427493214607239,
+              "val_macro_f1": 0.9063129513084421,
+              "test_acc": 0.9351997375488281,
+              "test_macro_f1": 0.8899693819945428
+            },
+            "metadata": {
+              "best_epoch": 42,
+              "model_parameters": 526080,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "sage": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9533396164576212,
+            "std": 0.0007846858109299613
+          },
+          "val_macro_f1": {
+            "mean": 0.9174950378255593,
+            "std": 0.001346400850832611
+          },
+          "test_acc": {
+            "mean": 0.9486211736996969,
+            "std": 0.0005931466480433154
+          },
+          "test_macro_f1": {
+            "mean": 0.90538703287893,
+            "std": 0.000896739016795917
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9531298875808716,
+              "val_macro_f1": 0.9182004088513096,
+              "test_acc": 0.9490405917167664,
+              "test_macro_f1": 0.9062136567173786
+            },
+            "metadata": {
+              "best_epoch": 85,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9543882012367249,
+              "val_macro_f1": 0.9186740284088964,
+              "test_acc": 0.9477823376655579,
+              "test_macro_f1": 0.9041408157618305
+            },
+            "metadata": {
+              "best_epoch": 120,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9525007605552673,
+              "val_macro_f1": 0.9156106762164719,
+              "test_acc": 0.9490405917167664,
+              "test_macro_f1": 0.9058066261575808
+            },
+            "metadata": {
+              "best_epoch": 126,
+              "model_parameters": 1050368,
+              "classifier_parameters": 5140,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 256,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mmgcn": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9583726525306702,
+            "std": 0.002302021711408783
+          },
+          "val_macro_f1": {
+            "mean": 0.9231453649559792,
+            "std": 0.004279371761603337
+          },
+          "test_acc": {
+            "mean": 0.9564852714538574,
+            "std": 0.0006463536822040404
+          },
+          "test_macro_f1": {
+            "mean": 0.9117057206197975,
+            "std": 0.0020843621797817136
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9569047093391418,
+              "val_macro_f1": 0.9217680565508475,
+              "test_acc": 0.9572192430496216,
+              "test_macro_f1": 0.9130606883495604
+            },
+            "metadata": {
+              "best_epoch": 90,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9565901160240173,
+              "val_macro_f1": 0.918730412573112,
+              "test_acc": 0.9565901160240173,
+              "test_macro_f1": 0.9132953704923106
+            },
+            "metadata": {
+              "best_epoch": 127,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9616231322288513,
+              "val_macro_f1": 0.9289376257439784,
+              "test_acc": 0.9556464552879333,
+              "test_macro_f1": 0.9087611030175216
+            },
+            "metadata": {
+              "best_epoch": 184,
+              "model_parameters": 1214208,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 2,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "mgat": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9580580790837606,
+            "std": 0.0016512503844538264
+          },
+          "val_macro_f1": {
+            "mean": 0.9190240622548118,
+            "std": 0.003334915724075348
+          },
+          "test_acc": {
+            "mean": 0.9571143984794617,
+            "std": 0.0016710933454809431
+          },
+          "test_macro_f1": {
+            "mean": 0.9060962159070384,
+            "std": 0.001804399039994426
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9572192430496216,
+              "val_macro_f1": 0.9185414842574534,
+              "test_acc": 0.9572192430496216,
+              "test_macro_f1": 0.9039969386177324
+            },
+            "metadata": {
+              "best_epoch": 177,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9565901160240173,
+              "val_macro_f1": 0.9152023679668682,
+              "test_acc": 0.9591066241264343,
+              "test_macro_f1": 0.9084022621249941
+            },
+            "metadata": {
+              "best_epoch": 176,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9603648781776428,
+              "val_macro_f1": 0.9233283345401139,
+              "test_acc": 0.9550173282623291,
+              "test_macro_f1": 0.9058894469783887
+            },
+            "metadata": {
+              "best_epoch": 179,
+              "model_parameters": 441304,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dip": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9624619881312052,
+            "std": 0.0007414192611046406
+          },
+          "val_macro_f1": {
+            "mean": 0.9262564860198902,
+            "std": 0.0011020811613345362
+          },
+          "test_acc": {
+            "mean": 0.9643493890762329,
+            "std": 0.0012137923707445286
+          },
+          "test_macro_f1": {
+            "mean": 0.9238260327373924,
+            "std": 0.005263350196129171
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9635105133056641,
+              "val_macro_f1": 0.9252081029502326,
+              "test_acc": 0.9631959795951843,
+              "test_macro_f1": 0.9169993409886026
+            },
+            "metadata": {
+              "best_epoch": 52,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9619377255439758,
+              "val_macro_f1": 0.9277794488166675,
+              "test_acc": 0.9638251066207886,
+              "test_macro_f1": 0.9246700415852585
+            },
+            "metadata": {
+              "best_epoch": 59,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9619377255439758,
+              "val_macro_f1": 0.9257819062927706,
+              "test_acc": 0.9660270810127258,
+              "test_macro_f1": 0.9298087156383164
+            },
+            "metadata": {
+              "best_epoch": 39,
+              "model_parameters": 8160360,
+              "classifier_parameters": 10260,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.001,
+                  "weight_decay": 0.0001
+                }
+              ],
+              "hidden_dim": null,
+              "num_layers": null,
+              "other_depth_fields": {
+                "d_model": 256,
+                "q_dim": 256,
+                "mp_hops": 3
+              }
+            }
+          }
+        ]
+      },
+      "dgf": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9603648980458578,
+            "std": 0.0007705200981907255
+          },
+          "val_macro_f1": {
+            "mean": 0.9134270266843728,
+            "std": 0.0042221908697449165
+          },
+          "test_acc": {
+            "mean": 0.9599454601605734,
+            "std": 0.0015693185217141687
+          },
+          "test_macro_f1": {
+            "mean": 0.9074838206840439,
+            "std": 0.00816346652723168
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9613085985183716,
+              "val_macro_f1": 0.9083185167918082,
+              "test_acc": 0.9578483700752258,
+              "test_macro_f1": 0.896217283519211
+            },
+            "metadata": {
+              "best_epoch": 173,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9603648781776428,
+              "val_macro_f1": 0.9186585355631414,
+              "test_acc": 0.9616231322288513,
+              "test_macro_f1": 0.9152993206581621
+            },
+            "metadata": {
+              "best_epoch": 231,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9594212174415588,
+              "val_macro_f1": 0.9133040276981687,
+              "test_acc": 0.9603648781776428,
+              "test_macro_f1": 0.9109348578747584
+            },
+            "metadata": {
+              "best_epoch": 209,
+              "model_parameters": 98432,
+              "classifier_parameters": 1300,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 64,
+              "num_layers": 10,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "dmgc": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.927859902381897,
+            "std": 0.006504388333292178
+          },
+          "val_macro_f1": {
+            "mean": 0.8694931740397704,
+            "std": 0.021428220603125592
+          },
+          "test_acc": {
+            "mean": 0.9282793203989664,
+            "std": 0.008266923990533444
+          },
+          "test_macro_f1": {
+            "mean": 0.8624258926604368,
+            "std": 0.0252157778101926
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9307958483695984,
+              "val_macro_f1": 0.8822512995238873,
+              "test_acc": 0.9295375943183899,
+              "test_macro_f1": 0.8728699348138355
+            },
+            "metadata": {
+              "best_epoch": 177,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9339414834976196,
+              "val_macro_f1": 0.8869190610544951,
+              "test_acc": 0.9377162456512451,
+              "test_macro_f1": 0.8867325807238782
+            },
+            "metadata": {
+              "best_epoch": 189,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9188423752784729,
+              "val_macro_f1": 0.8393091615409288,
+              "test_acc": 0.9175841212272644,
+              "test_macro_f1": 0.8276751624435968
+            },
+            "metadata": {
+              "best_epoch": 112,
+              "model_parameters": 296194,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 1,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      },
+      "lgmrec": {
+        "metrics": {
+          "val_acc": {
+            "mean": 0.9591066439946493,
+            "std": 0.001284200163514593
+          },
+          "val_macro_f1": {
+            "mean": 0.9242518765776021,
+            "std": 0.003493962705832536
+          },
+          "test_acc": {
+            "mean": 0.9599454800287882,
+            "std": 0.0003923190105287569
+          },
+          "test_macro_f1": {
+            "mean": 0.9188750797975827,
+            "std": 0.0013473234874334062
+          }
+        },
+        "runs": [
+          {
+            "run_id": 0,
+            "seed": 42,
+            "metrics": {
+              "val_acc": 0.9606794714927673,
+              "val_macro_f1": 0.9266164368907498,
+              "test_acc": 0.9594212174415588,
+              "test_macro_f1": 0.9171031473351899
+            },
+            "metadata": {
+              "best_epoch": 150,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 1,
+            "seed": 43,
+            "metrics": {
+              "val_acc": 0.9591066241264343,
+              "val_macro_f1": 0.9268270295846038,
+              "test_acc": 0.9603648781776428,
+              "test_macro_f1": 0.9203677686847132
+            },
+            "metadata": {
+              "best_epoch": 136,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          },
+          {
+            "run_id": 2,
+            "seed": 44,
+            "metrics": {
+              "val_acc": 0.9575338363647461,
+              "val_macro_f1": 0.9193121632574526,
+              "test_acc": 0.9600503444671631,
+              "test_macro_f1": 0.9191543233728448
+            },
+            "metadata": {
+              "best_epoch": 104,
+              "model_parameters": 204928,
+              "classifier_parameters": 2580,
+              "optimizer": "AdamW",
+              "optimizer_groups": [
+                {
+                  "lr": 0.005,
+                  "weight_decay": 1e-05
+                }
+              ],
+              "hidden_dim": 128,
+              "num_layers": 3,
+              "other_depth_fields": {}
+            }
+          }
+        ]
+      }
+    }
+  },
   "paired_contrasts": {
     "uniform_plain - terminal_plain": {
       "category": "retention",
