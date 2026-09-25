@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 import torch
 
-from scripts.summarize_multi_order_bank_nc import analyze, render_report
+from scripts.summarize_multi_order_bank_nc import _macro_f1, analyze, render_report
 
 
 DATASET = "Movies"
@@ -54,3 +54,12 @@ def test_analyzer_computes_factorial_pairs_population_stats_and_gammas(tmp_path)
     assert result["factorial"][DATASET]["mob_terminal_plain"]["metrics"]["val_acc"]["std"] > 0.0
     assert result["per_run_rows"][0]["seed"] == 42
     assert "Fusion attribution trigger" in render_report(result)
+
+
+def test_macro_f1_reuses_observed_nc_evaluation_labels() -> None:
+    labels = torch.tensor([0, 1, 2, 0, 1, 2])
+    predictions = torch.tensor([0, 1, 2, 0, 1, 1])
+    indices = torch.tensor([0, 1, 2, 3, 4, 5])
+    observed = _macro_f1(labels, predictions, indices, [0, 1, 2])
+    declared_class_count = _macro_f1(labels, predictions, indices, [0, 1, 2, 3])
+    assert observed > declared_class_count

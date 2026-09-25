@@ -308,10 +308,15 @@ def _load_nc_data(dataset: str, seed: int = 42):
     return cfg, load_mag_data(cfg, "nc", seed)
 
 
-def _macro_f1(labels: torch.Tensor, predictions: torch.Tensor, indices: torch.Tensor, n_classes: int) -> float:
+def _macro_f1(
+    labels: torch.Tensor,
+    predictions: torch.Tensor,
+    indices: torch.Tensor,
+    eval_labels: list[int] | tuple[int, ...],
+) -> float:
     y = labels[indices].cpu().numpy()
     pred = predictions[indices].cpu().numpy()
-    return float(f1_score(y, pred, labels=list(range(n_classes)), average="macro", zero_division=0))
+    return float(f1_score(y, pred, labels=list(eval_labels), average="macro", zero_division=0))
 
 
 def collect_gpr_diagnostics(factorial_root: Path, datasets: tuple[str, ...], device_name: str = "cuda:0") -> dict[str, list[dict[str, Any]]]:
@@ -418,7 +423,7 @@ def collect_gpr_diagnostics(factorial_root: Path, datasets: tuple[str, ...], dev
                     z_base = analysis["fused_z"]
                     pred_base = classifier(z_base).argmax(dim=-1).detach().cpu()
                     base_acc = float((pred_base[data.val_idx] == data.y[data.val_idx]).float().mean().item())
-                    base_f1 = _macro_f1(data.y, pred_base, data.val_idx, int(data.num_classes))
+                    base_f1 = _macro_f1(data.y, pred_base, data.val_idx, eval_labels)
                     stored_val = payload["metrics"]
                     if abs(base_acc - float(stored_val["val_acc"])) > 1e-6 or abs(base_f1 - float(stored_val["val_macro_f1"])) > 1e-6:
                         raise ValueError(f"Recomputed validation metrics disagree with {dataset}/{variant}/run{run_id}")
@@ -450,7 +455,7 @@ def collect_gpr_diagnostics(factorial_root: Path, datasets: tuple[str, ...], dev
                         _, _, _, fused = model._fuse_modalities(z_t, z_v)
                         predictions = classifier(fused).argmax(dim=-1).detach().cpu()
                         acc = float((predictions[data.val_idx] == data.y[data.val_idx]).float().mean().item())
-                        f1 = _macro_f1(data.y, predictions, data.val_idx, int(data.num_classes))
+                        f1 = _macro_f1(data.y, predictions, data.val_idx, eval_labels)
                         sensitivity_rows.append({
                             "dataset": dataset, "variant": variant, "run_id": run_id - 1,
                             "seed": int(payload["seed"]), "order": order,
@@ -479,7 +484,7 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         return
     fieldnames = list(dict.fromkeys(key for row in rows for key in row.keys()))
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -536,7 +541,7 @@ def render_report(summary: dict[str, Any]) -> str:
                     + " | ".join(_pct(metrics[name]["mean"], metrics[name]["std"]) for name in METRICS)
                     + " |"
                 )
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines).rstrip() + "\n"
 
 
 def main() -> None:
