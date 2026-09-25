@@ -4,8 +4,8 @@ import subprocess
 import sys
 
 
-DATASETS = ["Movies", "Toys", "Grocery", "Reddit-S", "ele-fashion", "books-nc"]
-MODELS = ["mlp", "gcn", "sage"]
+DATASETS = ["Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S"]
+MODELS = ["mlp", "gcn", "sage", "mmgcn", "mgat", "dip", "dgf", "dmgc", "lgmrec"]
 
 
 def main() -> None:

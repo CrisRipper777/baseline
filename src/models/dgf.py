@@ -19,7 +19,7 @@ class Model(nn.Module):
     OpenMAG's clustering/contrastive losses (cross-modal NCE, random-walk
     graph contrastive, k-means community loss) are intentionally NOT
     included — this adaptation uses the unified supervised CE protocol
-    (unified supervised DGF filtering-core adaptation).
+    (RPTA baseline_adaptations.md: DGF filtering-core supervised adaptation).
     """
 
     def __init__(self, cfg, data_info):
@@ -57,7 +57,7 @@ class Model(nn.Module):
 
     # ------------------------------------------------------------------
     # Node-domain normalized adjacency (self-loops added: OpenMAG NC
-    # loader uses self_loop=True; unified protocol uses standard conv
+    # loader uses self_loop=True; RPTA protocol allows standard conv
     # self-loops).
     # ------------------------------------------------------------------
 

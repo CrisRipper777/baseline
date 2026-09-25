@@ -19,6 +19,7 @@ grad_clip: 1.0
 max_train_batches: null
 
 save_ckpt_path: null
+run_metrics_path: null
 scheduler: null
 scheduler_warmup_epochs: 10
 scheduler_min_lr: 1.0e-5

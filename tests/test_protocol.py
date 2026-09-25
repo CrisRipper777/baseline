@@ -94,6 +94,32 @@ def test_multi_run_dispatch_calls_set_seed_42_43_44(monkeypatch) -> None:
     assert result["test_acc"] == (0.5, 0.0)
 
 
+def test_nc_run_metrics_sidecar_records_internal_seeds_and_metadata(tmp_path, monkeypatch) -> None:
+    import json
+
+    cfg = OmegaConf.create({
+        "seed": 42,
+        "num_runs": 3,
+        "model": {"name": "gcn"},
+        "task": {
+            "training_mode": "full_graph",
+            "protocol_version": "unified_full_graph_nc_v1",
+            "evaluate_test": True,
+            "run_metrics_path": str(tmp_path / "runs.json"),
+        },
+    })
+    monkeypatch.setattr(nc, "set_seed", lambda _: None)
+    monkeypatch.setattr(nc, "_run_single_nc", lambda cfg, data, device, logger, run_id, seed, eval_labels: {
+        "val_acc": 0.5, "val_macro_f1": 0.4, "test_acc": 0.45, "test_macro_f1": 0.35,
+        "_run_metadata": {"model_parameters": 123, "optimizer": "AdamW"},
+    })
+    nc.run_nc(cfg, _tiny_nc_data(), torch.device("cpu"), logging.getLogger("test.sidecar"))
+    payload = json.loads((tmp_path / "runs.json").read_text())
+    assert payload["run_seeds"] == [42, 43, 44]
+    assert payload["runs"][1]["seed"] == 43
+    assert payload["runs"][1]["metadata"]["model_parameters"] == 123
+
+
 def test_mean_std_uses_population_standard_deviation() -> None:
     mean, std = mean_std([0.0, 1.0, 1.0])
     assert mean == pytest.approx(2.0 / 3.0)
@@ -314,3 +340,23 @@ def test_model_optimizer_preset_overrides_task_lr_and_weight_decay() -> None:
     optimizer = build_optimizer(model.parameters(), cfg, model=model)
     assert optimizer.param_groups[0]["lr"] == pytest.approx(5e-3)
     assert optimizer.param_groups[0]["weight_decay"] == pytest.approx(1e-5)
+
+
+
+def test_formal_dataset_and_model_scopes_and_mob_capacity_are_frozen() -> None:
+    from scripts.run_mob_factorial_nc import DATASETS as MOB_DATASETS, FUSIONS, READOUTS, _jobs
+    from scripts.run_nc_baselines import DATASETS as NC_DATASETS, MODELS as NC_MODELS
+
+    assert MOB_DATASETS == ("Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S")
+    assert NC_DATASETS == MOB_DATASETS
+    assert NC_MODELS == ("mlp", "gcn", "sage", "mmgcn", "mgat", "dip", "dgf", "dmgc", "lgmrec")
+    assert len(list(_jobs(MOB_DATASETS))) == 30
+    assert READOUTS == ("terminal", "uniform", "gpr")
+    assert FUSIONS == ("plain_mlp", "residual")
+
+    mob_cfg = OmegaConf.load("configs/model/multi_order_bank.yaml")
+    assert mob_cfg.hidden_dim == 256
+    assert mob_cfg.max_order == mob_cfg.num_layers == 3
+    assert mob_cfg.dropout == pytest.approx(0.2)
+    assert mob_cfg.fusion_mode == "plain_mlp"
+    assert all("books" not in dataset.lower() for dataset in MOB_DATASETS)

@@ -107,3 +107,20 @@ def test_imported_model_forward_inference_and_lp_batch_contract(
     assert sampled_z.shape == (6, model.out_dim)
     assert torch.isfinite(sampled_z).all()
     assert sampled_aux.item() == 0.0
+
+
+@pytest.mark.parametrize("device_name", ["cpu", "cuda"])
+def test_dmgc_v3_inference_device_fix_preserves_full_forward_math(device_name: str) -> None:
+    if device_name == "cuda" and not torch.cuda.is_available():
+        pytest.skip("CUDA is not available")
+    device = torch.device(device_name)
+    model = build_model(_cfg("dmgc"), _data_info()).to(device).eval()
+    x, edge_index = _inputs(device)
+    with torch.no_grad():
+        full_z = model(x, edge_index)[0]
+        inferred_z = model.inference(
+            x.cpu(), edge_index.cpu(), device=device, batch_size=3
+        )
+    assert torch.isfinite(full_z).all()
+    assert torch.isfinite(inferred_z).all()
+    assert torch.allclose(full_z.cpu(), inferred_z.cpu(), atol=1e-4, rtol=1e-4)

@@ -1,7 +1,8 @@
 name: multi_order_bank
 
-hidden_dim: 128
+hidden_dim: 256
 max_order: 3
 num_layers: 3
 dropout: 0.2
 readout: terminal # terminal | uniform | gpr
+fusion_mode: plain_mlp # plain_mlp | residual | linear

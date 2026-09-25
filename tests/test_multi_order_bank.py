@@ -16,7 +16,7 @@ VISUAL_DIM = 2
 HIDDEN = 4
 
 
-def _cfg(readout: str):
+def _cfg(readout: str, fusion_mode: str = "plain_mlp"):
     return OmegaConf.create(
         {
             "model": {
@@ -26,6 +26,7 @@ def _cfg(readout: str):
                 "num_layers": 3,
                 "dropout": 0.0,
                 "readout": readout,
+                "fusion_mode": fusion_mode,
             }
         }
     )
@@ -46,9 +47,9 @@ def _inputs():
     return x, edge_index
 
 
-def _model(readout: str) -> Model:
+def _model(readout: str, fusion_mode: str = "plain_mlp") -> Model:
     return Model(
-        _cfg(readout),
+        _cfg(readout, fusion_mode),
         {
             "input_dim": TEXT_DIM + VISUAL_DIM,
             "num_nodes": NUM_NODES,
@@ -183,24 +184,99 @@ def test_modality_states_do_not_cross_propagate() -> None:
 
 
 def test_readouts_share_projector_and_fusion_parameter_shapes() -> None:
-    models = [_model(name) for name in ("terminal", "uniform", "gpr")]
-    layouts = [
-        {
-            name: tuple(value.shape)
-            for name, value in model.state_dict().items()
-            if not name.startswith("gamma_")
-        }
-        for model in models
-    ]
-    assert layouts[0] == layouts[1] == layouts[2]
-    for model in models:
-        assert isinstance(model.text_projector[0], nn.Linear)
-        assert isinstance(model.text_projector[1], nn.LayerNorm)
-        assert isinstance(model.visual_projector[0], nn.Linear)
-        assert isinstance(model.visual_projector[1], nn.LayerNorm)
-        assert isinstance(model.fusion, nn.Linear)
-        assert model.fusion.in_features == 2 * HIDDEN
-        assert model.fusion.out_features == HIDDEN
+    for fusion_mode in ("plain_mlp", "residual"):
+        models = [_model(name, fusion_mode) for name in ("terminal", "uniform", "gpr")]
+        layouts = [
+            {
+                name: tuple(value.shape)
+                for name, value in model.state_dict().items()
+                if not name.startswith("gamma_")
+            }
+            for model in models
+        ]
+        assert layouts[0] == layouts[1] == layouts[2]
+        for model in models:
+            assert isinstance(model.text_projector[0], nn.Linear)
+            assert isinstance(model.text_projector[1], nn.LayerNorm)
+            assert isinstance(model.visual_projector[0], nn.Linear)
+            assert isinstance(model.visual_projector[1], nn.LayerNorm)
+        if fusion_mode == "plain_mlp":
+            assert isinstance(models[0].plain_fusion[0], nn.Linear)
+            assert isinstance(models[0].plain_fusion[1], nn.ReLU)
+            assert isinstance(models[0].plain_fusion[2], nn.Dropout)
+            assert isinstance(models[0].plain_fusion[3], nn.Linear)
+            assert not hasattr(models[0], "output_norm")
+        else:
+            assert isinstance(models[0].fusion_skip, nn.Linear)
+            assert isinstance(models[0].output_norm, nn.LayerNorm)
+            assert models[0].text_refine_mlp is not models[0].visual_refine_mlp
+            assert models[0].text_refine_norm is not models[0].visual_refine_norm
+
+
+def test_plain_mlp_fusion_matches_exact_concat_mlp_formula() -> None:
+    model = _model("terminal", "plain_mlp")
+    x, edge_index = _inputs()
+    result = model.analyze(x, edge_index)
+    u = torch.cat([result["Z_text"], result["Z_visual"]], dim=-1)
+    layer1, _, dropout, layer2 = model.plain_fusion
+    expected = layer2(dropout(torch.relu(layer1(u))))
+    assert torch.equal(result["refined_text"], result["Z_text"])
+    assert torch.equal(result["refined_visual"], result["Z_visual"])
+    assert torch.equal(result["fusion_input"], u)
+    assert torch.allclose(result["fused_z"], expected)
+
+
+def test_residual_fusion_matches_exact_late_fusion_formula() -> None:
+    model = _model("uniform", "residual")
+    x, edge_index = _inputs()
+    result = model.analyze(x, edge_index)
+    expected_t = model.text_refine_norm(
+        result["Z_text"] + model.text_refine_mlp(result["Z_text"])
+    )
+    expected_v = model.visual_refine_norm(
+        result["Z_visual"] + model.visual_refine_mlp(result["Z_visual"])
+    )
+    u = torch.cat([expected_t, expected_v], dim=-1)
+    expected_z = model.output_norm(
+        model.fusion_skip(u) + model.fusion_mlp(u)
+    )
+    assert torch.allclose(result["refined_text"], expected_t)
+    assert torch.allclose(result["refined_visual"], expected_v)
+    assert torch.allclose(result["fusion_input"], u)
+    assert torch.allclose(result["fused_z"], expected_z)
+
+
+def test_residual_modality_refinement_is_independent_until_concat() -> None:
+    model = _model("gpr", "residual")
+    text = torch.randn(NUM_NODES, HIDDEN)
+    visual = torch.randn(NUM_NODES, HIDDEN)
+    _, visual_before, _, _ = model._fuse_modalities(text, visual)
+    _, visual_after, _, _ = model._fuse_modalities(text + 3.0, visual)
+    assert torch.equal(visual_before, visual_after)
+
+
+def test_readout_and_fusion_choices_do_not_change_propagation_states() -> None:
+    x, edge_index = _inputs()
+    analyses = []
+    for readout, fusion_mode in (
+        ("terminal", "plain_mlp"),
+        ("uniform", "residual"),
+        ("gpr", "plain_mlp"),
+        ("terminal", "residual"),
+    ):
+        torch.manual_seed(90210)
+        model = _model(readout, fusion_mode)
+        analyses.append(model.analyze(x, edge_index))
+    for key in ("H0_text", "H0_visual", "S_text", "S_visual"):
+        first = analyses[0][key]
+        if isinstance(first, list):
+            assert all(
+                torch.equal(a, b)
+                for other in analyses[1:]
+                for a, b in zip(first, other[key], strict=True)
+            )
+        else:
+            assert all(torch.equal(first, other[key]) for other in analyses[1:])
 
 
 def test_no_attention_or_auxiliary_objective_and_forward_is_finite() -> None:
@@ -214,6 +290,14 @@ def test_no_attention_or_auxiliary_objective_and_forward_is_finite() -> None:
     assert aux_info == {}
     assert not hasattr(model, "attention")
     assert not any(isinstance(module, nn.MultiheadAttention) for module in model.modules())
+
+
+def test_linear_debug_fusion_remains_available() -> None:
+    model = _model("terminal", "linear")
+    x, edge_index = _inputs()
+    analysis = model.analyze(x, edge_index)
+    expected = model.fusion(torch.cat([analysis["Z_text"], analysis["Z_visual"]], dim=-1))
+    assert torch.allclose(analysis["fused_z"], expected)
 
 
 def test_forward_backward_gradients_are_finite() -> None:

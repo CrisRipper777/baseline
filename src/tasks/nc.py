@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 
@@ -153,6 +154,18 @@ def _run_single_nc(
     logger.info("Training mode: %s", training_mode)
     logger.info("Loader: %s", "FullGraph" if uses_graph else "NodeDataLoader")
     logger.info("Inference mode: %s", inference_mode)
+    logger.info(
+        "Model parameters=%d | Classifier parameters=%d | optimizer=%s | groups=%s | hidden_dim=%s | num_layers=%s",
+        count_parameters(model),
+        count_parameters(classifier),
+        type(optimizer).__name__,
+        [
+            {"lr": float(group["lr"]), "weight_decay": float(group["weight_decay"])}
+            for group in optimizer.param_groups
+        ],
+        cfg.model.get("hidden_dim", None),
+        cfg.model.get("num_layers", None),
+    )
 
     best_val = -1.0
     best_metrics: dict[str, float] = {}
@@ -288,6 +301,23 @@ def _run_single_nc(
         best_metrics["test_macro_f1"] = test_metrics["macro_f1"]
         del z
 
+    run_metadata = {
+        "best_epoch": int(best_epoch),
+        "model_parameters": count_parameters(model),
+        "classifier_parameters": count_parameters(classifier),
+        "optimizer": type(optimizer).__name__,
+        "optimizer_groups": [
+            {"lr": float(group["lr"]), "weight_decay": float(group["weight_decay"])}
+            for group in optimizer.param_groups
+        ],
+        "hidden_dim": cfg.model.get("hidden_dim", None),
+        "num_layers": cfg.model.get("num_layers", None),
+        "other_depth_fields": {
+            name: cfg.model.get(name)
+            for name in ("d_model", "q_dim", "mp_hops")
+            if cfg.model.get(name) is not None
+        },
+    }
     save_ckpt_path = cfg.task.get("save_ckpt_path")
     if save_ckpt_path:
         path = _checkpoint_path_for_run(save_ckpt_path, cfg, run_id)
@@ -299,6 +329,7 @@ def _run_single_nc(
                 "selection": "best_val_accuracy",
                 "epoch": best_epoch,
                 "metrics": dict(best_metrics),
+                "run_metadata": run_metadata,
                 "model_state": clone_state_dict(model),
                 "head_state": clone_state_dict(classifier),
                 "data_info": data_info,
@@ -321,7 +352,7 @@ def _run_single_nc(
             format_pct(best_metrics["test_acc"]),
             format_pct(best_metrics["test_macro_f1"]),
         )
-    return best_metrics
+    return {**best_metrics, "_run_metadata": run_metadata}
 
 
 def run_nc(
@@ -343,6 +374,36 @@ def run_nc(
             _run_single_nc(cfg, data, device, logger, run_id, seed, eval_labels)
         )
 
+    run_metrics_path = cfg.task.get("run_metrics_path")
+    if run_metrics_path:
+        path = Path(str(run_metrics_path)).expanduser()
+        if not path.is_absolute():
+            path = path.resolve()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as handle:
+            json.dump(
+                {
+                    "protocol_version": str(cfg.task.get("protocol_version", "")),
+                    "base_seed": int(cfg.seed),
+                    "run_seeds": [int(cfg.seed) + run_id for run_id in range(int(cfg.num_runs))],
+                    "aggregation": "mean ± population std (ddof=0)",
+                    "runs": [
+                        {
+                            "run_id": run_id,
+                            "seed": int(cfg.seed) + run_id,
+                            "metrics": {
+                                key: float(value)
+                                for key, value in item.items()
+                                if not key.startswith("_")
+                            },
+                            "metadata": item.get("_run_metadata", {}),
+                        }
+                        for run_id, item in enumerate(run_results)
+                    ],
+                },
+                handle,
+                indent=2,
+            )
     output: dict[str, tuple[float, float]] = {}
     keys = ["val_acc", "val_macro_f1"]
     if bool(cfg.task.get("evaluate_test", True)):

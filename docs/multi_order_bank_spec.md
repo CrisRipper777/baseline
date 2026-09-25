@@ -2,70 +2,66 @@
 
 ## Scope
 
-Multi-Order Bank is a small experimental backbone in this repository. It is not a paper model and carries no novelty, contribution, or MAG-specific mechanism claim. Its purpose is to measure whether explicit retention and readout of several physical-graph propagation orders behaves differently from terminal-only propagation.
+Multi-Order Bank is a simple experimental backbone, not a paper model. It measures propagation-order and late-fusion effects without making a novelty, contribution, or MAG-specific mechanism claim. The fixed capacity for this round is `hidden_dim=256`, `max_order=3`, `num_layers=3`, and `dropout=0.2`. These values are frozen before the formal factorial runs.
 
-The three frozen empirical questions are:
+## Independent encoders and physical propagation
 
-- Q1: Does retaining multiple propagation orders outperform terminal-only propagation? Compare terminal and uniform.
-- Q2: Does learnable multi-order response outperform uniform averaging? Compare gpr and uniform.
-- Q3: Do Text and Visual learn different order responses? Compare gamma_text and gamma_visual.
+Text and Visual use separate projectors and remain independent through propagation and modality readout:
 
-## Encoder
+- `H0_m = projector_m(X_m)`
+- `projector_m = Linear(input_dim_m, 256) → LayerNorm → ReLU → Dropout(0.2)`
+- `P = D_tilde^(-1/2) A_tilde D_tilde^(-1/2)`
+- `A_tilde` is the physical graph made undirected, with one self-loop per node.
+- `S0_m=H0_m`, then `S1_m=P S0_m`, `S2_m=P S1_m`, and `S3_m=P S2_m`.
 
-Text and Visual paths are independent from input projection through their per-modality readout.
-
-For modality m in {text, visual}:
-
-- H0_m = projector_m(X_m)
-- Projector_m = Linear(input_dim_m, hidden_dim), LayerNorm, ReLU, Dropout.
-- The two projectors have independent parameters and matching structure.
-- Both modalities use the same physical graph operator, while their feature states remain separate.
-
-The physical operator is the standard symmetric-normalized GCN operator:
-
-P = D_tilde^(-1/2) A_tilde D_tilde^(-1/2)
-
-A_tilde is the original physical adjacency after making its undirected representation explicit and adding exactly one self-loop per node. No semantic edges or learned graph weights are added.
-
-Propagation order is fixed at three:
-
-- S0_m = H0_m
-- Sk_m = P S(k-1)_m for k in {1, 2, 3}
-
-All four states remain available through the analysis API.
+The same physical operator is used for both modalities. Feature states never cross between modalities before fusion. There is no semantic edge weighting, restart, attention, MoE, node-adaptive routing, graph rewiring, or auxiliary loss.
 
 ## Readouts
 
-The only model-config difference among the three variants is model.readout.
+`model.readout` selects one of three exact formulas:
 
-- terminal: Z_m = S3_m
-- uniform: Z_m = (S0_m + S1_m + S2_m + S3_m) / 4
-- gpr: Z_m = sum over k=0..3 of gamma_m[k] * Sk_m
+- `terminal`: `Z_m = S3_m`
+- `uniform`: `Z_m = (S0_m + S1_m + S2_m + S3_m) / 4`
+- `gpr`: `Z_m = sum(k=0..3) gamma_m[k] * S_k_m`
 
-GPR has independent learnable gamma_text and gamma_visual vectors of length four. Both initialize to [0.25, 0.25, 0.25, 0.25]. They are direct signed coefficients; no softmax, node-dependent routing, or attention is applied.
+GPR has separate learnable Text and Visual vectors initialized to `[0.25, 0.25, 0.25, 0.25]`. Coefficients are signed and used directly, without softmax.
 
-## Fusion and task interface
+## Fusion endpoints
 
-After per-modality readout, concatenate Z_text and Z_visual and apply one Linear(2 * hidden_dim, hidden_dim) fusion projection. The formal config uses hidden_dim=128 and dropout=0.2. There is no cross-modal attention, early fusion, mixture of experts, semantic edge weighting, restart, prototype, auxiliary loss, or graph rewiring.
+Fusion happens only after both modality readouts. The six formal variants are the 3 readouts crossed with the 2 fusion modes.
 
-The model exposes out_dim=hidden_dim and the common five-field task forward tuple with a zero scalar auxiliary loss. NC uses the unified_full_graph_nc_v1 full-graph training protocol. LP can use the unified_sampled_lp_v1 LinkNeighborLoader interface; the model opts into depth resolution and has num_layers=3, matching the fixed [5, 5, 5] fanouts.
+`plain_mlp` uses `U=concat(Z_text,Z_visual)` and exactly:
 
-## Analysis API
+`Linear(512,256) → ReLU → Dropout(0.2) → Linear(256,256)`.
 
-Model.analyze(x, edge_index) returns:
+`residual` independently refines each modality:
 
-- H0_text and H0_visual
-- S_text and S_visual, each ordered [S0, S1, S2, S3]
-- Z_text and Z_visual
-- fused_z
-- gamma_text and gamma_visual for gpr (None for terminal/uniform)
+`Zbar_m = LayerNorm(Z_m + Linear(256,256) → ReLU → Dropout(0.2) → Linear(256,256)(Z_m))`.
 
-No attention, semantic similarity gate, expert score, or prototype score is computed.
+It then concatenates `U=concat(Zbar_text,Zbar_visual)` and computes:
 
-## Formula-level checks
+`Z = LayerNorm(Linear_skip(512,256)(U) + MLP_fuse(U))`,
 
-tests/test_multi_order_bank.py verifies state recurrence, the explicit normalized operator, all three exact readouts, signed unnormalized GPR coefficients, gamma initialization and modality independence, physical-graph-only propagation, finite forward/backward values, inference, and NC/LP interface compatibility.
+where `MLP_fuse = Linear(512,256) → ReLU → Dropout(0.2) → Linear(256,256)`.
 
-## Current smoke status
+This specifies only the requested late-fusion equations. No other V3 research mechanism is included. The old single-linear fusion remains available as `fusion_mode=linear` for debugging; it is not a factorial endpoint.
 
-Movies NC with seed 42, num_runs=1, and epochs=2 completed for terminal, uniform, and gpr. Each run trained, selected and saved a validation checkpoint, evaluated validation and test metrics, and returned finite values. These are interface smokes only; no results are interpreted as research evidence.
+All variants expose `out_dim=256`. Fusion choice does not alter propagation states. The task head is the same NC linear classifier for every variant.
+
+## Analysis API and tests
+
+`Model.analyze(x, edge_index)` returns `H0_text`, `H0_visual`, `S_text`, `S_visual`, `Z_text`, `Z_visual`, `refined_text`, `refined_visual`, `fusion_input`, `fused_z`, and the GPR coefficients when present.
+
+`tests/test_multi_order_bank.py` verifies the physical operator and `S0`–`S3` recurrence, exact readouts, signed GPR behavior and initialization, independent modality parameters/states, exact `plain_mlp` and residual equations, branch independence before concatenation, unchanged propagation across readout/fusion variants, finite backward/inference, and NC/LP interface compatibility.
+
+## Formal questions and analysis
+
+- Q1: Does uniform multi-order retention improve over terminal-only propagation, in each fusion setting?
+- Q2: Does GPR improve over uniform averaging, in each fusion setting?
+- Q3: Does the residual fusion endpoint improve over `plain_mlp`?
+- Q4: Do Text and Visual have different GPR order profiles across fusion settings?
+- Q5: Are the propagation states complementary or highly redundant?
+
+The analyzer exports signed and absolute gamma profiles, effective orders, Text/Visual profile distance and cosine, actual gamma-weighted order contribution, `S0`–`S3` pairwise mean nodewise cosine matrices, and frozen validation sensitivity. Sensitivity zeros gamma coefficients without retraining; it is not a retrained ablation or causal-necessity test.
+
+Paired support labels use validation accuracy only: strong support requires at least +0.30 percentage points mean across five datasets, positive means on at least 4/5 datasets, and at least 10/15 same-seed pairs positive. Moderate support requires positive mean and at least 3/5 positive dataset means. These are practical evidence labels, not significance claims. Test metrics are descriptive only.

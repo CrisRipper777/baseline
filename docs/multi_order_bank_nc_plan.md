@@ -1,45 +1,79 @@
-# Multi-Order Bank NC benchmark plan
+# Multi-Order Bank NC factorial plan
 
-## Frozen scope
+## Frozen design
 
-The future formal plan contains 15 dataset/readout jobs: five NC datasets (Movies, Toys, Grocery, ele-fashion, Reddit-S) crossed with terminal, uniform, and gpr. Each job uses one command with seed=42 and num_runs=3. The task runner creates run seeds 42, 43, and 44 internally. Do not split seeds into separate shell commands.
+The formal factorial contains six variants:
 
-Every job writes its three per-run checkpoints and Hydra result files under a dataset/readout-specific directory beneath outputs/multi_order_bank_nc/. Checkpoint paths become best_run1.pt, best_run2.pt, and best_run3.pt.
+- `mob_terminal_plain`, `mob_uniform_plain`, `mob_gpr_plain`
+- `mob_terminal_residual`, `mob_uniform_residual`, `mob_gpr_residual`
 
-## Exact future commands
+Cross these with `Movies`, `Toys`, `Grocery`, `ele-fashion`, and `Reddit-S`: 30 dataset/variant jobs and 90 runs. Each job is one command with `seed=42 num_runs=3`; the task executes seeds 42, 43, and 44 internally. Two GPUs are assigned across independent jobs. No seed-specific shell jobs are created.
 
-The commands below are prepared for a future formal launch. They have not been executed.
+Every command uses `unified_full_graph_nc_v1`, full-graph training for graph encoders, Validation Accuracy checkpoint selection, and descriptive-only test metrics. Model capacity is frozen at hidden dimension 256, three propagation orders, three layers, and dropout 0.2.
 
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Movies task=nc model=multi_order_bank model.readout=terminal seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Movies/terminal/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Movies/terminal/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Movies task=nc model=multi_order_bank model.readout=uniform seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Movies/uniform/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Movies/uniform/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Movies task=nc model=multi_order_bank model.readout=gpr seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Movies/gpr/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Movies/gpr/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Toys task=nc model=multi_order_bank model.readout=terminal seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Toys/terminal/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Toys/terminal/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Toys task=nc model=multi_order_bank model.readout=uniform seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Toys/uniform/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Toys/uniform/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Toys task=nc model=multi_order_bank model.readout=gpr seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Toys/gpr/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Toys/gpr/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Grocery task=nc model=multi_order_bank model.readout=terminal seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Grocery/terminal/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Grocery/terminal/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Grocery task=nc model=multi_order_bank model.readout=uniform seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Grocery/uniform/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Grocery/uniform/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Grocery task=nc model=multi_order_bank model.readout=gpr seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Grocery/gpr/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Grocery/gpr/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=ele-fashion task=nc model=multi_order_bank model.readout=terminal seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/ele-fashion/terminal/best.pt hydra.run.dir=outputs/multi_order_bank_nc/ele-fashion/terminal/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=ele-fashion task=nc model=multi_order_bank model.readout=uniform seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/ele-fashion/uniform/best.pt hydra.run.dir=outputs/multi_order_bank_nc/ele-fashion/uniform/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=ele-fashion task=nc model=multi_order_bank model.readout=gpr seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/ele-fashion/gpr/best.pt hydra.run.dir=outputs/multi_order_bank_nc/ele-fashion/gpr/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Reddit-S task=nc model=multi_order_bank model.readout=terminal seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Reddit-S/terminal/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Reddit-S/terminal/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Reddit-S task=nc model=multi_order_bank model.readout=uniform seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Reddit-S/uniform/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Reddit-S/uniform/run
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python -m src.main dataset=Reddit-S task=nc model=multi_order_bank model.readout=gpr seed=42 num_runs=3 device=cuda:0 task.save_ckpt_path=outputs/multi_order_bank_nc/Reddit-S/gpr/best.pt hydra.run.dir=outputs/multi_order_bank_nc/Reddit-S/gpr/run
+Outputs are separated by dataset and variant under `outputs/mob_factorial_nc_v1/<dataset>/<variant>/`. Best checkpoints contain all three run states and validation-selected epoch metadata. They remain local and are not committed.
 
-## Launcher and analyzer
+## Launcher
 
-Run all 15 prepared jobs sequentially with:
+Dry-run the fixed matrix:
 
-    scripts/run_multi_order_bank_nc.sh
+```bash
+conda run --no-capture-output -n yhf_env python scripts/run_mob_factorial_nc.py --dry-run
+```
 
-After all checkpoints exist, produce per-dataset/readout mean ± population std, paired same-seed differences (uniform - terminal, gpr - terminal, gpr - uniform), and each GPR run's gamma_text/gamma_visual with:
+Run the 30 jobs across the two GPUs:
 
-    PYTHONPATH=src conda run --no-capture-output -n yhf_env python scripts/summarize_multi_order_bank_nc.py --root outputs/multi_order_bank_nc
+```bash
+GPU_IDS=0,1 scripts/run_multi_order_bank_nc.sh
+```
 
-The analyzer reads run checkpoints and checks expected seeds, best-epoch metadata, validation-accuracy selection, required metrics, and GPR coefficients before writing summary.json and summary.md.
+The launcher assigns one physical GPU per job, passes `device=cuda:0` within that process, and leaves `seed=42,num_runs=3` intact. Completion metadata and per-job logs are stored under each variant directory.
 
-## Smoke record and launch status
+## Paired contrasts
 
-The three requested Movies NC smokes completed with seed=42, num_runs=1, and epochs=2. The three imported model NC smokes and their tiny sports-LP interface smokes also completed as documented in imported_baseline_notes.md.
+The analyzer computes all four NC metrics for each variant and same-seed paired differences:
 
-No formal 5-dataset benchmark has started. The launcher and 15 commands are prepared only.
+- Retention: `uniform_plain - terminal_plain`; `uniform_residual - terminal_residual`.
+- Adaptive response: `gpr_plain - uniform_plain`; `gpr_residual - uniform_residual`.
+- Fusion: each residual variant minus its matching plain variant.
+
+Practical support rules are defined in `multi_order_bank_spec.md`; they are based on validation accuracy, not test performance, and are not significance claims. A multi-order effect is called fusion-robust only when its direction has a positive mean and at least 3/5 positive dataset means in both fusion settings.
+
+## Conditional fusion attribution
+
+After the six primary variants, the analyzer checks the preregistered trigger. If any residual-minus-plain contrast reaches strong support, or has at least +0.30 pp mean validation accuracy and at least 3/5 positive dataset means, add the GPR-only `modality_refine_only` and `fusion_residual_only` variants for five datasets and three internal seeds each. Do not run this conditional stage if the trigger is false.
+
+A parameter-count-matched plain GPR control is optional only if residual fusion clearly helps and capacity needs to be examined. It is not part of the primary matrix.
+
+## Result analysis
+
+After the factorial is complete, run:
+
+```bash
+conda run --no-capture-output -n yhf_env python scripts/summarize_multi_order_bank_nc.py \
+  --factorial-root outputs/mob_factorial_nc_v1 \
+  --baseline-root outputs/nc_benchmark_v1 \
+  --output-root results/nc_benchmark_v1 \
+  --device cuda:0
+```
+
+The analyzer writes run-level and aggregate tables, paired contrasts, gamma profiles, actual order contributions, hop redundancy, frozen sensitivity, `summary.json`, and `report.md`. It writes `fusion_attribution.csv` only when the trigger is met; the conditional jobs must then be completed before component effects can be reported.
+
+## Baseline benchmark gate
+
+The nine formal baselines are MLP, GCN, GraphSAGE, MMGCN, MGAT, DiP, DGF, DMGC, and LGMRec. The 45 dataset/model jobs use the same one-command `seed=42,num_runs=3` convention. Before launching them, finish the factorial and run 1-epoch/1-run full-graph CUDA preflight for DiP, MMGCN, MGAT, DGF, DMGC, and LGMRec on the largest graph, `ele-fashion`. Any OOM stops the baseline launch. The baseline launcher is:
+
+```bash
+conda run --no-capture-output -n yhf_env python scripts/run_nc_baselines.py --dry-run
+GPU_IDS=0,1 conda run --no-capture-output -n yhf_env python scripts/run_nc_baselines.py
+```
+
+Provenance is stored at `outputs/nc_benchmark_v1/provenance.json`. No LP training is included in this round.
+
+
+## Pre-launch verification record
+
+- Full repository regression: 96 passed, one upstream PyG deprecation warning.
+- Python `compileall`, `git diff --check`, and shell syntax check passed.
+- All six Movies-NC endpoint workflow smokes (three readouts by two fusion modes) completed two epochs on CUDA and saved finite validation-selected checkpoints.
+- The 30 formal factorial jobs, heavy-model preflight, and 45 baseline jobs have not started in this snapshot.

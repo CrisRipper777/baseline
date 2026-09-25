@@ -15,6 +15,7 @@ class Model(nn.Module):
 
     MAX_ORDER = 3
     READOUTS = {"terminal", "uniform", "gpr"}
+    FUSION_MODES = {"plain_mlp", "residual", "linear"}
     requires_full_lp_sampler_depth = True
 
     def __init__(self, cfg, data_info):
@@ -48,6 +49,14 @@ class Model(nn.Module):
             raise ValueError(
                 f"model.readout must be one of {sorted(self.READOUTS)}, got {self.readout!r}"
             )
+        self.fusion_mode = str(
+            cfg.model.get("fusion_mode", "plain_mlp")
+        ).strip().lower()
+        if self.fusion_mode not in self.FUSION_MODES:
+            raise ValueError(
+                "model.fusion_mode must be one of "
+                f"{sorted(self.FUSION_MODES)}, got {self.fusion_mode!r}"
+            )
 
         self.text_projector = nn.Sequential(
             nn.Linear(self.text_dim, self.hidden_dim),
@@ -61,7 +70,38 @@ class Model(nn.Module):
             nn.ReLU(),
             nn.Dropout(self.dropout),
         )
-        self.fusion = nn.Linear(2 * self.hidden_dim, self.hidden_dim)
+        if self.fusion_mode == "plain_mlp":
+            self.plain_fusion = nn.Sequential(
+                nn.Linear(2 * self.hidden_dim, self.hidden_dim),
+                nn.ReLU(),
+                nn.Dropout(self.dropout),
+                nn.Linear(self.hidden_dim, self.hidden_dim),
+            )
+        elif self.fusion_mode == "residual":
+            self.text_refine_mlp = nn.Sequential(
+                nn.Linear(self.hidden_dim, self.hidden_dim),
+                nn.ReLU(),
+                nn.Dropout(self.dropout),
+                nn.Linear(self.hidden_dim, self.hidden_dim),
+            )
+            self.visual_refine_mlp = nn.Sequential(
+                nn.Linear(self.hidden_dim, self.hidden_dim),
+                nn.ReLU(),
+                nn.Dropout(self.dropout),
+                nn.Linear(self.hidden_dim, self.hidden_dim),
+            )
+            self.text_refine_norm = nn.LayerNorm(self.hidden_dim)
+            self.visual_refine_norm = nn.LayerNorm(self.hidden_dim)
+            self.fusion_skip = nn.Linear(2 * self.hidden_dim, self.hidden_dim)
+            self.fusion_mlp = nn.Sequential(
+                nn.Linear(2 * self.hidden_dim, self.hidden_dim),
+                nn.ReLU(),
+                nn.Dropout(self.dropout),
+                nn.Linear(self.hidden_dim, self.hidden_dim),
+            )
+            self.output_norm = nn.LayerNorm(self.hidden_dim)
+        else:
+            self.fusion = nn.Linear(2 * self.hidden_dim, self.hidden_dim)
         if self.readout == "gpr":
             self.gamma_text = nn.Parameter(torch.full((4,), 0.25))
             self.gamma_visual = nn.Parameter(torch.full((4,), 0.25))
@@ -131,6 +171,30 @@ class Model(nn.Module):
             raise RuntimeError("GPR readout requires modality-specific gamma parameters")
         return sum(gamma[k] * states[k] for k in range(4))
 
+    def _fuse_modalities(
+        self, z_text: torch.Tensor, z_visual: torch.Tensor
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Apply the selected late-fusion head after independent readouts."""
+        if self.fusion_mode == "residual":
+            refined_text = self.text_refine_norm(
+                z_text + self.text_refine_mlp(z_text)
+            )
+            refined_visual = self.visual_refine_norm(
+                z_visual + self.visual_refine_mlp(z_visual)
+            )
+        else:
+            refined_text, refined_visual = z_text, z_visual
+        fusion_input = torch.cat([refined_text, refined_visual], dim=-1)
+        if self.fusion_mode == "plain_mlp":
+            fused = self.plain_fusion(fusion_input)
+        elif self.fusion_mode == "residual":
+            fused = self.output_norm(
+                self.fusion_skip(fusion_input) + self.fusion_mlp(fusion_input)
+            )
+        else:
+            fused = self.fusion(fusion_input)
+        return refined_text, refined_visual, fusion_input, fused
+
     def analyze(self, x: torch.Tensor, edge_index: torch.Tensor) -> dict[str, torch.Tensor | list[torch.Tensor] | None]:
         """Return every propagation state and modality readout for inspection."""
         if edge_index is None:
@@ -155,7 +219,9 @@ class Model(nn.Module):
         z_visual = self._readout(
             states_visual, getattr(self, "gamma_visual", None)
         )
-        fused = self.fusion(torch.cat([z_text, z_visual], dim=-1))
+        refined_text, refined_visual, fusion_input, fused = self._fuse_modalities(
+            z_text, z_visual
+        )
         return {
             "H0_text": h0_text,
             "H0_visual": h0_visual,
@@ -163,6 +229,9 @@ class Model(nn.Module):
             "S_visual": states_visual,
             "Z_text": z_text,
             "Z_visual": z_visual,
+            "refined_text": refined_text,
+            "refined_visual": refined_visual,
+            "fusion_input": fusion_input,
             "fused_z": fused,
             "gamma_text": getattr(self, "gamma_text", None),
             "gamma_visual": getattr(self, "gamma_visual", None),
