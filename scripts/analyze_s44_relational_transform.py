@@ -304,12 +304,17 @@ def _add_controller_audits(dataset, seed, variant, model, head, data, x_gpu, edg
                 zero_analysis = model.analyze(x_gpu, edge_gpu, controller_override=zeros)
             zero_logits = head(zero_analysis["fused_z"])
             max_error = float((base_logits[val_gpu] - zero_logits[val_gpu]).abs().max())
-            if not torch.equal(base_logits[val_gpu], zero_logits[val_gpu]):
-                raise AssertionError(f"ZERO_DYNAMIC did not exactly recover P0 branch: max error={max_error}")
+            # The algebraic carrier is identical; allow only standard GPU GEMM roundoff.
+            zero_dynamic_atol, zero_dynamic_rtol = 1e-5, 1e-6
+            if not torch.allclose(base_logits[val_gpu], zero_logits[val_gpu],
+                                  atol=zero_dynamic_atol, rtol=zero_dynamic_rtol):
+                raise AssertionError(f"ZERO_DYNAMIC differs from P0 branch beyond tolerance: max error={max_error}")
             metrics, pred = _metrics(zero_logits, data, labels)
         zero_row = _intervention_row(dataset, seed, variant, "ZERO_DYNAMIC", metrics,
                                      normal_metrics, pred, normal_pred)
         zero_row["max_abs_logit_difference_from_p0_branch"] = max_error
+        zero_row["p0_branch_atol"] = zero_dynamic_atol
+        zero_row["p0_branch_rtol"] = zero_dynamic_rtol
         intervention_rows.append(zero_row)
 
     if variant in {"s44_expert_rel", "s44_expert_rel_multi"}:
@@ -621,7 +626,7 @@ def _interpretation_statuses(contrasts, interventions, multimodal, experts) -> d
     shuffle_status = category(shuffle_harm, shuffle_positive, len(shuffle_deltas))
     lowrank = contrast("lowrank_rel_minus_global")
     zero_rows = [r for r in interventions if r.get("intervention") == "ZERO_DYNAMIC"]
-    exact_zero = all(float(r.get("max_abs_logit_difference_from_p0_branch", math.inf)) == 0.0 for r in zero_rows)
+    exact_zero = all(float(r.get("max_abs_logit_difference_from_p0_branch", math.inf)) <= 1e-5 for r in zero_rows)
     dynamic_status = category(float(lowrank["mean_delta_val_acc"]),
                               int(lowrank["positive_seed_pairs_delta_val_acc"]),
                               int(lowrank["total_seed_pairs_delta_val_acc"]), secondary=exact_zero)
@@ -648,7 +653,7 @@ def _interpretation_statuses(contrasts, interventions, multimodal, experts) -> d
         "EdgeConditionality": {"status": shuffle_status,
                                "evidence": f"across edge-conditioned variants, mean loss under target-wise edge shuffle={shuffle_harm:.5f}; affected variant-seed rows={shuffle_positive}/{len(shuffles)}"},
         "DynamicTransformation": {"status": dynamic_status,
-                                  "evidence": f"low-rank relation minus global mean Δaccuracy={lowrank['mean_delta_val_acc']:.5f}; exact ZERO_DYNAMIC=P0 branch check={exact_zero}"},
+                                  "evidence": f"low-rank relation minus global mean Δaccuracy={lowrank['mean_delta_val_acc']:.5f}; ZERO_DYNAMIC=P0 branch within 1e-5 absolute tolerance={exact_zero}"},
         "MultimodalRelationContext": {"status": multi_status,
                                       "evidence": f"scalar multi-relation minus relation mean Δaccuracy={multi['mean_delta_val_acc']:.5f}; remove/swap interventions lower accuracy in {multi_harm}/{len(multi_rows)} rows"},
         "ExpertRouting": {"status": expert_status,
