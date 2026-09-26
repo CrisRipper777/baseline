@@ -164,3 +164,15 @@ def test_historical_model_source_and_checkpoints_are_unchanged():
             assert payload["task"] == "nc" and payload["protocol_version"] == "unified_full_graph_nc_v1"
             assert payload["seed"] == 41 + run
             assert not any(k.startswith("test_") for k in payload["metrics"])
+
+
+def test_analysis_csv_sparse_cells_are_explicit_and_diff_clean(tmp_path):
+    import csv
+    from scripts.analyze_s43_h15_h1r_h2ab import _write_csv
+
+    target = tmp_path / "sparse.csv"
+    _write_csv(target, [{"metric": 1.0}, {"metric": 2.0, "summary": "all"}])
+    lines = target.read_text().splitlines()
+    assert all(not line.endswith(",") for line in lines)
+    records = list(csv.DictReader(target.open()))
+    assert records[0]["summary"] == "NA"

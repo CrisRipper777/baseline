@@ -50,7 +50,9 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
     with path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
-        writer.writerows(rows)
+        for row in rows:
+            # Explicit NA cells prevent dangling delimiters in sparse summary rows.
+            writer.writerow({key: ("NA" if row.get(key) in (None, "") else row.get(key, "NA")) for key in fields})
 
 
 def _mean(xs):
@@ -859,7 +861,8 @@ def run_formal_analysis(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any]:
     else:
         h15_summary = json.loads((RESULT_ROOT / "h15_summary.json").read_text())
     contrast_tables = {"h1r": h1r_contrasts, "h2a": h2a_contrasts, "h2b": h2b_contrasts,
-                       "training_commit": json.loads((OUTPUT_ROOT / "formal" / datasets[0] / VARIANTS[0] / "complete.json").read_text())["training_commit"]}
+                       "training_commit": json.loads((OUTPUT_ROOT / "formal" / datasets[0] / VARIANTS[0] / "complete.json").read_text())["training_commit"],
+                       "analysis_commit": __import__("subprocess").check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()}
     statuses = _report(contrast_tables, h2a_interventions + h2b_interventions, h15_summary, complexity)
     provenance = _provenance(contrast_tables["training_commit"])
     summary = {
