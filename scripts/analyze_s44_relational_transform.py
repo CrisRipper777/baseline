@@ -282,10 +282,6 @@ def _add_controller_audits(dataset, seed, variant, model, head, data, x_gpu, edg
 
     if variant in {"s44_lowrank_global", "s44_lowrank_rel", "s44_lowrank_rel_multi"}:
         zeros = {key: torch.zeros_like(value) for key, value in controllers.items()}
-        metrics, pred = _run_controller_intervention(model, head, data, x_gpu, edge_gpu,
-                                                      val_gpu, labels, zeros, edge_rows, full_eval=True)
-        intervention_rows.append(_intervention_row(dataset, seed, variant, "ZERO_DYNAMIC", metrics,
-                                                   normal_metrics, pred, normal_pred))
         # Exact nested P0 carrier check at the same frozen checkpoint parameters.
         with torch.no_grad():
             ht, hv = normal_analysis["H_text"], normal_analysis["H_visual"]
@@ -295,12 +291,26 @@ def _add_controller_audits(dataset, seed, variant, model, head, data, x_gpu, edg
             zt = model.output_norm_text(ht + rt)
             zv = model.output_norm_visual(hv + rv)
             base_logits = head(model.plain_fusion(torch.cat((zt, zv), dim=-1)))
-            zero_analysis = model.analyze(x_gpu, edge_gpu, controller_override=zeros)
+            if variant == "s44_lowrank_global":
+                saved = {name: getattr(model, f"global_a_{name}").detach().clone() for name in ("text", "visual")}
+                try:
+                    for name in ("text", "visual"):
+                        getattr(model, f"global_a_{name}").zero_()
+                    zero_analysis = model.analyze(x_gpu, edge_gpu)
+                finally:
+                    for name in ("text", "visual"):
+                        getattr(model, f"global_a_{name}").copy_(saved[name])
+            else:
+                zero_analysis = model.analyze(x_gpu, edge_gpu, controller_override=zeros)
             zero_logits = head(zero_analysis["fused_z"])
             max_error = float((base_logits[val_gpu] - zero_logits[val_gpu]).abs().max())
             if not torch.equal(base_logits[val_gpu], zero_logits[val_gpu]):
                 raise AssertionError(f"ZERO_DYNAMIC did not exactly recover P0 branch: max error={max_error}")
-        intervention_rows[-1]["max_abs_logit_difference_from_p0_branch"] = max_error
+            metrics, pred = _metrics(zero_logits, data, labels)
+        zero_row = _intervention_row(dataset, seed, variant, "ZERO_DYNAMIC", metrics,
+                                     normal_metrics, pred, normal_pred)
+        zero_row["max_abs_logit_difference_from_p0_branch"] = max_error
+        intervention_rows.append(zero_row)
 
     if variant in {"s44_expert_rel", "s44_expert_rel_multi"}:
         uniform = {key: torch.full_like(value, 0.5) for key, value in controllers.items()}
@@ -403,7 +413,10 @@ def _semantic_audit_rows(dataset: str, seed: int, variant: str, analysis: dict[s
             for semantic_modality in modalities:
                 semantic = selected_semantic[semantic_modality]
                 finite = torch.isfinite(control) & torch.isfinite(semantic)
-                rho = float(spearmanr(control[finite].numpy(), semantic[finite].numpy()).statistic) if int(finite.sum()) > 1 else math.nan
+                if int(finite.sum()) > 1 and float(control[finite].max()) > float(control[finite].min()) and float(semantic[finite].max()) > float(semantic[finite].min()):
+                    rho = float(spearmanr(control[finite].numpy(), semantic[finite].numpy()).statistic)
+                else:
+                    rho = math.nan
                 total_var = float(control[finite].var(unbiased=False)) if int(finite.sum()) else math.nan
                 thresholds = thresholds_by_modality[semantic_modality]
                 rows.append({
