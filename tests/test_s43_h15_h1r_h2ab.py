@@ -174,5 +174,6 @@ def test_analysis_csv_sparse_cells_are_explicit_and_diff_clean(tmp_path):
     _write_csv(target, [{"metric": 1.0}, {"metric": 2.0, "summary": "all"}])
     lines = target.read_text().splitlines()
     assert all(not line.endswith(",") for line in lines)
+    assert b"\r" not in target.read_bytes()
     records = list(csv.DictReader(target.open()))
     assert records[0]["summary"] == "NA"

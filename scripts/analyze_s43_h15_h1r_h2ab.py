@@ -48,7 +48,7 @@ def _write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         return
     fields = list(dict.fromkeys(k for row in rows for k in row))
     with path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
+        writer = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore", lineterminator="\n")
         writer.writeheader()
         for row in rows:
             # Explicit NA cells prevent dangling delimiters in sparse summary rows.
