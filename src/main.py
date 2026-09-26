@@ -14,6 +14,7 @@ from hydra.core.hydra_config import HydraConfig
 from omegaconf import DictConfig, OmegaConf
 
 from src.data import load_mag_data
+from src.data.loaders import resolve_path
 from src.tasks import run_lp, run_nc
 from src.utils.device import get_device
 from src.utils.logging import setup_logger
@@ -62,6 +63,17 @@ def main(cfg: DictConfig) -> None:
     logger.info("Device: %s", device)
 
     data = load_mag_data(cfg, str(cfg.task.name), int(cfg.seed))
+    edge_override = cfg.task.get("edge_index_override_path")
+    if edge_override:
+        payload = torch.load(resolve_path(str(edge_override)), map_location="cpu", weights_only=False)
+        edge_index = payload.get("edge_index") if isinstance(payload, dict) else payload
+        edge_index = torch.as_tensor(edge_index, dtype=torch.long).contiguous()
+        if edge_index.dim() != 2 or edge_index.size(0) != 2:
+            raise ValueError("task.edge_index_override_path must contain edge_index with shape [2, num_edges]")
+        if edge_index.numel() and (int(edge_index.min()) < 0 or int(edge_index.max()) >= data.num_nodes):
+            raise ValueError("graph override contains node IDs outside the loaded dataset")
+        data.edge_index = edge_index
+        data.info["edge_index_override_path"] = str(resolve_path(str(edge_override)))
     _log_data_info(logger, data, str(cfg.model.name))
 
     if int(cfg.task.epochs) <= 0:

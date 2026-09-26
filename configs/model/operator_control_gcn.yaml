@@ -1,0 +1,7 @@
+name: operator_control_gcn
+hidden_dim: 256
+num_layers: 3
+dropout: 0.2
+activation: relu
+norm: batchnorm
+readout: deep_only # deep_only | anchored25

@@ -28,3 +28,6 @@ loss:
   aux_weight: 1.0
 
 evaluate_test: true
+
+# Optional physical graph override for isolated topology controls.
+edge_index_override_path: null
