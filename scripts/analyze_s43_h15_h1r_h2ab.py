@@ -157,20 +157,28 @@ def _write_h15_report(summary: dict[str, Any]) -> None:
         f"- Fixed lambda grid: `{GRID}`.",
         f"- Max absolute logit deviation at lambda=1 from historical NORMAL: {summary['max_lambda1_logit_abs_error']:.3g}.",
         "- Lambda=0 retains `0.5 * R_A` and removes D while preserving A scale.", "",
-        "## Oracle proportions by dataset and seed", "",
+        "## Validation-node oracle proportions by dataset and seed", "",
         "| Dataset | Seed | lambda*=0 | lambda*>0 | lambda*<0 | Mean headroom |",
         "|---|---:|---:|---:|---:|---:|",
     ]
     for row in summary["oracle_summary"]:
         lines.append(f"| {row['dataset']} | {row['seed']} | {row['fraction_lambda_star_zero']:.3f} | {row['fraction_lambda_star_positive']:.3f} | {row['fraction_lambda_star_negative']:.3f} | {row['mean_oracle_headroom']:.5f} |")
-    lines += ["", "## Interpretation boundary", "", "The oracle is descriptive and optimistic because it minimizes each validation node's true-label CE over the same fixed grid. It does not estimate deployable routing value.", ""]
+    lines += ["", "## Modality-only validation scans", "",
+              "These aggregate scan minima also use validation labels and are descriptive summaries of the preregistered grid; they were not used to select a model or training hyperparameter.",
+              "| Dataset | Seed | Text-only best lambda | Visual-only best lambda | Best lambdas differ |", "|---|---:|---:|---:|:---:|"]
+    for row in summary["modality_summary"]:
+        if row["mode"] == "TEXT_ONLY":
+            pair = next(x for x in summary["modality_summary"] if x["dataset"] == row["dataset"] and x["seed"] == row["seed"] and x["mode"] == "VISUAL_ONLY")
+            lines.append(f"| {row['dataset']} | {row['seed']} | {row['best_lambda']:.2g} | {pair['best_lambda']:.2g} | {'yes' if row['best_lambda'] != pair['best_lambda'] else 'no'} |")
+    lines += ["", "## Interpretation boundary", "",
+              "The node oracle is optimistic because it minimizes each validation node's true-label CE over the same fixed grid. It does not estimate deployable routing value. Modality-only minima are likewise descriptive validation scans, not selected operating points.", ""]
     (RESULT_ROOT / "h15_report.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def run_h15() -> dict[str, Any]:
     RESULT_ROOT.mkdir(parents=True, exist_ok=True)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    scan_rows, modality_rows, node_rows, oracle_summary = [], [], [], []
+    scan_rows, modality_rows, modality_summary, node_rows, oracle_summary = [], [], [], [], []
     max_error = 0.0
     n_checkpoints = 0
     for dataset in DATASETS:
@@ -218,6 +226,7 @@ def run_h15() -> dict[str, Any]:
                         node_preds.append(val_logits.argmax(-1).detach().cpu())
                     logits_shared.append(logits)
 
+                this_modality_rows = []
                 for mode in ("TEXT_ONLY", "VISUAL_ONLY"):
                     for lam in GRID:
                         lt = lam if mode == "TEXT_ONLY" else 1.0
@@ -226,9 +235,21 @@ def run_h15() -> dict[str, Any]:
                         rel_v = 0.5 * ra["visual"] + 0.5 * float(lv) * rd["visual"]
                         logits = _fused_logits(model, classifier, h["text"], h["visual"], rel_t, rel_v)
                         metrics, pred, _ = _metrics(logits, data, labels)
-                        modality_rows.append({"dataset": dataset, "seed": seed, "mode": mode, "lambda": lam,
-                                              "lambda_text": lt, "lambda_visual": lv, **metrics,
-                                              "prediction_flip_vs_lambda1": float((pred != normal_pred).float().mean())})
+                        record = {"dataset": dataset, "seed": seed, "mode": mode, "lambda": lam,
+                                  "lambda_text": lt, "lambda_visual": lv, **metrics,
+                                  "prediction_flip_vs_lambda1": float((pred != normal_pred).float().mean())}
+                        modality_rows.append(record)
+                        this_modality_rows.append(record)
+                for mode in ("TEXT_ONLY", "VISUAL_ONLY"):
+                    candidates = [r for r in this_modality_rows if r["mode"] == mode]
+                    best = min(candidates, key=lambda r: r["true_label_ce"])
+                    baseline = next(r for r in candidates if float(r["lambda"]) == 1.0)
+                    modality_summary.append({"dataset": dataset, "seed": seed, "mode": mode,
+                                              "best_lambda": float(best["lambda"]), "best_val_ce": best["true_label_ce"],
+                                              "best_val_accuracy": best["val_acc"], "best_val_macro_f1": best["val_macro_f1"],
+                                              "val_ce_at_lambda1": baseline["true_label_ce"],
+                                              "ce_change_vs_lambda1": best["true_label_ce"] - baseline["true_label_ce"],
+                                              "interpretation": "DESCRIPTIVE_MODALITY_SCAN_ONLY; validation labels used"})
 
                 losses = torch.stack(node_losses)  # [grid, validation nodes]
                 preds = torch.stack(node_preds)
@@ -262,12 +283,18 @@ def run_h15() -> dict[str, Any]:
                 torch.cuda.empty_cache()
     _write_csv(RESULT_ROOT / "h15_lambda_scan.csv", scan_rows)
     _write_csv(RESULT_ROOT / "h15_modality_scan.csv", modality_rows)
+    _write_csv(RESULT_ROOT / "h15_modality_summary.csv", modality_summary)
     _write_csv(RESULT_ROOT / "h15_node_oracle.csv", node_rows)
     _write_csv(RESULT_ROOT / "h15_oracle_summary.csv", oracle_summary)
     summary = {"study": "S4.3 Phase 2 H1.5 Frozen Differential-Usage Heterogeneity Audit",
                "generated_at_utc": datetime.now(timezone.utc).isoformat(), "grid": list(GRID),
                "checkpoints_read": n_checkpoints, "training_runs": 0,
                "max_lambda1_logit_abs_error": max_error, "oracle_summary": oracle_summary,
+               "modality_summary": modality_summary,
+               "modality_best_lambda_differing_pairs": sum(
+                   next(x["best_lambda"] for x in modality_summary if x["dataset"] == ds and x["seed"] == seed and x["mode"] == "TEXT_ONLY")
+                   != next(x["best_lambda"] for x in modality_summary if x["dataset"] == ds and x["seed"] == seed and x["mode"] == "VISUAL_ONLY")
+                   for ds in DATASETS for seed in SEEDS),
                "oracle_policy": "DESCRIPTIVE_ORACLE_ONLY; validation labels are not used for training/router/threshold/hyperparameter selection"}
     (RESULT_ROOT / "h15_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     _write_h15_report(summary)
@@ -623,31 +650,73 @@ def _report(contrast_tables, intervention_rows, h15_summary, complexity):
     status_h2b_global, why_h2b_global = _status_from_deltas(h2b, "h2b_global_diff_minus_global_agg")
     status_h2b_adapt, why_h2b_adapt = _status_from_deltas(h2b, "h2b_node_diff_minus_global_diff")
     h15_fraction = [r["fraction_lambda_star_zero"] for r in h15_summary["oracle_summary"]]
-    status_h15 = "MECHANISM_SUPPORT" if max(h15_fraction, default=0)-min(h15_fraction, default=0) > .05 else "MIXED"
+    modality_mismatch = h15_summary["modality_best_lambda_differing_pairs"]
+    status_h15 = "MECHANISM_SUPPORT" if (max(h15_fraction, default=0)-min(h15_fraction, default=0) > .05 or modality_mismatch > 0) else "MIXED"
     mean_oracle = _mean([r["mean_oracle_headroom"] for r in h15_summary["oracle_summary"]])
+
+    def contrast_mean(rows, name, key):
+        values = [float(r[key]) for r in rows if r.get("contrast") == name and r.get("dataset") != "ALL"]
+        return _mean(values)
+
+    def intervention_mean(family, intervention, key):
+        values = [float(r[key]) for r in intervention_rows
+                  if r.get("variant", "").startswith(family) and r.get("intervention") == intervention]
+        return _mean(values)
+
+    h1r_acc = contrast_mean(h1r, "h1r_functional_signed_minus_agg_signed", "delta_val_acc")
+    h1r_f1 = contrast_mean(h1r, "h1r_functional_signed_minus_agg_signed", "delta_val_macro_f1")
+    h1r_ce = contrast_mean(h1r, "h1r_functional_signed_minus_agg_signed", "delta_true_label_ce")
+    act_acc = contrast_mean(h1r, "signed_functional_minus_historical_relu_functional", "delta_val_acc")
+    act_f1 = contrast_mean(h1r, "signed_functional_minus_historical_relu_functional", "delta_val_macro_f1")
+    h2a_gs_acc = contrast_mean(h2a, "h2a_global_scalar_minus_p0_residual", "delta_val_acc")
+    h2a_gs_f1 = contrast_mean(h2a, "h2a_global_scalar_minus_p0_residual", "delta_val_macro_f1")
+    h2a_gs_ce = contrast_mean(h2a, "h2a_global_scalar_minus_p0_residual", "delta_true_label_ce")
+    h2a_s_acc = contrast_mean(h2a, "h2a_node_scalar_minus_global_scalar", "delta_val_acc")
+    h2a_g_acc = contrast_mean(h2a, "h2a_node_group_minus_global_group", "delta_val_acc")
+    h2a_g_ce = contrast_mean(h2a, "h2a_node_group_minus_global_group", "delta_true_label_ce")
+    h2a_force_acc = intervention_mean("h2a_node", "FORCE_ONE", "delta_val_acc")
+    h2a_force_f1 = intervention_mean("h2a_node", "FORCE_ONE", "delta_val_macro_f1")
+    h2a_mean_acc = intervention_mean("h2a_node", "MEAN_REPLACE", "delta_val_acc")
+    h2a_mean_f1 = intervention_mean("h2a_node", "MEAN_REPLACE", "delta_val_macro_f1")
+    h2a_mean_ce = intervention_mean("h2a_node", "MEAN_REPLACE", "delta_true_label_ce")
+    h2a_shuffle_acc = _mean([float(r["delta_val_acc"]) for r in intervention_rows if r.get("variant", "").startswith("h2a_node") and r.get("intervention", "").startswith("NODE_SHUFFLE")])
+    h2a_shuffle_f1 = _mean([float(r["delta_val_macro_f1"]) for r in intervention_rows if r.get("variant", "").startswith("h2a_node") and r.get("intervention", "").startswith("NODE_SHUFFLE")])
+    h2a_shuffle_ce = _mean([float(r["delta_true_label_ce"]) for r in intervention_rows if r.get("variant", "").startswith("h2a_node") and r.get("intervention", "").startswith("NODE_SHUFFLE")])
+    h2b_glob_acc = contrast_mean(h2b, "h2b_global_diff_minus_global_agg", "delta_val_acc")
+    h2b_glob_f1 = contrast_mean(h2b, "h2b_global_diff_minus_global_agg", "delta_val_macro_f1")
+    h2b_glob_ce = contrast_mean(h2b, "h2b_global_diff_minus_global_agg", "delta_true_label_ce")
+    h2b_node_acc = contrast_mean(h2b, "h2b_node_diff_minus_node_agg", "delta_val_acc")
+    h2b_node_f1 = contrast_mean(h2b, "h2b_node_diff_minus_node_agg", "delta_val_macro_f1")
+    h2b_node_ce = contrast_mean(h2b, "h2b_node_diff_minus_node_agg", "delta_true_label_ce")
+    h2b_adapt_acc = contrast_mean(h2b, "h2b_node_diff_minus_global_diff", "delta_val_acc")
+    h2b_mean_acc = intervention_mean("h2b_node", "MEAN_REPLACE", "delta_val_acc")
+    h2b_mean_ce = intervention_mean("h2b_node", "MEAN_REPLACE", "delta_true_label_ce")
+    h2b_shuffle_acc = _mean([float(r["delta_val_acc"]) for r in intervention_rows if r.get("variant", "").startswith("h2b_node") and r.get("intervention", "").startswith("NODE_SHUFFLE")])
+    h2b_shuffle_f1 = _mean([float(r["delta_val_macro_f1"]) for r in intervention_rows if r.get("variant", "").startswith("h2b_node") and r.get("intervention", "").startswith("NODE_SHUFFLE")])
+    h2b_shuffle_ce = _mean([float(r["delta_true_label_ce"]) for r in intervention_rows if r.get("variant", "").startswith("h2b_node") and r.get("intervention", "").startswith("NODE_SHUFFLE")])
     report = [
         "# S4.3 Phase 2: Adaptive Structural Utility Audit", "",
-        f"Training commit: `{contrast_tables['training_commit']}`. Source commit: `{SOURCE_COMMIT}`.",
+        f"Training commit: `{contrast_tables['training_commit']}`. Analysis commit: `{contrast_tables['analysis_commit']}`. Source commit: `{SOURCE_COMMIT}`.",
         "Protocol: unified full-graph node classification; validation-only selection/evaluation; test evaluation disabled. Formal scope is Movies, Grocery, ele-fashion, Reddit-S; Toys remains a holdout.", "",
         "## Result status", "",
-        f"- H1.5: **{status_h15}** — lambda*=0 fractions span {min(h15_fraction, default=0):.3f}–{max(h15_fraction, default=0):.3f}; mean oracle headroom={mean_oracle:.5f}.",
+        f"- H1.5: **{status_h15}** — lambda*=0 shares span {min(h15_fraction, default=0):.3f}–{max(h15_fraction, default=0):.3f}; modality-only aggregate scan minima differ in {modality_mismatch}/12 dataset-seed pairs; mean node-oracle headroom={mean_oracle:.5f}.",
         f"- H1R: **{status_h1r}** — {why_h1r}",
         f"- H2a scalar adaptation: **{status_h2a_s}** — {why_h2a_s}",
         f"- H2a group adaptation: **{status_h2a_g}** — {why_h2a_g}",
         f"- H2b global differential vs matched generic correction: **{status_h2b_global}** — {why_h2b_global}",
         f"- H2b node differential vs matched generic correction: **{status_h2b}** — {why_h2b}", "",
         "## Answers", "",
-        f"1. **Differential usage heterogeneity:** the frozen node oracle has mean validation CE headroom {mean_oracle:.5f}; lambda*=0 shares vary across dataset-seed combinations. Interpret this as an optimistic descriptive bound, not a deployable selector.",
-        f"2. **ReLU/sign preservation:** the primary paired signed-functional minus signed-aggregative comparison is {status_h1r}. H1R tests the current handcrafted D basis only; the signed-vs-historical ReLU secondary comparison changes activation and is labeled ACTIVATION_CHANGED.",
-        f"3. **Structural dosage:** node-vs-global scalar status is {status_h2a_s}; node-vs-global group status is {status_h2a_g}. Group indices have no intrinsic semantic meaning. Global beta values are per-dataset trained priors, not cross-dataset adaptation.",
-        "4. **Functional node assignment:** compare MEAN_REPLACE and the ten degree-bin NODE_SHUFFLE interventions with NORMAL in `h2a_frozen_interventions.csv` and `h2b_frozen_interventions.csv`. These are frozen sensitivity tests, not retrained causal ablations.",
-        f"5. **D correction value:** global differential-vs-generic status is {status_h2b_global}; the paired node differential-vs-generic status is {status_h2b}. Inspect accuracy/F1 and CE deltas in `h2b_paired_contrasts.csv`.",
-        f"6. **D correction adaptation:** node_diff vs global_diff is {status_h2b_adapt}; node_agg vs global_agg is also tabulated. Coefficients describe learned correction dosage and are not causal contributions.",
-        "7. **Next-stage carrier:** use the paired contrasts and shuffle sensitivity to choose among fixed structural dosage, node-conditioned structural dosage, or a bounded residual correction. This report does not define an H3/H4 architecture.", "",
+        f"1. **Differential usage heterogeneity:** node-oracle mean validation CE headroom is {mean_oracle:.4f}; lambda*=0 fractions vary by dataset/seed, and Text-only versus Visual-only scan minima differ in {modality_mismatch}/12 checkpoint pairs. This is an optimistic descriptive bound and aggregate validation scan, not a deployable selector.",
+        f"2. **ReLU/sign preservation:** signed functional minus signed aggregative averages {h1r_acc:+.4f} accuracy, {h1r_f1:+.4f} Macro-F1, and {h1r_ce:+.4f} CE, so signed preservation does not rescue the functional basis here ({status_h1r}). Signed functional versus historical ReLU is ACTIVATION_CHANGED and averages {act_acc:+.4f} accuracy and {act_f1:+.4f} Macro-F1; it is not a pure causal comparison.",
+        f"3. **Structural dosage:** global scalar beta versus reused P0 residual averages {h2a_gs_acc:+.4f} accuracy and {h2a_gs_f1:+.4f} Macro-F1, with CE {h2a_gs_ce:+.4f}. Node-vs-global effects are {h2a_s_acc:+.4f} accuracy for scalar and {h2a_g_acc:+.4f} accuracy / {h2a_g_ce:+.4f} CE for group dosage. Effects are small and metric-dependent; group indices have no intrinsic semantic meaning, and global beta values are per-dataset priors.",
+        f"4. **Functional node assignment:** forcing beta=1 on trained H2a node gates changes accuracy/F1 by {h2a_force_acc:+.4f}/{h2a_force_f1:+.4f}; validation-mean replacement changes them by {h2a_mean_acc:+.4f}/{h2a_mean_f1:+.4f} (CE {h2a_mean_ce:+.4f}), while degree-bin shuffling averages {h2a_shuffle_acc:+.4f}/{h2a_shuffle_f1:+.4f} (CE {h2a_shuffle_ce:+.4f}). H2b node mean replacement gives {h2b_mean_acc:+.4f} accuracy (CE {h2b_mean_ce:+.4f}) and degree-bin shuffling gives {h2b_shuffle_acc:+.4f}/{h2b_shuffle_f1:+.4f} (CE {h2b_shuffle_ce:+.4f}). This is modest frozen sensitivity, not a retrained causal ablation.",
+        f"5. **D correction value:** global differential-minus-generic averages {h2b_glob_acc:+.4f} accuracy, {h2b_glob_f1:+.4f} Macro-F1, {h2b_glob_ce:+.4f} CE; node differential-minus-generic averages {h2b_node_acc:+.4f}, {h2b_node_f1:+.4f}, {h2b_node_ce:+.4f}. Differential corrections do not show consistent utility over matched generic corrections.",
+        f"6. **D correction adaptation:** node_diff minus global_diff averages {h2b_adapt_acc:+.4f} accuracy. Node shuffling and mean replacement move validation metrics only modestly; coefficients are learned dosage, not causal contributions.",
+        "7. **Next-stage carrier:** if one carrier is carried forward for a later hypothesis test, the simplest candidate is modality-specific global structural dosage (`h2a_global_scalar`). Node/group adaptation has no consistent accuracy gain, and the tested D corrections regress on the primary classification contrasts. Treat that choice as provisional; this report does not define an H3/H4 architecture.", "",
         "## Complexity", "",
         f"The complexity table contains {sum(r['variant'] != 'p0_residual_reference' for r in complexity)} formal variant-dataset profiles plus the reused P0 residual reference for each dataset. See `complexity_table.csv` for parameters, peak memory, wall time, mean epoch proxy, and best epoch.", "",
         "## Interpretation boundaries", "",
-        "- H1.5 node oracle uses validation labels and is DESCRIPTIVE_ORACLE_ONLY.",
+        "- H1.5 node oracle uses validation labels and is DESCRIPTIVE_ORACLE_ONLY; modality-only scan minima are descriptive validation summaries.",
         "- H1R tests the current handcrafted differential basis, not all learned experts or transforms.",
         "- Learned beta/lambda do not equal causal contribution.",
         "- Group indices have no intrinsic semantic meaning.",
