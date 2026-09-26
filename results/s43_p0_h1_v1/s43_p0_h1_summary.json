@@ -1,0 +1,322 @@
+{
+  "study": "S4.3 Hypothesis Validation Pilots Phase 1: P0 + H1",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "datasets": [
+    "Movies",
+    "Grocery",
+    "ele-fashion",
+    "Reddit-S"
+  ],
+  "variants": [
+    "p0_relation_only",
+    "p0_residual",
+    "p0_concat",
+    "h1_dual_agg",
+    "h1_dual_functional_static",
+    "h1_dual_functional_global"
+  ],
+  "test_evaluation": false,
+  "formal_jobs_expected": 24,
+  "formal_jobs_checkpoint_validated": 24,
+  "formal_runs_expected": 72,
+  "formal_runs_present": 72,
+  "failed_or_not_started_jobs": [],
+  "p0": {
+    "status": "STRONG_SUPPORT",
+    "reason": "Primary residual-minus-relation-only validation deltas are positive for both metrics on all four datasets.",
+    "primary_contrast": "p0_residual - p0_relation_only",
+    "concat_interpretation": "CAPACITY_DIFFERENT_SECONDARY_CONTROL"
+  },
+  "h1": {
+    "status": "MIXED",
+    "reason": "Performance direction and/or functional diagnostics are mixed.",
+    "primary_contrast": "dual_functional_static - dual_agg",
+    "interpretation_boundary": "Functional structural basis diversity is tested against repeated aggregative capacity; this does not establish two relation types because U_D=sH-U_A is linearly related to H and U_A."
+  },
+  "p0_paired_contrasts": {
+    "p0_residual - p0_relation_only": {
+      "val_acc": {
+        "mean_delta": 0.06675880153973897,
+        "population_std": 0.01535452681673572,
+        "positive_seed_pairs": 12,
+        "positive_dataset_means": 4
+      },
+      "val_macro_f1": {
+        "mean_delta": 0.10410495314091006,
+        "population_std": 0.031891106381888044,
+        "positive_seed_pairs": 12,
+        "positive_dataset_means": 4
+      }
+    },
+    "p0_concat - p0_relation_only": {
+      "val_acc": {
+        "mean_delta": 0.0632059375445048,
+        "population_std": 0.01605114693379673,
+        "positive_seed_pairs": 12,
+        "positive_dataset_means": 4
+      },
+      "val_macro_f1": {
+        "mean_delta": 0.09723689910728567,
+        "population_std": 0.03523362419561352,
+        "positive_seed_pairs": 12,
+        "positive_dataset_means": 4
+      }
+    },
+    "p0_concat - p0_residual": {
+      "val_acc": {
+        "mean_delta": -0.0035528639952341714,
+        "population_std": 0.004740971619847672,
+        "positive_seed_pairs": 4,
+        "positive_dataset_means": 2
+      },
+      "val_macro_f1": {
+        "mean_delta": -0.006868054033624403,
+        "population_std": 0.01604865735332834,
+        "positive_seed_pairs": 7,
+        "positive_dataset_means": 2
+      }
+    }
+  },
+  "h1_paired_contrasts": {
+    "dual_agg - single_agg": {
+      "val_acc": {
+        "mean_delta": 0.0008964488903681437,
+        "population_std": 0.0031821200824992827,
+        "positive_seed_pairs": 7,
+        "positive_dataset_means": 3
+      },
+      "val_macro_f1": {
+        "mean_delta": 0.0019609209282240394,
+        "population_std": 0.013174348190819779,
+        "positive_seed_pairs": 8,
+        "positive_dataset_means": 2
+      }
+    },
+    "dual_functional_static - dual_agg": {
+      "val_acc": {
+        "mean_delta": -0.012828648090362549,
+        "population_std": 0.011691102255045849,
+        "positive_seed_pairs": 0,
+        "positive_dataset_means": 0
+      },
+      "val_macro_f1": {
+        "mean_delta": -0.02935285725340064,
+        "population_std": 0.03902412084765976,
+        "positive_seed_pairs": 3,
+        "positive_dataset_means": 1
+      }
+    },
+    "dual_functional_global - dual_functional_static": {
+      "val_acc": {
+        "mean_delta": 0.00024469196796417236,
+        "population_std": 0.002652031269311699,
+        "positive_seed_pairs": 4,
+        "positive_dataset_means": 1
+      },
+      "val_macro_f1": {
+        "mean_delta": -0.0014339582319570915,
+        "population_std": 0.017936544064702728,
+        "positive_seed_pairs": 5,
+        "positive_dataset_means": 1
+      }
+    },
+    "dual_functional_global - single_agg": {
+      "val_acc": {
+        "mean_delta": -0.011687507232030233,
+        "population_std": 0.011760383321891318,
+        "positive_seed_pairs": 0,
+        "positive_dataset_means": 0
+      },
+      "val_macro_f1": {
+        "mean_delta": -0.02882589455713369,
+        "population_std": 0.041748427973917424,
+        "positive_seed_pairs": 3,
+        "positive_dataset_means": 0
+      }
+    }
+  },
+  "h1_basis_diagnostics_summary": [
+    {
+      "variant": "h1_dual_functional_static",
+      "modality": "text",
+      "mean_norm_R_A": 11.079681158065796,
+      "mean_norm_R_D": 11.14938497543335,
+      "mean_cosine_R_A_R_D": 0.3404795303940773,
+      "std_cosine_R_A_R_D": 0.05863150333364805,
+      "R_A_to_R_D_mean_norm_ratio": 0.9936597335999493,
+      "flagged_rows": 0
+    },
+    {
+      "variant": "h1_dual_functional_static",
+      "modality": "visual",
+      "mean_norm_R_A": 11.260075092315674,
+      "mean_norm_R_D": 11.13057510058085,
+      "mean_cosine_R_A_R_D": 0.32763008773326874,
+      "std_cosine_R_A_R_D": 0.060330781154334545,
+      "R_A_to_R_D_mean_norm_ratio": 1.0129963041870103,
+      "flagged_rows": 0
+    },
+    {
+      "variant": "h1_dual_functional_global",
+      "modality": "text",
+      "mean_norm_R_A": 11.12502384185791,
+      "mean_norm_R_D": 11.156660556793213,
+      "mean_cosine_R_A_R_D": 0.34119504193464917,
+      "std_cosine_R_A_R_D": 0.05810510305066904,
+      "R_A_to_R_D_mean_norm_ratio": 0.9971087234621541,
+      "flagged_rows": 0
+    },
+    {
+      "variant": "h1_dual_functional_global",
+      "modality": "visual",
+      "mean_norm_R_A": 11.39457376797994,
+      "mean_norm_R_D": 11.137949466705322,
+      "mean_cosine_R_A_R_D": 0.327263484398524,
+      "std_cosine_R_A_R_D": 0.06004518487801155,
+      "R_A_to_R_D_mean_norm_ratio": 1.023956110860811,
+      "flagged_rows": 0
+    }
+  ],
+  "h1_frozen_intervention_summary": [
+    {
+      "variant": "h1_dual_functional_static",
+      "intervention": "FORCE_A",
+      "delta_val_acc": -0.003208095828692118,
+      "delta_val_macro_f1": -0.015573187753551784,
+      "delta_true_label_ce": 0.05502146234114965,
+      "prediction_flip_rate_vs_normal": 0.08732122881338
+    },
+    {
+      "variant": "h1_dual_functional_static",
+      "intervention": "FORCE_D",
+      "delta_val_acc": -0.088898998995622,
+      "delta_val_macro_f1": -0.09082913491667088,
+      "delta_true_label_ce": 0.22280992567539215,
+      "prediction_flip_rate_vs_normal": 0.17278039082884789
+    },
+    {
+      "variant": "h1_dual_functional_global",
+      "intervention": "FORCE_A",
+      "delta_val_acc": -0.0006544490655263265,
+      "delta_val_macro_f1": -0.009584522671122725,
+      "delta_true_label_ce": 0.05131921668847402,
+      "prediction_flip_rate_vs_normal": 0.08392622414976358
+    },
+    {
+      "variant": "h1_dual_functional_global",
+      "intervention": "FORCE_D",
+      "delta_val_acc": -0.09397129466136296,
+      "delta_val_macro_f1": -0.09445338149674604,
+      "delta_true_label_ce": 0.25628208244840306,
+      "prediction_flip_rate_vs_normal": 0.17704440715412298
+    },
+    {
+      "variant": "h1_dual_functional_global",
+      "intervention": "SWAP_MODALITY_ALPHA",
+      "delta_val_acc": -0.0004463096459706624,
+      "delta_val_macro_f1": -0.00026688988401680586,
+      "delta_true_label_ce": 6.730730334917705e-05,
+      "prediction_flip_rate_vs_normal": 0.0010698305510838206
+    }
+  ],
+  "h1_global_alpha_summary": {
+    "alpha_text_A": {
+      "mean": 0.5033237586418787,
+      "population_std": 0.0056277279947492456
+    },
+    "alpha_text_D": {
+      "mean": 0.4966762438416481,
+      "population_std": 0.005627714786364271
+    },
+    "alpha_visual_A": {
+      "mean": 0.5011298134922981,
+      "population_std": 0.010163752546193209
+    },
+    "alpha_visual_D": {
+      "mean": 0.49887018154064816,
+      "population_std": 0.010163737709461678
+    }
+  },
+  "complexity_summary": [
+    {
+      "variant": "p0_relation_only",
+      "trainable_params_by_input_shape": [
+        597516,
+        730644
+      ],
+      "peak_cuda_memory_mb_min": 1033.0,
+      "peak_cuda_memory_mb_max": 3635.0,
+      "mean_job_wall_seconds": 50.94401668332284
+    },
+    {
+      "variant": "p0_residual",
+      "trainable_params_by_input_shape": [
+        597516,
+        730644
+      ],
+      "peak_cuda_memory_mb_min": 1015.0,
+      "peak_cuda_memory_mb_max": 3835.0,
+      "mean_job_wall_seconds": 53.21354563895147
+    },
+    {
+      "variant": "p0_concat",
+      "trainable_params_by_input_shape": [
+        860172,
+        993300
+      ],
+      "peak_cuda_memory_mb_min": 1141.0,
+      "peak_cuda_memory_mb_max": 4215.0,
+      "mean_job_wall_seconds": 74.85480221168837
+    },
+    {
+      "variant": "h1_dual_agg",
+      "trainable_params_by_input_shape": [
+        730124,
+        863252
+      ],
+      "peak_cuda_memory_mb_min": 1179.0,
+      "peak_cuda_memory_mb_max": 4407.0,
+      "mean_job_wall_seconds": 62.42672608059365
+    },
+    {
+      "variant": "h1_dual_functional_static",
+      "trainable_params_by_input_shape": [
+        730124,
+        863252
+      ],
+      "peak_cuda_memory_mb_min": 1213.0,
+      "peak_cuda_memory_mb_max": 4599.0,
+      "mean_job_wall_seconds": 56.545406132529024
+    },
+    {
+      "variant": "h1_dual_functional_global",
+      "trainable_params_by_input_shape": [
+        730128,
+        863256
+      ],
+      "peak_cuda_memory_mb_min": 1215.0,
+      "peak_cuda_memory_mb_max": 5694.0,
+      "mean_job_wall_seconds": 63.15259109647013
+    }
+  ],
+  "global_coefficient_interpretation": "learned coefficient != causal contribution; interpret with FORCE_A/FORCE_D frozen sensitivity",
+  "interventions_interpretation": "frozen sensitivity; no retraining; not a causal retrained ablation",
+  "qa": {
+    "pytest": "154 passed",
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "formal_dry_run": "24 jobs / 72 runs",
+    "preflight_dry_run": "6 jobs / 6 runs",
+    "ele_fashion_preflight": "6/6 passed"
+  },
+  "source_branch": "problem_deep_dive",
+  "source_commit": "e535ad91911557790658ddc87bfaa516da531aad",
+  "training_branch": "s43_p0_h1",
+  "training_commit": [
+    "e5c39c14315fcdaaf1e5e9d085f6538e4380a795"
+  ],
+  "analysis_branch": "s43_p0_h1",
+  "analysis_commit": "cb45fc4cb27ebae9e0811a660e49b5d194283850",
+  "mean_epoch_seconds_note": "job wall time divided by observed completed epoch log lines; includes setup and validation overhead",
+  "results_root": "results/s43_p0_h1_v1"
+}
