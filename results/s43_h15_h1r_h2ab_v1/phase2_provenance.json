@@ -1,0 +1,86 @@
+{
+  "study": "S4.3 Phase 2 Adaptive Structural Utility Audit",
+  "generated_at_utc": "2026-09-26T14:59:24.883868+00:00",
+  "source_branch": "s43_p0_h1",
+  "source_commit": "601bad98ff28e85c9aeac23b84b5db51ad4c7c86",
+  "training_branch": "s43_h15_h1r_h2ab",
+  "training_commit": "9b9f1eb04cb7d83f55506f47b654905efe021d9b",
+  "analysis_commit": "89e4bfecdb67d48663e8452e7bbcf8efe6e99606",
+  "old_evidence_commits": {
+    "multi_order_bank": "31468c5a1439b3561487936bf5d83749b502f61e",
+    "mechanism_discovery": "d31b095faa4f98538e60cfac293a831138dde3db",
+    "problem_deep_dive": "e535ad91911557790658ddc87bfaa516da531aad",
+    "s43_p0_h1_results": "601bad98ff28e85c9aeac23b84b5db51ad4c7c86"
+  },
+  "protocol_version": "unified_full_graph_nc_v1",
+  "task": "nc",
+  "test_disabled": true,
+  "formal_datasets": [
+    "Movies",
+    "Grocery",
+    "ele-fashion",
+    "Reddit-S"
+  ],
+  "excluded_datasets": [
+    "Toys"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "seed_command": 42,
+  "num_runs": 3,
+  "formal_variants": [
+    "h1r_dual_agg_signed",
+    "h1r_dual_functional_signed",
+    "h2a_global_scalar",
+    "h2a_node_scalar",
+    "h2a_global_group",
+    "h2a_node_group",
+    "h2b_global_agg_correction",
+    "h2b_global_diff_correction",
+    "h2b_node_agg_correction",
+    "h2b_node_diff_correction"
+  ],
+  "config_sha256": {
+    "configs/model/adaptive_relation_pilot.yaml": "6cec817ff9684e882dff750816df3cb5fda7abe857f832469190cd6ff6acb7fb",
+    "configs/task/nc.yaml": "f959a73d5256d2e51b2ce3600c4f7252e7d79122c267aa70dc84abeddedb3852"
+  },
+  "code_file_sha256": {
+    "configs/model/adaptive_relation_pilot.yaml": "6cec817ff9684e882dff750816df3cb5fda7abe857f832469190cd6ff6acb7fb",
+    "configs/task/nc.yaml": "f959a73d5256d2e51b2ce3600c4f7252e7d79122c267aa70dc84abeddedb3852",
+    "src/models/adaptive_relation_pilot.py": "d80cd360b8be8c93e7a6505e68ff87e0de844dc9af539b5041918cc1232f3fd1",
+    "scripts/run_s43_h15_h1r_h2ab_nc.py": "3327616f53d742e0faefeae54a9e528f29830932c0243f85b4efe7fd34100b9d",
+    "scripts/analyze_s43_h15_h1r_h2ab.py": "79dcf3d280a50f65f5c2b7baece0a133511b735d2482c2ce8e7f163ed93bfa8a",
+    "tests/test_s43_h15_h1r_h2ab.py": "e029546bc872e7bd7facfb3473dd28f68f7ca13da36819915c45dd8e7937493f"
+  },
+  "dataset_hashes_train_validation_scope": {
+    "Movies": "eb448b46a14943e2f3ccfa4cdfff8586bbb2edc930fc439edefabffc233c9709",
+    "Grocery": "10c106d3b1e7913abf4ca6d49f3ae5ca9cf210d687cb67325d69c72e2d75b926",
+    "ele-fashion": "29644cb0bb2bbb04a38a86e486ecb356236b73571cf668df15b3c32499b15307",
+    "Reddit-S": "ce62657818c99b9c13e2a7bd0b0dd8f9187e20dd4d4cbcc4b681d48ce445585f"
+  },
+  "variant_definitions": {
+    "h1r_dual_agg_signed": "LN(H+0.5*T_A1(P_rel H)+0.5*T_A2(P_rel H)); LeakyReLU slope 0.1",
+    "h1r_dual_functional_signed": "LN(H+0.5*T_A(P_rel H)+0.5*T_D(sH-P_rel H)); LeakyReLU slope 0.1",
+    "h2a_global_scalar": "LN(H+beta_m*R_A), beta=2sigmoid(b_m), initialized 1",
+    "h2a_node_scalar": "LN(H+beta_i,m*R_A), beta=2sigmoid(b_m+ConditionEncoderV1(H,R_A))",
+    "h2a_global_group": "LN(H+group_beta_m*R_A), 8 groups of 32 channels",
+    "h2a_node_group": "LN(H+group_beta_i,m*R_A), node-conditioned 8-group dosage",
+    "h2b_global_agg_correction": "LN(H+R_A+lambda_m*T_C(P_rel H))",
+    "h2b_global_diff_correction": "LN(H+R_A+lambda_m*T_D(sH-P_rel H))",
+    "h2b_node_agg_correction": "LN(H+R_A+lambda_i,m*T_C(P_rel H))",
+    "h2b_node_diff_correction": "LN(H+R_A+lambda_i,m*T_D(sH-P_rel H))"
+  },
+  "interpretation_boundaries": [
+    "H1.5 node oracle uses validation labels and is DESCRIPTIVE_ORACLE_ONLY",
+    "H1R tests current handcrafted D basis, not all experts/transforms",
+    "learned beta/lambda are not causal contributions",
+    "group indices have no intrinsic semantic meaning",
+    "global beta/lambda are per-dataset trained priors, not cross-dataset adaptation",
+    "frozen interventions are sensitivity tests, not retrained ablations"
+  ],
+  "cuda_available": true,
+  "cuda_device_count": 2
+}

@@ -1,0 +1,78 @@
+{
+  "study": "S4.3 Phase 2 Adaptive Structural Utility Audit",
+  "generated_at_utc": "2026-09-26T14:59:25.702461+00:00",
+  "source_commit": "601bad98ff28e85c9aeac23b84b5db51ad4c7c86",
+  "training_commit": "9b9f1eb04cb7d83f55506f47b654905efe021d9b",
+  "analysis_commit": "89e4bfecdb67d48663e8452e7bbcf8efe6e99606",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "task": "nc",
+  "test_disabled": true,
+  "datasets": [
+    "Movies",
+    "Grocery",
+    "ele-fashion",
+    "Reddit-S"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "formal_variants": [
+    "h1r_dual_agg_signed",
+    "h1r_dual_functional_signed",
+    "h2a_global_scalar",
+    "h2a_node_scalar",
+    "h2a_global_group",
+    "h2a_node_group",
+    "h2b_global_agg_correction",
+    "h2b_global_diff_correction",
+    "h2b_node_agg_correction",
+    "h2b_node_diff_correction"
+  ],
+  "formal_jobs": 40,
+  "formal_runs": 120,
+  "statuses": {
+    "H1.5": "MECHANISM_SUPPORT",
+    "H1R": "MIXED",
+    "H2a_scalar": "MECHANISM_SUPPORT",
+    "H2a_group": "MECHANISM_SUPPORT",
+    "H2b_global": "MIXED",
+    "H2b_node": "MIXED",
+    "H2b_node_vs_global": "MIXED"
+  },
+  "mean_h15_oracle_headroom": 0.29839468250672024,
+  "outputs": [
+    "h15_node_oracle.csv",
+    "h2b_table.csv",
+    "h1r_paired_contrasts.csv",
+    "h1r_frozen_interventions.csv",
+    "h1r_basis_diagnostics.csv",
+    "h15_modality_summary.csv",
+    "h2b_paired_contrasts.csv",
+    "h2b_frozen_interventions.csv",
+    "h1r_table.csv",
+    "h2a_gate_statistics.csv",
+    "complexity_table.csv",
+    "h2a_paired_contrasts.csv",
+    "h2a_frozen_interventions.csv",
+    "phase2_provenance.json",
+    "s43_phase2_report.md",
+    "s43_phase2_summary.json",
+    "h15_oracle_summary.csv",
+    "h2a_table.csv",
+    "h15_modality_scan.csv",
+    "h15_summary.json",
+    "h15_report.md",
+    "h2b_lambda_statistics.csv",
+    "h15_lambda_scan.csv"
+  ],
+  "interpretation_boundaries": [
+    "H1.5 node oracle uses validation labels and is DESCRIPTIVE_ORACLE_ONLY",
+    "H1R tests current handcrafted D basis, not all experts/transforms",
+    "learned beta/lambda are not causal contributions",
+    "group indices have no intrinsic semantic meaning",
+    "global beta/lambda are per-dataset trained priors, not cross-dataset adaptation",
+    "frozen interventions are sensitivity tests, not retrained ablations"
+  ]
+}

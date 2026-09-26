@@ -1,0 +1,25 @@
+dataset,seed,variant,modality,mean_norm_R_A,mean_norm_R_D,mean_cosine_R_A_R_D,std_cosine_R_A_R_D,negative_R_D_fraction,interpretation
+Movies,42,h1r_dual_functional_signed,text,11.262063980102539,11.358073234558105,0.2966917157173157,0.054401107132434845,0.5004709959030151,current handcrafted D basis; not all learned experts
+Movies,42,h1r_dual_functional_signed,visual,11.471074104309082,11.295467376708984,0.25303715467453003,0.07193552702665329,0.49961918592453003,current handcrafted D basis; not all learned experts
+Movies,43,h1r_dual_functional_signed,text,11.225945472717285,11.308273315429688,0.3034927248954773,0.054174091666936874,0.4998324513435364,current handcrafted D basis; not all learned experts
+Movies,43,h1r_dual_functional_signed,visual,11.282421112060547,11.283516883850098,0.25879451632499695,0.06605783104896545,0.5007299184799194,current handcrafted D basis; not all learned experts
+Movies,44,h1r_dual_functional_signed,text,11.254227638244629,11.340527534484863,0.2766030728816986,0.06096749007701874,0.5007849931716919,current handcrafted D basis; not all learned experts
+Movies,44,h1r_dual_functional_signed,visual,11.446024894714355,11.275003433227539,0.25887173414230347,0.06676866859197617,0.5004592537879944,current handcrafted D basis; not all learned experts
+Grocery,42,h1r_dual_functional_signed,text,11.176071166992188,11.178518295288086,0.2628031075000763,0.061717621982097626,0.4999291002750397,current handcrafted D basis; not all learned experts
+Grocery,42,h1r_dual_functional_signed,visual,11.469295501708984,11.057320594787598,0.2679794728755951,0.07242739945650101,0.49854961037635803,current handcrafted D basis; not all learned experts
+Grocery,43,h1r_dual_functional_signed,text,11.221037864685059,11.172769546508789,0.2756039798259735,0.06385158747434616,0.4999416768550873,current handcrafted D basis; not all learned experts
+Grocery,43,h1r_dual_functional_signed,visual,11.39295768737793,11.087867736816406,0.2660004496574402,0.06977532058954239,0.5000103116035461,current handcrafted D basis; not all learned experts
+Grocery,44,h1r_dual_functional_signed,text,11.239713668823242,11.176807403564453,0.2754061818122864,0.057631734758615494,0.5002104640007019,current handcrafted D basis; not all learned experts
+Grocery,44,h1r_dual_functional_signed,visual,11.40622615814209,11.112306594848633,0.27058398723602295,0.06812912225723267,0.5007331967353821,current handcrafted D basis; not all learned experts
+ele-fashion,42,h1r_dual_functional_signed,text,10.371258735656738,11.133012771606445,0.24849021434783936,0.06970302015542984,0.4957073926925659,current handcrafted D basis; not all learned experts
+ele-fashion,42,h1r_dual_functional_signed,visual,10.272493362426758,11.438713073730469,0.26832011342048645,0.054633188992738724,0.5002385377883911,current handcrafted D basis; not all learned experts
+ele-fashion,43,h1r_dual_functional_signed,text,10.904804229736328,11.045680046081543,0.22088070213794708,0.07169922441244125,0.4900248348712921,current handcrafted D basis; not all learned experts
+ele-fashion,43,h1r_dual_functional_signed,visual,9.950532913208008,11.41617488861084,0.26907214522361755,0.05583927035331726,0.5022985339164734,current handcrafted D basis; not all learned experts
+ele-fashion,44,h1r_dual_functional_signed,text,11.032134056091309,11.039320945739746,0.23924855887889862,0.0696573406457901,0.4923724830150604,current handcrafted D basis; not all learned experts
+ele-fashion,44,h1r_dual_functional_signed,visual,10.043990135192871,11.30925178527832,0.26953819394111633,0.0592183917760849,0.49700310826301575,current handcrafted D basis; not all learned experts
+Reddit-S,42,h1r_dual_functional_signed,text,11.929952621459961,11.12569808959961,0.283229798078537,0.07693058997392654,0.5032943487167358,current handcrafted D basis; not all learned experts
+Reddit-S,42,h1r_dual_functional_signed,visual,12.250292778015137,10.909478187561035,0.250460147857666,0.0802399069070816,0.5027720928192139,current handcrafted D basis; not all learned experts
+Reddit-S,43,h1r_dual_functional_signed,text,11.708470344543457,11.14291763305664,0.30216366052627563,0.07801409810781479,0.5040549039840698,current handcrafted D basis; not all learned experts
+Reddit-S,43,h1r_dual_functional_signed,visual,12.215209007263184,10.922015190124512,0.2565126419067383,0.07597491145133972,0.5034958124160767,current handcrafted D basis; not all learned experts
+Reddit-S,44,h1r_dual_functional_signed,text,11.669665336608887,11.155323028564453,0.299206405878067,0.06955552846193314,0.5034810900688171,current handcrafted D basis; not all learned experts
+Reddit-S,44,h1r_dual_functional_signed,visual,12.132357597351074,10.93873119354248,0.25402402877807617,0.07521187514066696,0.503354549407959,current handcrafted D basis; not all learned experts

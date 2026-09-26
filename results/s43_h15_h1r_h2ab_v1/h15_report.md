@@ -8,7 +8,7 @@ The node oracle uses validation labels and is `DESCRIPTIVE_ORACLE_ONLY`; oracle-
 - Max absolute logit deviation at lambda=1 from historical NORMAL: 0.
 - Lambda=0 retains `0.5 * R_A` and removes D while preserving A scale.
 
-## Oracle proportions by dataset and seed
+## Validation-node oracle proportions by dataset and seed
 
 | Dataset | Seed | lambda*=0 | lambda*>0 | lambda*<0 | Mean headroom |
 |---|---:|---:|---:|---:|---:|
@@ -25,6 +25,24 @@ The node oracle uses validation labels and is `DESCRIPTIVE_ORACLE_ONLY`; oracle-
 | Reddit-S | 43 | 0.256 | 0.396 | 0.348 | 0.11865 |
 | Reddit-S | 44 | 0.255 | 0.391 | 0.354 | 0.10900 |
 
+## Modality-only validation scans
+
+These aggregate scan minima also use validation labels and are descriptive summaries of the preregistered grid; they were not used to select a model or training hyperparameter.
+| Dataset | Seed | Text-only best lambda | Visual-only best lambda | Best lambdas differ |
+|---|---:|---:|---:|:---:|
+| Movies | 42 | 1.5 | 0 | yes |
+| Movies | 43 | 2 | 0 | yes |
+| Movies | 44 | 1 | 0.25 | yes |
+| Grocery | 42 | -0.5 | 0 | yes |
+| Grocery | 43 | 0.5 | 1 | yes |
+| Grocery | 44 | 0.25 | 1 | yes |
+| ele-fashion | 42 | 1.5 | 0.25 | yes |
+| ele-fashion | 43 | 1 | 0.5 | yes |
+| ele-fashion | 44 | 1 | 0.5 | yes |
+| Reddit-S | 42 | 0 | 0 | no |
+| Reddit-S | 43 | -1 | -0.5 | yes |
+| Reddit-S | 44 | -0.5 | 0 | yes |
+
 ## Interpretation boundary
 
-The oracle is descriptive and optimistic because it minimizes each validation node's true-label CE over the same fixed grid. It does not estimate deployable routing value.
+The node oracle is optimistic because it minimizes each validation node's true-label CE over the same fixed grid. It does not estimate deployable routing value. Modality-only minima are likewise descriptive validation scans, not selected operating points.
