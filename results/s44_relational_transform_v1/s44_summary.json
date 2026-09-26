@@ -1,0 +1,615 @@
+{
+  "experiment": "S4.4 Relational Transformation Pilot",
+  "protocol": {
+    "task": "NC",
+    "protocol_version": "unified_full_graph_nc_v1",
+    "training_mode": "full_graph",
+    "selection": "best_val_accuracy",
+    "data_split_seed": 42,
+    "test_evaluation": false,
+    "lp_evaluation": false,
+    "datasets": [
+      "Movies",
+      "Grocery",
+      "ele-fashion",
+      "Reddit-S"
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "variants": [
+      "s44_scalar_global",
+      "s44_scalar_raw",
+      "s44_scalar_rel",
+      "s44_scalar_rel_multi",
+      "s44_lowrank_global",
+      "s44_lowrank_rel",
+      "s44_lowrank_rel_multi",
+      "s44_expert_uniform",
+      "s44_expert_rel",
+      "s44_expert_rel_multi"
+    ],
+    "expected_runs": 120
+  },
+  "completed_runs": 120,
+  "multimodal_intervention_rows": 72,
+  "expected_runs": 120,
+  "interpretation_statuses": {
+    "RelationState": {
+      "status": "STRONG_SUPPORT",
+      "evidence": "scalar relation minus raw mean \u0394accuracy=0.00054; positive paired seeds=8/12"
+    },
+    "EdgeConditionality": {
+      "status": "STRONG_SUPPORT",
+      "evidence": "across edge-conditioned variants, mean loss under target-wise edge shuffle=0.00039; affected variant-seed rows=49/96"
+    },
+    "DynamicTransformation": {
+      "status": "MECHANISM_SUPPORT",
+      "evidence": "low-rank relation minus global mean \u0394accuracy=0.00059; ZERO_DYNAMIC=P0 branch within 1e-5 absolute tolerance=True"
+    },
+    "MultimodalRelationContext": {
+      "status": "MECHANISM_SUPPORT",
+      "evidence": "scalar multi-relation minus relation mean \u0394accuracy=-0.00071; remove/swap interventions lower accuracy in 37/72 rows"
+    },
+    "ExpertRouting": {
+      "status": "MIXED",
+      "evidence": "routed minus uniform mean \u0394accuracy=0.00090; routing shuffle harms 8/24 rows; mean edge fraction pi_max>0.90=0.434"
+    }
+  },
+  "provenance": {
+    "source_branch": "s43_h15_h1r_h2ab",
+    "source_commit": "7b98b31a78fb978fadd96448bbcfd3ffa295d82f",
+    "training_branch": "s44_relational_transform",
+    "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+    "analysis_commit": "92cb223f102d43a9b32810891f11cacebf72afbc",
+    "config_sha256": {
+      "configs/model/relational_transform_pilot.yaml": "0f91e377daa50b20e945e5edc64411a6edb5e70784549f8c2741ef82f49603b5",
+      "configs/task/nc.yaml": "f959a73d5256d2e51b2ce3600c4f7252e7d79122c267aa70dc84abeddedb3852",
+      "configs/dataset/Movies.yaml": "81b803b0ed79ad86d483aee5dceadac149ca9ba2263e31160b22951a7812f5c8",
+      "configs/dataset/Grocery.yaml": "18969c97a0f06ab33fd3094624d524f03de48139405159bb06d19cf107105e56",
+      "configs/dataset/ele-fashion.yaml": "50e683dcae43c505c999ecbc22a6b5b380a8b897d4942933c01f266f8169b917",
+      "configs/dataset/Reddit-S.yaml": "010129b2a4b7de2969286de9a74108a7cd08a481feaac067dc5cae62db36246a"
+    },
+    "dataset_sha256_by_dataset_seed": {
+      "Movies": {
+        "/hdd1/DataInHere/YHF/data/Movies/MoviesGraph.pt": "f6798e6951f29b1d76aa7938684f44d502600c31f3a5987722f5bc450511700f",
+        "/hdd1/DataInHere/YHF/data/Movies/TextFeature/Movies_roberta_base_512_mean.npy": "38cc09ef3192eac8a022303fd48a9954bea9c3064078846aa5d2db31e137eece",
+        "/hdd1/DataInHere/YHF/data/Movies/ImageFeature/Movies_openai_clip-vit-large-patch14.npy": "c422191f1a7cdc85598f00b52e0f60a02f65d6a48548e9c42a8530b3e572dfeb",
+        "/hdd1/DataInHere/YHF/data/MAGB_split/Movies_nc_seed42_train0.6_val0.2.pt": "9089d5eb1d5a3edeae46bd9296e4f85815fccf8e489452bc87a2126a88546211"
+      },
+      "Grocery": {
+        "/hdd1/DataInHere/YHF/data/Grocery/GroceryGraph.pt": "af203035d655275a20da353f481e67f4b595eeb73ef1d397d0d9b603cefc70d7",
+        "/hdd1/DataInHere/YHF/data/Grocery/TextFeature/Grocery_roberta_base_256_mean.npy": "b67ab7600b842807b53805e31b9d969d860e9c48b1a56f76799d44367f33c516",
+        "/hdd1/DataInHere/YHF/data/Grocery/ImageFeature/Grocery_openai_clip-vit-large-patch14.npy": "ac50f63312488f3e94271532e7fd863c27a332c6ca8a4b9cc801afb9ce0b2470",
+        "/hdd1/DataInHere/YHF/data/MAGB_split/Grocery_nc_seed42_train0.6_val0.2.pt": "3ca4581592fcb705b42672b18412375d33bf6109c72e4714786066878a54d58e"
+      },
+      "ele-fashion": {
+        "/hdd1/DataInHere/YHF/data/ele-fashion/clip_feat.pt": "b2bd3cc6d9c4c2581a70567ee282580c44e486f0e55a83e62abf8935116a86c6",
+        "/hdd1/DataInHere/YHF/data/ele-fashion/nc_edges-nodeid.pt": "6c732c72ea8e1c8e2a5ae1a53a81a80d0b122ea8bb2475801ed20776f3fdcff2",
+        "/hdd1/DataInHere/YHF/data/ele-fashion/labels-w-missing.pt": "888e80c154a18d61a6b8f75ed2f02f0cb9440613e631810432362857b6a33065",
+        "/hdd1/DataInHere/YHF/data/ele-fashion/split.pt": "e48e74afd502df5bc5e4d638e611fc4fbfdecee461aa920f3f47a6446826c52f"
+      },
+      "Reddit-S": {
+        "/hdd1/DataInHere/YHF/data/Reddit-S/RedditSGraph.pt": "06af9e010df31f5a6537afa5c96f5cbdb9687b5722c1a1acc80d094bd216309b",
+        "/hdd1/DataInHere/YHF/data/Reddit-S/TextFeature/RedditS_roberta_base_100_mean.npy": "da41d78a8b65902ee902295949da437228d7b6d6de303a748f6c324072d65abd",
+        "/hdd1/DataInHere/YHF/data/Reddit-S/ImageFeature/RedditS_openai_clip-vit-large-patch14.npy": "936191dcf3c06e367674cfedd2e80fd87e3120485a9f45acb8ff48e7b3bad58b",
+        "/hdd1/DataInHere/YHF/data/MAGB_split/Reddit-S_nc_seed42_train0.6_val0.2.pt": "2154e82ef061de9d3c018aa19674ea6e2220953f272bedebb1559396e43750a5"
+      }
+    },
+    "run_checkpoint_map": {
+      "Movies/42/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_global/best_run1.pt"
+      },
+      "Movies/42/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_raw/best_run1.pt"
+      },
+      "Movies/42/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_rel/best_run1.pt"
+      },
+      "Movies/42/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_rel_multi/best_run1.pt"
+      },
+      "Movies/42/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_global/best_run1.pt"
+      },
+      "Movies/42/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_rel/best_run1.pt"
+      },
+      "Movies/42/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_rel_multi/best_run1.pt"
+      },
+      "Movies/42/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_uniform/best_run1.pt"
+      },
+      "Movies/42/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_rel/best_run1.pt"
+      },
+      "Movies/42/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_rel_multi/best_run1.pt"
+      },
+      "Movies/43/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_global/best_run2.pt"
+      },
+      "Movies/43/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_raw/best_run2.pt"
+      },
+      "Movies/43/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_rel/best_run2.pt"
+      },
+      "Movies/43/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_rel_multi/best_run2.pt"
+      },
+      "Movies/43/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_global/best_run2.pt"
+      },
+      "Movies/43/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_rel/best_run2.pt"
+      },
+      "Movies/43/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_rel_multi/best_run2.pt"
+      },
+      "Movies/43/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_uniform/best_run2.pt"
+      },
+      "Movies/43/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_rel/best_run2.pt"
+      },
+      "Movies/43/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_rel_multi/best_run2.pt"
+      },
+      "Movies/44/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_global/best_run3.pt"
+      },
+      "Movies/44/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_raw/best_run3.pt"
+      },
+      "Movies/44/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_rel/best_run3.pt"
+      },
+      "Movies/44/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_scalar_rel_multi/best_run3.pt"
+      },
+      "Movies/44/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_global/best_run3.pt"
+      },
+      "Movies/44/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_rel/best_run3.pt"
+      },
+      "Movies/44/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_lowrank_rel_multi/best_run3.pt"
+      },
+      "Movies/44/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_uniform/best_run3.pt"
+      },
+      "Movies/44/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_rel/best_run3.pt"
+      },
+      "Movies/44/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Movies/s44_expert_rel_multi/best_run3.pt"
+      },
+      "Grocery/42/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_global/best_run1.pt"
+      },
+      "Grocery/42/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_raw/best_run1.pt"
+      },
+      "Grocery/42/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_rel/best_run1.pt"
+      },
+      "Grocery/42/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_rel_multi/best_run1.pt"
+      },
+      "Grocery/42/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_global/best_run1.pt"
+      },
+      "Grocery/42/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_rel/best_run1.pt"
+      },
+      "Grocery/42/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_rel_multi/best_run1.pt"
+      },
+      "Grocery/42/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_uniform/best_run1.pt"
+      },
+      "Grocery/42/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_rel/best_run1.pt"
+      },
+      "Grocery/42/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_rel_multi/best_run1.pt"
+      },
+      "Grocery/43/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_global/best_run2.pt"
+      },
+      "Grocery/43/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_raw/best_run2.pt"
+      },
+      "Grocery/43/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_rel/best_run2.pt"
+      },
+      "Grocery/43/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_rel_multi/best_run2.pt"
+      },
+      "Grocery/43/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_global/best_run2.pt"
+      },
+      "Grocery/43/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_rel/best_run2.pt"
+      },
+      "Grocery/43/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_rel_multi/best_run2.pt"
+      },
+      "Grocery/43/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_uniform/best_run2.pt"
+      },
+      "Grocery/43/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_rel/best_run2.pt"
+      },
+      "Grocery/43/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_rel_multi/best_run2.pt"
+      },
+      "Grocery/44/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_global/best_run3.pt"
+      },
+      "Grocery/44/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_raw/best_run3.pt"
+      },
+      "Grocery/44/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_rel/best_run3.pt"
+      },
+      "Grocery/44/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_scalar_rel_multi/best_run3.pt"
+      },
+      "Grocery/44/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_global/best_run3.pt"
+      },
+      "Grocery/44/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_rel/best_run3.pt"
+      },
+      "Grocery/44/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_lowrank_rel_multi/best_run3.pt"
+      },
+      "Grocery/44/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_uniform/best_run3.pt"
+      },
+      "Grocery/44/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_rel/best_run3.pt"
+      },
+      "Grocery/44/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Grocery/s44_expert_rel_multi/best_run3.pt"
+      },
+      "ele-fashion/42/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_global/best_run1.pt"
+      },
+      "ele-fashion/42/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_raw/best_run1.pt"
+      },
+      "ele-fashion/42/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_rel/best_run1.pt"
+      },
+      "ele-fashion/42/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_rel_multi/best_run1.pt"
+      },
+      "ele-fashion/42/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_global/best_run1.pt"
+      },
+      "ele-fashion/42/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_rel/best_run1.pt"
+      },
+      "ele-fashion/42/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_rel_multi/best_run1.pt"
+      },
+      "ele-fashion/42/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_uniform/best_run1.pt"
+      },
+      "ele-fashion/42/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_rel/best_run1.pt"
+      },
+      "ele-fashion/42/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_rel_multi/best_run1.pt"
+      },
+      "ele-fashion/43/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_global/best_run2.pt"
+      },
+      "ele-fashion/43/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_raw/best_run2.pt"
+      },
+      "ele-fashion/43/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_rel/best_run2.pt"
+      },
+      "ele-fashion/43/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_rel_multi/best_run2.pt"
+      },
+      "ele-fashion/43/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_global/best_run2.pt"
+      },
+      "ele-fashion/43/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_rel/best_run2.pt"
+      },
+      "ele-fashion/43/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_rel_multi/best_run2.pt"
+      },
+      "ele-fashion/43/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_uniform/best_run2.pt"
+      },
+      "ele-fashion/43/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_rel/best_run2.pt"
+      },
+      "ele-fashion/43/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_rel_multi/best_run2.pt"
+      },
+      "ele-fashion/44/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_global/best_run3.pt"
+      },
+      "ele-fashion/44/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_raw/best_run3.pt"
+      },
+      "ele-fashion/44/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_rel/best_run3.pt"
+      },
+      "ele-fashion/44/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_scalar_rel_multi/best_run3.pt"
+      },
+      "ele-fashion/44/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_global/best_run3.pt"
+      },
+      "ele-fashion/44/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_rel/best_run3.pt"
+      },
+      "ele-fashion/44/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_lowrank_rel_multi/best_run3.pt"
+      },
+      "ele-fashion/44/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_uniform/best_run3.pt"
+      },
+      "ele-fashion/44/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_rel/best_run3.pt"
+      },
+      "ele-fashion/44/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/ele-fashion/s44_expert_rel_multi/best_run3.pt"
+      },
+      "Reddit-S/42/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_global/best_run1.pt"
+      },
+      "Reddit-S/42/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_raw/best_run1.pt"
+      },
+      "Reddit-S/42/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_rel/best_run1.pt"
+      },
+      "Reddit-S/42/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_rel_multi/best_run1.pt"
+      },
+      "Reddit-S/42/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_global/best_run1.pt"
+      },
+      "Reddit-S/42/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_rel/best_run1.pt"
+      },
+      "Reddit-S/42/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_rel_multi/best_run1.pt"
+      },
+      "Reddit-S/42/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_uniform/best_run1.pt"
+      },
+      "Reddit-S/42/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_rel/best_run1.pt"
+      },
+      "Reddit-S/42/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_rel_multi/best_run1.pt"
+      },
+      "Reddit-S/43/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_global/best_run2.pt"
+      },
+      "Reddit-S/43/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_raw/best_run2.pt"
+      },
+      "Reddit-S/43/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_rel/best_run2.pt"
+      },
+      "Reddit-S/43/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_rel_multi/best_run2.pt"
+      },
+      "Reddit-S/43/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_global/best_run2.pt"
+      },
+      "Reddit-S/43/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_rel/best_run2.pt"
+      },
+      "Reddit-S/43/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_rel_multi/best_run2.pt"
+      },
+      "Reddit-S/43/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_uniform/best_run2.pt"
+      },
+      "Reddit-S/43/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_rel/best_run2.pt"
+      },
+      "Reddit-S/43/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_rel_multi/best_run2.pt"
+      },
+      "Reddit-S/44/s44_scalar_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_global/best_run3.pt"
+      },
+      "Reddit-S/44/s44_scalar_raw": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_raw/best_run3.pt"
+      },
+      "Reddit-S/44/s44_scalar_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_rel/best_run3.pt"
+      },
+      "Reddit-S/44/s44_scalar_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_scalar_rel_multi/best_run3.pt"
+      },
+      "Reddit-S/44/s44_lowrank_global": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_global/best_run3.pt"
+      },
+      "Reddit-S/44/s44_lowrank_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_rel/best_run3.pt"
+      },
+      "Reddit-S/44/s44_lowrank_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_lowrank_rel_multi/best_run3.pt"
+      },
+      "Reddit-S/44/s44_expert_uniform": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_uniform/best_run3.pt"
+      },
+      "Reddit-S/44/s44_expert_rel": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_rel/best_run3.pt"
+      },
+      "Reddit-S/44/s44_expert_rel_multi": {
+        "training_commit": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+        "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/s44_relational_transform_v1/formal/Reddit-S/s44_expert_rel_multi/best_run3.pt"
+      }
+    },
+    "d3_semantic_cache_sha256": {
+      "Movies/42": "2e3381c7abeac96aeead68538eec405d3012c32decb5864f885da5a191478781",
+      "Movies/43": "45be366c58220f5f1d5edc88fbce70c5008766cd3a656f3a6e0c8cd1eefec529",
+      "Movies/44": "dd35df316bccc85fbba39f0c58736091bc9aa1bf219044b164d0728482dac2ae",
+      "Grocery/42": "c9f9ca062c858fce71639f9704df73320ac37eff1b14dda7a4d274f70d934c9a",
+      "Grocery/43": "7941f925298ddbaf4bd6d684148e585d0e2c8bdf745919ff79d7edfbe864b443",
+      "Grocery/44": "8869afd66a5432902e61ac506afb1eca6ebc3566f9e53fd53a1d1c744a6e7fca",
+      "ele-fashion/42": "1f240fc0aab6ff82291eae2ddeb12e84e9b7d96652ae26df3dbfaf0fc880f5a3",
+      "ele-fashion/43": "50dc63bb8eb90be81febea242fe127e511e7078e49e58b72a7921370f2ea5c34",
+      "ele-fashion/44": "d5a4a5decb72ae88205e68b13238e5effda68d2b25f65a670c05c5718ea28e4b",
+      "Reddit-S/42": "1a5dfc6a8e7f9214d6710f6a44e602fedfb2d2acf705b1e484fec0df732c2cc4",
+      "Reddit-S/43": "2b1344a79dc56880551cf3a4fcf066b37d1cfe6597c37e2474a8ed58d2cab0b5",
+      "Reddit-S/44": "9ec0383ac12456d2143b229c83a3c0cdc10a5133cc5a96e2b3da9a623322510d"
+    },
+    "semantic_source": "D3 checkpoint_cache per-seed modality-uniform H0 compatibility from source_matched_compatibility(seed*101+7); validation adjacency and train-edge quartiles use the actual shared S4.4 base split seed 42",
+    "formulas": {
+      "P_rel": "historical relation_basis_pilot.Model._build_operators: remove raw self-loops; symmetrize; add one self-loop; symmetric normalize; remove normalized diagonal; no renormalization",
+      "edge_relation_R0": "[q_i,k_j,0,0] -> Linear(128,32), ReLU, Linear(32,32)",
+      "edge_relation_R1": "[q_i,k_j,abs(q_i-k_j),q_i*k_j] -> same pair MLP; no semantic scalar input",
+      "multimodal_relation": "LN(r_m + W_cross_out_m(Linear_cross_T(r_T)*Linear_cross_V(r_V)))",
+      "lowrank": "Delta_i=sum_j P_rel[i,j] U(a_ij * V(H_j)); rank=8; controller preactivation zero initialized",
+      "expert": "pi1*U1(V1(H_j)) + pi2*U2(V2(H_j)); K=2; routed logits zero initialized"
+    }
+  },
+  "evidence_boundaries": [
+    "Frozen interventions are checkpoint sensitivity analyses, not retrained causal effects.",
+    "Router weights do not have causal interpretation.",
+    "Expert routing requires routed-vs-uniform benefit, edge-shuffle sensitivity and no severe collapse together.",
+    "Multimodal context requires multi-vs-single paired results plus remove/swap interventions.",
+    "Low semantic correlation alone does not demonstrate task utility.",
+    "Conclusions are restricted to node classification; LP was not evaluated."
+  ]
+}
