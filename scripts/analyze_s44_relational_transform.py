@@ -94,10 +94,11 @@ def _config(dataset: str, model_name: str, variant: str, seed: int):
 
 
 @lru_cache(maxsize=1)
-def _load_data(dataset: str, seed: int):
+def _load_data(dataset: str):
     from src.data import load_mag_data
-    cfg = _config(dataset, "relational_transform_pilot", "s44_scalar_global", seed)
-    return load_mag_data(cfg, "nc", seed)
+    # The NC launcher loads one split at base seed 42, then varies model RNG seeds.
+    cfg = _config(dataset, "relational_transform_pilot", "s44_scalar_global", 42)
+    return load_mag_data(cfg, "nc", 42)
 
 
 def _data_info(data) -> dict[str, int]:
@@ -373,16 +374,12 @@ def _semantic_audit_rows(dataset: str, seed: int, variant: str, analysis: dict[s
         raise ValueError(f"D3 semantic cache identity mismatch: {cache_path}")
     if not torch.equal(cache["edge_index"].long(), data.edge_index.detach().cpu().long()):
         raise ValueError(f"D3 physical graph differs from S4.4 graph: {cache_path}")
-    if not torch.equal(cache["train_idx"].long().sort().values, data.train_idx.detach().cpu().long().sort().values):
-        raise ValueError(f"D3 train split differs from S4.4 split: {cache_path}")
-    if not torch.equal(cache["val_idx"].long().sort().values, data.val_idx.detach().cpu().long().sort().values):
-        raise ValueError(f"D3 validation split differs from S4.4 split: {cache_path}")
     n = int(cache["num_nodes"])
     pairs = cache["edge_cache"]["pairs"].long()
     edge_rows = analysis["edge_row"].detach().cpu().long()
     edge_cols = analysis["edge_col"].detach().cpu().long()
     val_mask = torch.zeros(n, dtype=torch.bool)
-    val_mask[cache["val_idx"].long()] = True
+    val_mask[data.val_idx.detach().cpu().long()] = True
     keep = val_mask[edge_rows]
     edge_rows, edge_cols = edge_rows[keep], edge_cols[keep]
     keys = pairs[:, 0] * n + pairs[:, 1]
@@ -398,13 +395,12 @@ def _semantic_audit_rows(dataset: str, seed: int, variant: str, analysis: dict[s
         "text": edge_cache["compat"]["text_uniform"].float(),
         "visual": edge_cache["compat"]["visual_uniform"].float(),
     }
-    train_idx = cache["train_idx"].long()
+    # D3 contributes its exact per-seed compatibility percentiles; quartiles are
+    # recomputed with the actual S4.4 training split (the shared base-seed split).
+    train_idx = data.train_idx.detach().cpu().long()
     quartiles, thresholds_by_modality = {}, {}
     for modality in modalities:
         q, thresholds = train_edge_quantile_bins(semantic_values[modality], pairs, train_idx)
-        d3_q = edge_cache[f"{modality}_semantic_q"].long()
-        if not torch.equal(q, d3_q):
-            raise RuntimeError(f"D3 train-edge semantic quartiles changed for {dataset}/{seed}/{modality}")
         quartiles[modality] = q[index]
         thresholds_by_modality[modality] = thresholds
     selected_semantic = {modality: semantic_values[modality][index] for modality in modalities}
@@ -436,7 +432,8 @@ def _semantic_audit_rows(dataset: str, seed: int, variant: str, analysis: dict[s
                     "controller_variance": total_var, "within_quartile_variance_fraction": math.nan,
                     "train_semantic_q25": thresholds["q25"], "train_semantic_q50": thresholds["q50"],
                     "train_semantic_q75": thresholds["q75"],
-                    "semantic_source": "D3 cached uniform H0; source_matched_compatibility(seed*101+7)",
+                    "semantic_source": "D3 cached per-seed modality-uniform H0; source_matched_compatibility(seed*101+7)",
+                    "validation_split_seed": 42, "train_threshold_split_seed": 42,
                 })
                 q_values = quartiles[semantic_modality]
                 for qid in range(4):
@@ -456,7 +453,8 @@ def _semantic_audit_rows(dataset: str, seed: int, variant: str, analysis: dict[s
                             float(part.var(unbiased=False)) / total_var if part.numel() and total_var > 0 else math.nan,
                         "train_semantic_q25": thresholds["q25"], "train_semantic_q50": thresholds["q50"],
                         "train_semantic_q75": thresholds["q75"],
-                        "semantic_source": "D3 cached uniform H0; source_matched_compatibility(seed*101+7)",
+                        "semantic_source": "D3 cached per-seed modality-uniform H0; source_matched_compatibility(seed*101+7)",
+                    "validation_split_seed": 42, "train_threshold_split_seed": 42,
                     })
     return rows
 
@@ -543,7 +541,7 @@ def _file_sha256(path: Path) -> str:
 
 def _dataset_hashes(dataset: str, seed: int) -> dict[str, str]:
     from src.data.loaders import resolve_path
-    cfg = _config(dataset, "relational_transform_pilot", "s44_scalar_global", seed)
+    cfg = _config(dataset, "relational_transform_pilot", "s44_scalar_global", 42)
     ds = cfg.dataset
     keys = ("graph_path", "text_feat_path", "image_feat_path", "joint_feat_path", "edge_path",
             "label_path", "node_split_path", "nc_split_path")
@@ -696,7 +694,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any]:
     # Loop dataset/seed first to reuse the read-only graph and feature tensors.
     for dataset in requested:
         for seed in SEEDS:
-            data = _load_data(dataset, seed)
+            data = _load_data(dataset)
             labels = _resolve_nc_eval_labels(data)
             x_gpu = data.x.to(device)
             edge_gpu = data.edge_index.to(device)
@@ -789,7 +787,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any]:
     summary = {
         "experiment": "S4.4 Relational Transformation Pilot",
         "protocol": {"task": "NC", "protocol_version": "unified_full_graph_nc_v1",
-                     "training_mode": "full_graph", "selection": "best_val_accuracy",
+                     "training_mode": "full_graph", "selection": "best_val_accuracy", "data_split_seed": 42,
                      "test_evaluation": False, "lp_evaluation": False,
                      "datasets": list(requested), "seeds": list(SEEDS),
                      "variants": list(FORMAL_VARIANTS), "expected_runs": len(requested) * len(SEEDS) * len(FORMAL_VARIANTS)},
@@ -809,7 +807,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any]:
                     ROOT / "outputs/problem_deep_dive_v1/checkpoint_cache" / f"{dataset}_seed{seed}.pt")
                 for dataset in requested for seed in SEEDS
             },
-            "semantic_source": "D3 checkpoint_cache, per-modality uniform H0, source_matched_compatibility with seed*101+7; bins from train physical edges only",
+            "semantic_source": "D3 checkpoint_cache per-seed modality-uniform H0 compatibility from source_matched_compatibility(seed*101+7); validation adjacency and train-edge quartiles use the actual shared S4.4 base split seed 42",
             "formulas": {
                 "P_rel": "historical relation_basis_pilot.Model._build_operators: remove raw self-loops; symmetrize; add one self-loop; symmetric normalize; remove normalized diagonal; no renormalization",
                 "edge_relation_R0": "[q_i,k_j,0,0] -> Linear(128,32), ReLU, Linear(32,32)",
