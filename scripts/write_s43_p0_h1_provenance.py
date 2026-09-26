@@ -21,6 +21,13 @@ VARIANTS = (
     "p0_relation_only", "p0_residual", "p0_concat", "h1_dual_agg",
     "h1_dual_functional_static", "h1_dual_functional_global",
 )
+TRAINING_FILES = (
+    "configs/model/relation_basis_pilot.yaml", "configs/task/nc.yaml",
+    "configs/dataset/Movies.yaml", "configs/dataset/Grocery.yaml",
+    "configs/dataset/ele-fashion.yaml", "configs/dataset/Reddit-S.yaml",
+    "src/models/relation_basis_pilot.py", "scripts/run_s43_p0_h1_nc.py",
+)
+ANALYSIS_ONLY_FILES = {"scripts/analyze_s43_p0_h1.py", "scripts/write_s43_p0_h1_provenance.py"}
 FILES = (
     "configs/model/relation_basis_pilot.yaml", "configs/task/nc.yaml",
     "configs/dataset/Movies.yaml", "configs/dataset/Grocery.yaml",
@@ -67,8 +74,16 @@ def main() -> None:
     if completed_jobs != 24 or len(training_commits) != 1:
         raise SystemExit(f"expected 24 jobs with one fixed training commit, got jobs={completed_jobs}, commits={training_commits}")
     training_commit = next(iter(training_commits))
-    if training_commit != git("rev-parse", "HEAD"):
-        raise SystemExit("training commit differs from current analysis commit; record an explicit analysis-only commit first")
+    analysis_commit = git("rev-parse", "HEAD")
+    subprocess.run(["git", "merge-base", "--is-ancestor", training_commit, "HEAD"], cwd=ROOT, check=True)
+    changed_paths = [name for name in git("diff", "--name-only", f"{training_commit}..HEAD").splitlines() if name]
+    unexpected = sorted(set(changed_paths) - ANALYSIS_ONLY_FILES)
+    if unexpected:
+        raise SystemExit(f"post-training changes exceed analysis-only scope: {unexpected}")
+    for name in TRAINING_FILES:
+        frozen_blob = subprocess.check_output(["git", "show", f"{training_commit}:{name}"], cwd=ROOT)
+        if hashlib.sha256(frozen_blob).hexdigest() != sha256(ROOT / name):
+            raise SystemExit(f"frozen training input changed after formal training: {name}")
     code_hashes = {name: sha256(ROOT / name) for name in FILES}
     configs = {
         name: sha256(ROOT / name)
@@ -79,7 +94,9 @@ def main() -> None:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "source_branch": SOURCE_BRANCH, "source_commit": SOURCE_COMMIT,
         "pilot_branch": branch, "training_commit": training_commit,
-        "analysis_commit": git("rev-parse", "HEAD"),
+        "analysis_commit": analysis_commit,
+        "analysis_commit_type": "same_as_training" if analysis_commit == training_commit else "analysis_only",
+        "analysis_only_files_since_training": changed_paths,
         "old_evidence_commits": OLD_EVIDENCE_COMMITS,
         "protocol_version": "unified_full_graph_nc_v1",
         "formal_datasets": list(DATASETS), "formal_variants": list(VARIANTS),
