@@ -280,6 +280,12 @@ def _add_controller_audits(dataset, seed, variant, model, head, data, x_gpu, edg
         summary[f"mean_{metric}"] = _mean(vals)
         summary[f"std_{metric}"] = _std(vals)
     intervention_rows.append(summary)
+    if variant in {"s44_expert_rel", "s44_expert_rel_multi"}:
+        # The router audit is the same deterministic target-wise edge permutation,
+        # also exposed under the family-specific protocol label.
+        intervention_rows.extend({**row, "intervention": "ROUTE_EDGE_SHUFFLE_REPLICATE"}
+                                 for row in shuffle_rows)
+        intervention_rows.append({**summary, "intervention": "ROUTE_EDGE_SHUFFLE_MEAN_STD"})
 
     if variant in {"s44_lowrank_global", "s44_lowrank_rel", "s44_lowrank_rel_multi"}:
         zeros = {key: torch.zeros_like(value) for key, value in controllers.items()}
