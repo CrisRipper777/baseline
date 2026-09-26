@@ -722,52 +722,140 @@ def _final_report(operator: dict[str, Any], topology: list[dict[str, Any]],
     for dataset in DATASETS:
         values = [float(r["real_minus_rewired_val_accuracy"]) for r in topology if r["dataset"] == dataset]
         if values:
-            topo_by_ds[dataset] = float(np.mean(values))
+            topo_by_ds[dataset] = {"mean": float(np.mean(values)),
+                                   "population_std": float(np.std(values, ddof=0)),
+                                   "runs": len(values)}
+
+    p8 = {}
+    for dataset in DATASETS:
+        values = [r for r in intervention if r["dataset"] == dataset and r["readout"] == "uniform" and
+                  r["group"] == "low_similarity_high_novelty" and r["mode"] == "FIXED_NORM_MASK"]
+        if values:
+            p8[dataset] = {
+                "target_loss_increase_mean": float(np.mean([float(r["edge_utility_val_loss_increase"]) for r in values])),
+                "matched_control_loss_increase_mean": float(np.mean([float(r["matched_control_edge_utility_mean"]) for r in values])),
+                "target_minus_control_mean": float(np.mean([float(r["target_minus_matched_utility"]) for r in values])),
+                "matched_runs": sum(r.get("matching_status") == "MATCHED" and int(r.get("matched_control_count", 0)) == 20 for r in values),
+            }
+    modality_utility = {}
+    for dataset in DATASETS:
+        modality_utility[dataset] = {}
+        for name in ("text_uniform", "visual_uniform"):
+            values = [r for r in intervention if r["dataset"] == dataset and r["readout"] == name and
+                      r["group"] == "joint_low_similarity_high_novelty" and r["mode"] == "FIXED_NORM_MASK" and
+                      r.get("matching_status") == "MATCHED"]
+            if values:
+                modality_utility[dataset][name] = float(np.mean([float(r["edge_utility_val_loss_increase"]) for r in values]))
+        if modality_utility[dataset]:
+            vals = list(modality_utility[dataset].values())
+            modality_utility[dataset]["text_minus_visual"] = (
+                modality_utility[dataset]["text_uniform"] - modality_utility[dataset]["visual_uniform"]
+                if "text_uniform" in modality_utility[dataset] and "visual_uniform" in modality_utility[dataset] else float("nan"))
+
+    utility_scores = {}
+    for group in ("SIMILARITY_ONLY", "TOPOLOGY_ONLY", "CONFIDENCE_ONLY", "NOVELTY_ONLY", "MODAL_DISAGREEMENT_ONLY", "ALL"):
+        values = [r for r in predictability if r["target"] == "G_struct" and r["feature_group"] == group]
+        def finite_mean(field: str):
+            items = [float(r[field]) for r in values if np.isfinite(float(r.get(field, float("nan"))))]
+            return float(np.mean(items)) if items else float("nan")
+        utility_scores[group] = {"validation_spearman_mean": finite_mean("val_spearman"),
+                                 "validation_r2_mean": finite_mean("val_r2"),
+                                 "sign_auroc_mean": finite_mean("val_sign_auroc"),
+                                 "finite_spearman_runs": int(sum(bool(np.isfinite(float(r.get("val_spearman", float("nan")))) ) for r in values))}
+
+    roots = {
+        "preflight_jobs": len(list((OUT / "preflight").glob("*/*/complete.json"))),
+        "operator_transfer_jobs": len(list((OUT / "operator_transfer").glob("*/*/complete.json"))),
+        "rewired_uniform_jobs": len(list((OUT / "rewired_topology").glob("*/*/complete.json"))),
+    }
+    raw_manifest = OUT / "node_intervention_effects" / "manifest.csv"
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    committed_manifest = RESULTS / "node_intervention_effects_manifest.csv"
+    committed_manifest.write_bytes(raw_manifest.read_bytes())
     payload = {
         "study": "D3 Principle Generalization & Problem Causal Deep-Dive",
         "source_commit": "d31b095faa4f98538e60cfac293a831138dde3db",
         "datasets": list(DATASETS), "task": "NC only",
         "analysis_splits": ["train", "validation"],
         "test_usage": "descriptive metrics only for newly retrained formal controls; no research decision uses test",
+        "formal_training": {**roots, "formal_runs": roots["operator_transfer_jobs"] * 3 + roots["rewired_uniform_jobs"] * 3,
+                            "internal_seeds": list(SEEDS), "completed": roots["operator_transfer_jobs"] == 20 and roots["rewired_uniform_jobs"] == 5},
         "gate_A_conditional_relational_utility": gate_a,
         "gate_B_adaptive_self_structure": gate_b,
         "gate_C_adaptive_modality_arbitration": gate_c,
         "anchoring_transfer": operator,
+        "P8_fixed_mask_low_similarity_high_novelty": p8,
+        "modality_specific_fixed_mask_utility": modality_utility,
+        "utility_predictability_G_struct": utility_scores,
         "real_minus_rewired_val_accuracy_by_dataset": topo_by_ds,
         "intervention_semantics": {
             "FIXED_NORM_MASK": "frozen normalized operator with target message weights zeroed; no renormalization and no retraining",
             "RENORMALIZED_DELETE": "remove target undirected pairs and rebuild the symmetric normalized operator; frozen checkpoint",
         },
         "thresholds": "semantic, novelty, and embeddedness thresholds are derived from edges whose endpoints are both in train split",
+        "raw_node_effect_manifest": str(committed_manifest.relative_to(ROOT)),
+        "raw_node_effect_data_root": str((OUT / "node_intervention_effects").relative_to(ROOT)),
     }
-    RESULTS.mkdir(parents=True, exist_ok=True)
     d3._write_json(RESULTS / "problem_deep_dive_summary.json", payload)
+
+    gcn = operator.get("operators", {}).get("gcn", {})
+    sage = operator.get("operators", {}).get("sage", {})
+    operator_lines = []
+    for name, item in (("GCN", gcn), ("SAGE", sage)):
+        operator_lines.append(f"| {name} | {100*float(item.get('mean_gain', float('nan'))):+.3f} pp | {item.get('positive_datasets', 0)}/5 |")
+    p8_lines = []
+    for dataset in DATASETS:
+        item = p8.get(dataset)
+        if item:
+            p8_lines.append(f"| {dataset} | {item['target_loss_increase_mean']:+.4f} | {item['matched_control_loss_increase_mean']:+.4f} | {item['target_minus_control_mean']:+.4f} | {item['matched_runs']}/3 |")
+    modality_lines = []
+    for dataset in DATASETS:
+        item = modality_utility.get(dataset, {})
+        if "text_uniform" in item and "visual_uniform" in item:
+            modality_lines.append(f"| {dataset} | {item['text_uniform']:+.4f} | {item['visual_uniform']:+.4f} | {item['text_minus_visual']:+.4f} |")
+    topology_lines = []
+    for dataset, item in topo_by_ds.items():
+        topology_lines.append(f"| {dataset} | {100*item['mean']:+.3f} pp | {100*item['population_std']:.3f} pp |")
+
+    novelty_ds = ", ".join(gate_a["datasets_novelty_predictability_gt_similarity"]) or "none"
+    modality_ds = ", ".join(gate_a["datasets_text_visual_utility_different"]) or "none"
+    supported_list = gate_a["datasets_low_similarity_high_novelty_positive_vs_matched"]
+    supported_ds = ", ".join(supported_list) or "none"
     lines = [
         "# D3 problem deep-dive report", "",
-        "Analysis scope: Movies, Toys, Grocery, ele-fashion, Reddit-S; NC only.",
-        "All selector fits, thresholds, grouping, intervention ranking, and gates use train/validation only.",
-        "Test values are descriptive for the formal retrained controls and do not decide any gate.", "",
+        "Scope: Movies, Toys, Grocery, ele-fashion, Reddit-S; node classification only.",
+        "All selector fits, thresholds, edge grouping, intervention ranking, and gates use Train/Validation only.",
+        "Test metrics appear only as descriptive fields for the formal retrained controls; no research decision uses Test.",
+        f"Formal controls completed: {payload['formal_training']['operator_transfer_jobs']} operator jobs × 3 seeds + {payload['formal_training']['rewired_uniform_jobs']} rewired jobs × 3 seeds = {payload['formal_training']['formal_runs']} runs.", "",
         "## Frozen questions", "",
-        "1. **Does anchoring transfer beyond fixed GPR-style diffusion?**",
-        f"   Operator-transfer gate: `{operator.get('gate', 'NOT_RUN')}`.",
-        "2. **Does conditional relation utility persist after degree and normalized-weight matching?**",
-        f"   Gate A: `{gate_a['status']}`. Fixed-mask interventions are frozen functional diagnostics, not retrained graph operators.",
-        "3. **What explains low-similarity useful edges?**",
-        "   See `low_similarity_edge_explanation.csv` and `conditional_relation_utility.csv` for train-thresholded novelty/embeddedness strata; these remain candidate descriptors, not causal edge labels.",
+        "1. **Does attribute anchoring transfer beyond fixed GPR-style diffusion?**",
+        f"   No under the registered transfer gate: `{operator.get('gate', 'NOT_RUN')}`. The mean anchored25−deep_only validation gain was GCN {100*float(gcn.get('mean_gain', float('nan'))):+.3f} pp (positive in {gcn.get('positive_datasets',0)}/5) and SAGE {100*float(sage.get('mean_gain', float('nan'))):+.3f} pp (positive in {sage.get('positive_datasets',0)}/5).",
+        "   | Operator | Mean paired gain | Positive datasets |", "   |---|---:|---:|", *operator_lines,
+        "2. **Does conditional relation utility remain after degree and normalized-weight matching?**",
+        f"   Registered Gate A: `{gate_a['status']}`. Under FIXED_NORM_MASK, the low-similarity/high-novelty group had positive validation cross-entropy increase beyond 20 exact matched controls in {len(supported_list)}/5 datasets ({supported_ds}); ele-fashion did not. This is a frozen functional diagnostic, not retrained valid-operator performance.",
+        "   | Dataset | Target ΔCE | Matched-control ΔCE | Target−control ΔCE | Matched seeds |", "   |---|---:|---:|---:|---:|", *p8_lines,
+        f"   Novelty-only validation utility prediction exceeded similarity-only in {len(gate_a['datasets_novelty_predictability_gt_similarity'])}/5 datasets ({novelty_ds}); the average correlations remain small. Gate A also required a modality difference.",
+        "3. **What best describes low-similarity useful edges?**",
+        "   The fixed-mask low-similarity/high-novelty category is the strongest consistent candidate: it was positive against matched controls in four datasets. The separate embeddedness splits do not show a consistent cross-dataset ordering, so these data do not identify structural bridges or establish semantic complementarity. See `low_similarity_edge_explanation.csv` and `conditional_relation_utility.csv`.",
         "4. **Is relation utility modality-dependent?**",
-        f"   Gate A modality check: `{gate_a['checks']['modality_specific_utility_differs']}`.",
-        "5. **Can self-versus-structure utility be predicted from observable signals?**",
-        f"   Gate B: `{gate_b['status']}`; see `self_structure_selector.csv` and `utility_predictability.csv`.",
+        f"   Text and Visual fixed-mask utility means differed for the same joint low-similarity/high-novelty edges in {len(modality_ds.split(', '))}/5 datasets ({modality_ds}); the stronger modality changed by dataset.",
+        "   | Dataset | U_text ΔCE | U_visual ΔCE | U_text−U_visual ΔCE |", "   |---|---:|---:|---:|", *modality_lines,
+        "5. **Can self-versus-structure utility be predicted from observable node signals?**",
+        f"   Gate B: `{gate_b['status']}`. The train-only logistic selector averaged {100*float(gate_b.get('mean_gain_over_best_train_selected_simple_reference', float('nan'))):+.3f} pp against the strongest Train-selected simple reference, with positive dataset means in {gate_b.get('positive_datasets',0)}/5. Oracle headroom averaged {100*float(gate_b.get('oracle_headroom_mean', float('nan'))):.3f} pp, so a simple selector did not realize the available oracle gain.",
         "6. **Can modality reliability be predicted?**",
-        f"   Gate C: `{gate_c['status']}`; see `modality_selector.csv` and `utility_predictability.csv`.",
-        "7. **Does real topology outperform degree-preserving rewiring?**",
-        "   See `topology_reality_check.csv`; validation comparison is primary, test descriptive only.",
-        "8. **Which problem areas meet the frozen evidence gates?**",
-        f"   A={gate_a['status']}; B={gate_b['status']}; C={gate_c['status']}; anchoring={operator.get('gate', 'NOT_RUN')}.",
-        "", "## Gate rules", "",
-        "Gate A requires at least 3/5 datasets with positive low-similarity/high-novelty utility beyond exact matched-control means under FIXED_NORM_MASK, novelty-only validation predictability exceeding similarity-only in at least 3/5 datasets, and text/visual utility means differing by more than 1e-4 in at least 3/5 datasets.",
-        "Gate B/C compare the learned train-only selector with the strongest non-learned simple reference selected by Train accuracy among static expert choice, confidence, entropy, and uniform_plain. They require at least 0.30 percentage points mean validation gain, positive dataset means on at least 3/5 datasets, and mean oracle headroom at least 0.30 points above the learned gain.",
-        "No node-level p-values are used. Frozen interventions are descriptive counterfactual diagnostics.", "",
+        f"   Gate C: `{gate_c['status']}`. The modality selector averaged {100*float(gate_c.get('mean_gain_over_best_train_selected_simple_reference', float('nan'))):+.3f} pp against its strongest simple reference, positive in {gate_c.get('positive_datasets',0)}/5. See `modality_selector.csv` and `modality_oracle.csv`.",
+        f"   Across G_struct utility probes, mean validation Spearman was SIMILARITY_ONLY {utility_scores['SIMILARITY_ONLY']['validation_spearman_mean']:.3f}, NOVELTY_ONLY {utility_scores['NOVELTY_ONLY']['validation_spearman_mean']:.3f}, TOPOLOGY_ONLY {utility_scores['TOPOLOGY_ONLY']['validation_spearman_mean']:.3f}; mean R² values were negative. These are weak predictive signals, not evidence for a usable routing rule.",
+        "7. **Does the real topology outperform degree-preserving rewiring?**",
+        "   Yes on Validation in all five datasets; real−rewired paired accuracy differences are:",
+        "   | Dataset | Mean real−rewired | Population std |", "   |---|---:|---:|", *topology_lines,
+        "8. **Which areas reached their preregistered gate?**",
+        f"   Conditional relation utility: `{gate_a['status']}`; adaptive self/structure: `{gate_b['status']}`; adaptive modality arbitration: `{gate_c['status']}`; anchoring transfer: `{operator.get('gate', 'NOT_RUN')}`. The evidence does not automatically freeze a model design or paper claim.",
+        "", "## Boundaries", "",
+        "Gate A requires 3/5 datasets with positive low-similarity/high-novelty utility beyond exact controls under FIXED_NORM_MASK, novelty-only validation predictability above similarity-only in 3/5, and text/visual utility differences in 3/5. Gate B/C require at least +0.30 pp mean accuracy over the strongest non-learned simple reference selected by Train accuracy, positive gains in 3/5 datasets, and oracle headroom at least 0.30 pp larger than learned gain.",
+        "`FIXED_NORM_MASK` and `RENORMALIZED_DELETE` are frozen-checkpoint interventions; neither is a trained model comparison. No node-level p-values are used. Same-label edge values are descriptive only and are excluded from selectors, features, and group construction.",
+        "", "## Output map", "",
+        "Operator: `operator_transfer.csv`, `operator_transfer_paired.csv`, `operator_transfer_report.md`; interventions: `semantic_utility_deconfounded.csv`, `similarity_novelty_intervention.csv`, `low_similarity_edge_explanation.csv`, `conditional_relation_utility.csv`, `modality_specific_edge_utility.csv`; selectors: `self_structure_oracle.csv`, `self_structure_selector.csv`, `modality_oracle.csv`, `modality_selector.csv`, `utility_predictability.csv`; topology: `topology_reality_check.csv`, `topology_reality_check_summary.csv`.",
+        "Raw per-node deltas are gzip-compressed under `outputs/problem_deep_dive_v1/node_intervention_effects/`; their SHA-256 manifest is committed as `node_intervention_effects_manifest.csv`. No raw node table is committed.", "",
     ]
     (RESULTS / "problem_deep_dive_report.md").write_text("\n".join(lines), encoding="utf-8")
     return payload

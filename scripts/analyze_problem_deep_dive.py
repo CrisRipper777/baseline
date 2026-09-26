@@ -451,6 +451,18 @@ def _topology_analysis() -> list[dict[str, Any]]:
                          "real_test_accuracy_descriptive": a["test_acc"],
                          "rewired_test_accuracy_descriptive": b["test_acc"]})
     _write_csv(RESULTS / "topology_reality_check.csv", rows)
+    summary = []
+    for dataset in DATASETS:
+        selected = [r for r in rows if r["dataset"] == dataset]
+        if not selected:
+            continue
+        for metric in ("real_minus_rewired_val_accuracy", "real_minus_rewired_val_macro_f1"):
+            values = [float(r[metric]) for r in selected]
+            summary.append({"dataset": dataset, "comparison": metric,
+                            "mean": float(np.mean(values)),
+                            "population_std": float(np.std(values, ddof=0)),
+                            "runs": len(values), "primary_split": "validation"})
+    _write_csv(RESULTS / "topology_reality_check_summary.csv", summary)
     return rows
 
 

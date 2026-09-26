@@ -1,0 +1,11 @@
+dataset,comparison,mean,population_std,runs,primary_split
+Movies,real_minus_rewired_val_accuracy,0.08828230698903401,0.0013488035197855885,3,validation
+Movies,real_minus_rewired_val_macro_f1,0.21655749417348116,0.01696639272038827,3,validation
+Toys,real_minus_rewired_val_accuracy,0.08601111173629761,0.0034676774203652714,3,validation
+Toys,real_minus_rewired_val_macro_f1,0.10031094828837277,0.009805079315206779,3,validation
+Grocery,real_minus_rewired_val_accuracy,0.0807223121325175,0.005272688446451001,3,validation
+Grocery,real_minus_rewired_val_macro_f1,0.10526294619575312,0.025571669951164007,3,validation
+ele-fashion,real_minus_rewired_val_accuracy,0.019671976566314697,0.0013781679912525683,3,validation
+ele-fashion,real_minus_rewired_val_macro_f1,0.050195716530120414,0.011422650686608438,3,validation
+Reddit-S,real_minus_rewired_val_accuracy,0.03732828299204508,0.00014830071096033246,3,validation
+Reddit-S,real_minus_rewired_val_macro_f1,0.06103827709596762,0.002668802170441418,3,validation

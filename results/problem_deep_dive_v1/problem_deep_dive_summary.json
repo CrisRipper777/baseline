@@ -1,0 +1,809 @@
+{
+  "study": "D3 Principle Generalization & Problem Causal Deep-Dive",
+  "source_commit": "d31b095faa4f98538e60cfac293a831138dde3db",
+  "datasets": [
+    "Movies",
+    "Toys",
+    "Grocery",
+    "ele-fashion",
+    "Reddit-S"
+  ],
+  "task": "NC only",
+  "analysis_splits": [
+    "train",
+    "validation"
+  ],
+  "test_usage": "descriptive metrics only for newly retrained formal controls; no research decision uses test",
+  "formal_training": {
+    "preflight_jobs": 5,
+    "operator_transfer_jobs": 20,
+    "rewired_uniform_jobs": 5,
+    "formal_runs": 75,
+    "internal_seeds": [
+      42,
+      43,
+      44
+    ],
+    "completed": true
+  },
+  "gate_A_conditional_relational_utility": {
+    "status": "STRONG_SUPPORT",
+    "checks": {
+      "fixed_mask_degree_weight_matched_utility": true,
+      "novelty_predictability_exceeds_similarity": true,
+      "modality_specific_utility_differs": true
+    },
+    "datasets_low_similarity_high_novelty_positive_vs_matched": [
+      "Grocery",
+      "Movies",
+      "Reddit-S",
+      "Toys"
+    ],
+    "datasets_matching_failed_or_incomplete": [],
+    "datasets_novelty_predictability_gt_similarity": [
+      "Movies",
+      "Toys",
+      "Reddit-S"
+    ],
+    "datasets_text_visual_utility_different": [
+      "Grocery",
+      "Movies",
+      "Reddit-S",
+      "Toys",
+      "ele-fashion"
+    ],
+    "datasets_modality_matching_failed_or_incomplete": []
+  },
+  "gate_B_adaptive_self_structure": {
+    "status": "MIXED",
+    "mean_gain_over_best_train_selected_simple_reference": -0.007113135398491897,
+    "positive_datasets": 0,
+    "oracle_headroom_mean": 0.05283726831295313,
+    "oracle_headroom_rule": "oracle headroom >= learned gain + 0.003 accuracy",
+    "per_dataset": {
+      "Grocery": {
+        "learned_minus_best_train_selected_simple_reference": -0.0030258662762323216,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "best_static_train_selected",
+          "uniform"
+        ],
+        "oracle_headroom": 0.05319668130795511
+      },
+      "Movies": {
+        "learned_minus_best_train_selected_simple_reference": -0.015696860627874416,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "best_static_train_selected",
+          "uniform"
+        ],
+        "oracle_headroom": 0.09888022395520894
+      },
+      "Reddit-S": {
+        "learned_minus_best_train_selected_simple_reference": -0.01017091328510015,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "best_static_train_selected",
+          "uniform"
+        ],
+        "oracle_headroom": 0.02285834119744153
+      },
+      "Toys": {
+        "learned_minus_best_train_selected_simple_reference": -0.006603849561085617,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "best_static_train_selected",
+          "uniform"
+        ],
+        "oracle_headroom": 0.06934042039139891
+      },
+      "ele-fashion": {
+        "learned_minus_best_train_selected_simple_reference": -6.81872421669875e-05,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "best_static_train_selected"
+        ],
+        "oracle_headroom": 0.019910674712761162
+      }
+    }
+  },
+  "gate_C_adaptive_modality_arbitration": {
+    "status": "MIXED",
+    "mean_gain_over_best_train_selected_simple_reference": -0.017381288021864658,
+    "positive_datasets": 0,
+    "oracle_headroom_mean": 0.031147169210881474,
+    "oracle_headroom_rule": "oracle headroom >= learned gain + 0.003 accuracy",
+    "per_dataset": {
+      "Grocery": {
+        "learned_minus_best_train_selected_simple_reference": -0.03182040019521722,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "confidence",
+          "uniform"
+        ],
+        "oracle_headroom": 0.022449975597852556
+      },
+      "Movies": {
+        "learned_minus_best_train_selected_simple_reference": -0.02629474105178964,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "uniform"
+        ],
+        "oracle_headroom": 0.06428714257148575
+      },
+      "Reddit-S": {
+        "learned_minus_best_train_selected_simple_reference": -0.005452448359022773,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "best_static_train_selected",
+          "uniform"
+        ],
+        "oracle_headroom": 0.01855929537590432
+      },
+      "Toys": {
+        "learned_minus_best_train_selected_simple_reference": -0.014576789884835314,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "uniform"
+        ],
+        "oracle_headroom": 0.03567689458001133
+      },
+      "ele-fashion": {
+        "learned_minus_best_train_selected_simple_reference": -0.008762060618458337,
+        "positive": false,
+        "best_simple_reference_methods": [
+          "uniform"
+        ],
+        "oracle_headroom": 0.014762537929153422
+      }
+    }
+  },
+  "anchoring_transfer": {
+    "gate": "OPERATOR_DEPENDENT",
+    "operators": {
+      "gcn": {
+        "mean_gain": 0.0008420030275980633,
+        "positive_datasets": 3
+      },
+      "sage": {
+        "mean_gain": 0.0004814028739929201,
+        "positive_datasets": 2
+      }
+    },
+    "rows": [
+      {
+        "dataset": "Movies",
+        "operator": "gcn",
+        "deep_val_accuracy_mean": 0.5237952470779419,
+        "deep_val_accuracy_population_std": 0.0005098112227041171,
+        "anchored25_val_accuracy_mean": 0.5272945364316305,
+        "anchored25_val_accuracy_population_std": 0.003557388232859044,
+        "deep_val_macro_f1_mean": 0.42608299378644293,
+        "anchored25_val_macro_f1_mean": 0.42264271310574353,
+        "anchored25_minus_deep_mean": 0.003499289353688558,
+        "anchored25_minus_deep_population_std": 0.003233544601020853,
+        "positive_seed_pairs": 2,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Movies",
+        "operator": "sage",
+        "deep_val_accuracy_mean": 0.4077184597651164,
+        "deep_val_accuracy_population_std": 0.04615720180006374,
+        "anchored25_val_accuracy_mean": 0.417416512966156,
+        "anchored25_val_accuracy_population_std": 0.03169097117724866,
+        "deep_val_macro_f1_mean": 0.09542444669751494,
+        "anchored25_val_macro_f1_mean": 0.12349521198285916,
+        "anchored25_minus_deep_mean": 0.009698053201039633,
+        "anchored25_minus_deep_population_std": 0.016230676063859386,
+        "positive_seed_pairs": 2,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Toys",
+        "operator": "gcn",
+        "deep_val_accuracy_mean": 0.7823145786921183,
+        "deep_val_accuracy_population_std": 0.0021966977754155036,
+        "anchored25_val_accuracy_mean": 0.7834420601526896,
+        "anchored25_val_accuracy_population_std": 0.0018645113226158732,
+        "deep_val_macro_f1_mean": 0.7461336735815762,
+        "anchored25_val_macro_f1_mean": 0.7492165609031746,
+        "anchored25_minus_deep_mean": 0.001127481460571289,
+        "anchored25_minus_deep_population_std": 0.002311784946910181,
+        "positive_seed_pairs": 1,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Toys",
+        "operator": "sage",
+        "deep_val_accuracy_mean": 0.7827977538108826,
+        "deep_val_accuracy_population_std": 0.0016147141710290691,
+        "anchored25_val_accuracy_mean": 0.7827977736790975,
+        "anchored25_val_accuracy_population_std": 0.002782808897734931,
+        "deep_val_macro_f1_mean": 0.7557516001018397,
+        "anchored25_val_macro_f1_mean": 0.7525964669673568,
+        "anchored25_minus_deep_mean": 1.9868214925130207e-08,
+        "anchored25_minus_deep_population_std": 0.004393373698662362,
+        "positive_seed_pairs": 2,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "gcn",
+        "deep_val_accuracy_mean": 0.797266960144043,
+        "deep_val_accuracy_population_std": 0.0032461186826309046,
+        "anchored25_val_accuracy_mean": 0.7964860995610555,
+        "anchored25_val_accuracy_population_std": 0.0023057047933501794,
+        "deep_val_macro_f1_mean": 0.7129319465287417,
+        "anchored25_val_macro_f1_mean": 0.6999814007303252,
+        "anchored25_minus_deep_mean": -0.0007808605829874674,
+        "anchored25_minus_deep_population_std": 0.0033158056018169043,
+        "positive_seed_pairs": 2,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "sage",
+        "deep_val_accuracy_mean": 0.8131771485010783,
+        "deep_val_accuracy_population_std": 0.002898804044781277,
+        "anchored25_val_accuracy_mean": 0.8081015348434448,
+        "anchored25_val_accuracy_population_std": 0.002488539920884235,
+        "deep_val_macro_f1_mean": 0.7380824264241289,
+        "anchored25_val_macro_f1_mean": 0.7374740679748931,
+        "anchored25_minus_deep_mean": -0.005075613657633464,
+        "anchored25_minus_deep_population_std": 0.0007685564894028702,
+        "positive_seed_pairs": 0,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "gcn",
+        "deep_val_accuracy_mean": 0.8570454518000284,
+        "deep_val_accuracy_population_std": 0.0008691989305615199,
+        "anchored25_val_accuracy_mean": 0.8564658761024475,
+        "anchored25_val_accuracy_population_std": 0.0008571062697728369,
+        "deep_val_macro_f1_mean": 0.7282077450075636,
+        "anchored25_val_macro_f1_mean": 0.7208096554939042,
+        "anchored25_minus_deep_mean": -0.0005795756975809733,
+        "anchored25_minus_deep_population_std": 0.00045994980288847947,
+        "positive_seed_pairs": 0,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "sage",
+        "deep_val_accuracy_mean": 0.871126115322113,
+        "deep_val_accuracy_population_std": 0.0010920683312705595,
+        "anchored25_val_accuracy_mean": 0.870273768901825,
+        "anchored25_val_accuracy_population_std": 0.0012536158621080321,
+        "deep_val_macro_f1_mean": 0.7431033649465825,
+        "anchored25_val_macro_f1_mean": 0.7338220011920299,
+        "anchored25_minus_deep_mean": -0.0008523464202880859,
+        "anchored25_minus_deep_population_std": 0.0015315695164994797,
+        "positive_seed_pairs": 1,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "gcn",
+        "deep_val_accuracy_mean": 0.9409667452176412,
+        "deep_val_accuracy_population_std": 0.0018580343980836875,
+        "anchored25_val_accuracy_mean": 0.9419104258219401,
+        "anchored25_val_accuracy_population_std": 0.00029657332402165766,
+        "deep_val_macro_f1_mean": 0.9022012656051738,
+        "anchored25_val_macro_f1_mean": 0.903869986614381,
+        "anchored25_minus_deep_mean": 0.0009436806042989095,
+        "anchored25_minus_deep_population_std": 0.001562304927958727,
+        "positive_seed_pairs": 1,
+        "seed_pairs": 3
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "sage",
+        "deep_val_accuracy_mean": 0.9569046894709269,
+        "deep_val_accuracy_population_std": 0.0011195453297014012,
+        "anchored25_val_accuracy_mean": 0.9555415908495585,
+        "anchored25_val_accuracy_population_std": 0.0011581684454137434,
+        "deep_val_macro_f1_mean": 0.9218390112532345,
+        "anchored25_val_macro_f1_mean": 0.9192881148987496,
+        "anchored25_minus_deep_mean": -0.0013630986213684082,
+        "anchored25_minus_deep_population_std": 0.0017482834943624607,
+        "positive_seed_pairs": 1,
+        "seed_pairs": 3
+      }
+    ],
+    "paired_rows": [
+      {
+        "dataset": "Movies",
+        "operator": "gcn",
+        "seed": 42,
+        "deep_val_accuracy": 0.5239952206611633,
+        "anchored25_val_accuracy": 0.5317936539649963,
+        "val_accuracy_gain": 0.007798433303833008,
+        "deep_val_macro_f1": 0.4581455037516117,
+        "anchored25_val_macro_f1": 0.4097783366576585,
+        "val_macro_f1_gain": -0.04836716709395322,
+        "test_accuracy_descriptive_gain": 0.00029987096786499023
+      },
+      {
+        "dataset": "Movies",
+        "operator": "gcn",
+        "seed": 43,
+        "deep_val_accuracy": 0.5242951512336731,
+        "anchored25_val_accuracy": 0.5269945859909058,
+        "val_accuracy_gain": 0.002699434757232666,
+        "deep_val_macro_f1": 0.40345866667716407,
+        "anchored25_val_macro_f1": 0.4399280433375893,
+        "val_macro_f1_gain": 0.03646937666042521,
+        "test_accuracy_descriptive_gain": -0.005097448825836182
+      },
+      {
+        "dataset": "Movies",
+        "operator": "gcn",
+        "seed": 44,
+        "deep_val_accuracy": 0.5230953693389893,
+        "anchored25_val_accuracy": 0.5230953693389893,
+        "val_accuracy_gain": 0.0,
+        "deep_val_macro_f1": 0.416644810930553,
+        "anchored25_val_macro_f1": 0.41822175932198274,
+        "val_macro_f1_gain": 0.0015769483914297444,
+        "test_accuracy_descriptive_gain": -0.01469266414642334
+      },
+      {
+        "dataset": "Movies",
+        "operator": "sage",
+        "seed": 42,
+        "deep_val_accuracy": 0.4553089439868927,
+        "anchored25_val_accuracy": 0.4436112642288208,
+        "val_accuracy_gain": -0.0116976797580719,
+        "deep_val_macro_f1": 0.1300227561851352,
+        "anchored25_val_macro_f1": 0.1268985752898687,
+        "val_macro_f1_gain": -0.003124180895266504,
+        "test_accuracy_descriptive_gain": -0.012293875217437744
+      },
+      {
+        "dataset": "Movies",
+        "operator": "sage",
+        "seed": 43,
+        "deep_val_accuracy": 0.4226154685020447,
+        "anchored25_val_accuracy": 0.4358128309249878,
+        "val_accuracy_gain": 0.013197362422943115,
+        "deep_val_macro_f1": 0.1150594576644834,
+        "anchored25_val_macro_f1": 0.13206849784550376,
+        "val_macro_f1_gain": 0.017009040181020355,
+        "test_accuracy_descriptive_gain": 0.021589189767837524
+      },
+      {
+        "dataset": "Movies",
+        "operator": "sage",
+        "seed": 44,
+        "deep_val_accuracy": 0.34523096680641174,
+        "anchored25_val_accuracy": 0.3728254437446594,
+        "val_accuracy_gain": 0.02759447693824768,
+        "deep_val_macro_f1": 0.04119112624292626,
+        "anchored25_val_macro_f1": 0.11151856281320498,
+        "val_macro_f1_gain": 0.07032743657027872,
+        "test_accuracy_descriptive_gain": 0.025187432765960693
+      },
+      {
+        "dataset": "Toys",
+        "operator": "gcn",
+        "seed": 42,
+        "deep_val_accuracy": 0.7818313837051392,
+        "anchored25_val_accuracy": 0.780864953994751,
+        "val_accuracy_gain": -0.0009664297103881836,
+        "deep_val_macro_f1": 0.7407444306937236,
+        "anchored25_val_macro_f1": 0.7479564633232312,
+        "val_macro_f1_gain": 0.0072120326295075365,
+        "test_accuracy_descriptive_gain": -0.0012080073356628418
+      },
+      {
+        "dataset": "Toys",
+        "operator": "gcn",
+        "seed": 43,
+        "deep_val_accuracy": 0.785213828086853,
+        "anchored25_val_accuracy": 0.785213828086853,
+        "val_accuracy_gain": 0.0,
+        "deep_val_macro_f1": 0.745173074629927,
+        "anchored25_val_macro_f1": 0.7477059628784642,
+        "val_macro_f1_gain": 0.0025328882485372572,
+        "test_accuracy_descriptive_gain": -0.003140866756439209
+      },
+      {
+        "dataset": "Toys",
+        "operator": "gcn",
+        "seed": 44,
+        "deep_val_accuracy": 0.7798985242843628,
+        "anchored25_val_accuracy": 0.7842473983764648,
+        "val_accuracy_gain": 0.004348874092102051,
+        "deep_val_macro_f1": 0.7524835154210782,
+        "anchored25_val_macro_f1": 0.7519872565078279,
+        "val_macro_f1_gain": -0.0004962589132502249,
+        "test_accuracy_descriptive_gain": -0.002416074275970459
+      },
+      {
+        "dataset": "Toys",
+        "operator": "sage",
+        "seed": 42,
+        "deep_val_accuracy": 0.7811065316200256,
+        "anchored25_val_accuracy": 0.7859386205673218,
+        "val_accuracy_gain": 0.004832088947296143,
+        "deep_val_macro_f1": 0.7542762018813091,
+        "anchored25_val_macro_f1": 0.7594940565563566,
+        "val_macro_f1_gain": 0.00521785467504754,
+        "test_accuracy_descriptive_gain": -0.003865659236907959
+      },
+      {
+        "dataset": "Toys",
+        "operator": "sage",
+        "seed": 43,
+        "deep_val_accuracy": 0.7823145389556885,
+        "anchored25_val_accuracy": 0.7832809686660767,
+        "val_accuracy_gain": 0.0009664297103881836,
+        "deep_val_macro_f1": 0.7555380277383983,
+        "anchored25_val_macro_f1": 0.7558786242102946,
+        "val_macro_f1_gain": 0.00034059647189632614,
+        "test_accuracy_descriptive_gain": -0.0019328594207763672
+      },
+      {
+        "dataset": "Toys",
+        "operator": "sage",
+        "seed": 44,
+        "deep_val_accuracy": 0.7849721908569336,
+        "anchored25_val_accuracy": 0.779173731803894,
+        "val_accuracy_gain": -0.005798459053039551,
+        "deep_val_macro_f1": 0.7574405706858118,
+        "anchored25_val_macro_f1": 0.7424167201354192,
+        "val_macro_f1_gain": -0.015023850550392681,
+        "test_accuracy_descriptive_gain": -0.004590451717376709
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "gcn",
+        "seed": 42,
+        "deep_val_accuracy": 0.7926793694496155,
+        "anchored25_val_accuracy": 0.7953147888183594,
+        "val_accuracy_gain": 0.0026354193687438965,
+        "deep_val_macro_f1": 0.7041487747612762,
+        "anchored25_val_macro_f1": 0.682914495288662,
+        "val_macro_f1_gain": -0.021234279472614248,
+        "test_accuracy_descriptive_gain": 0.006149351596832275
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "gcn",
+        "seed": 43,
+        "deep_val_accuracy": 0.7997071743011475,
+        "anchored25_val_accuracy": 0.7944363355636597,
+        "val_accuracy_gain": -0.005270838737487793,
+        "deep_val_macro_f1": 0.7125215113422237,
+        "anchored25_val_macro_f1": 0.7042303021811889,
+        "val_macro_f1_gain": -0.008291209161034874,
+        "test_accuracy_descriptive_gain": -0.007613480091094971
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "gcn",
+        "seed": 44,
+        "deep_val_accuracy": 0.799414336681366,
+        "anchored25_val_accuracy": 0.7997071743011475,
+        "val_accuracy_gain": 0.00029283761978149414,
+        "deep_val_macro_f1": 0.7221255534827252,
+        "anchored25_val_macro_f1": 0.7127994047211249,
+        "val_macro_f1_gain": -0.009326148761600317,
+        "test_accuracy_descriptive_gain": 0.012005865573883057
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "sage",
+        "seed": 42,
+        "deep_val_accuracy": 0.8152269124984741,
+        "anchored25_val_accuracy": 0.8105417490005493,
+        "val_accuracy_gain": -0.004685163497924805,
+        "deep_val_macro_f1": 0.7421072025222256,
+        "anchored25_val_macro_f1": 0.7395754171403417,
+        "val_macro_f1_gain": -0.002531785381883922,
+        "test_accuracy_descriptive_gain": -0.001756906509399414
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "sage",
+        "seed": 43,
+        "deep_val_accuracy": 0.8090776205062866,
+        "anchored25_val_accuracy": 0.8046852350234985,
+        "val_accuracy_gain": -0.004392385482788086,
+        "deep_val_macro_f1": 0.7365333146496973,
+        "anchored25_val_macro_f1": 0.7315413427447378,
+        "val_macro_f1_gain": -0.00499197190495948,
+        "test_accuracy_descriptive_gain": -0.01259148120880127
+      },
+      {
+        "dataset": "Grocery",
+        "operator": "sage",
+        "seed": 44,
+        "deep_val_accuracy": 0.8152269124984741,
+        "anchored25_val_accuracy": 0.8090776205062866,
+        "val_accuracy_gain": -0.0061492919921875,
+        "deep_val_macro_f1": 0.7356067621004636,
+        "anchored25_val_macro_f1": 0.7413054440395997,
+        "val_macro_f1_gain": 0.005698681939136141,
+        "test_accuracy_descriptive_gain": 0.0026354193687438965
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "gcn",
+        "seed": 42,
+        "deep_val_accuracy": 0.8567045331001282,
+        "anchored25_val_accuracy": 0.8555794358253479,
+        "val_accuracy_gain": -0.0011250972747802734,
+        "deep_val_macro_f1": 0.728763722361916,
+        "anchored25_val_macro_f1": 0.7209343667005071,
+        "val_macro_f1_gain": -0.007829355661408854,
+        "test_accuracy_descriptive_gain": -0.0011250972747802734
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "gcn",
+        "seed": 43,
+        "deep_val_accuracy": 0.8561931252479553,
+        "anchored25_val_accuracy": 0.8561931252479553,
+        "val_accuracy_gain": 0.0,
+        "deep_val_macro_f1": 0.726761427828614,
+        "anchored25_val_macro_f1": 0.7218376380995228,
+        "val_macro_f1_gain": -0.0049237897290911325,
+        "test_accuracy_descriptive_gain": -0.0011250972747802734
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "gcn",
+        "seed": 44,
+        "deep_val_accuracy": 0.858238697052002,
+        "anchored25_val_accuracy": 0.8576250672340393,
+        "val_accuracy_gain": -0.0006136298179626465,
+        "deep_val_macro_f1": 0.7290980848321609,
+        "anchored25_val_macro_f1": 0.7196569616816828,
+        "val_macro_f1_gain": -0.00944112315047807,
+        "test_accuracy_descriptive_gain": -0.0010228157043457031
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "sage",
+        "seed": 42,
+        "deep_val_accuracy": 0.8695918917655945,
+        "anchored25_val_accuracy": 0.8702055811882019,
+        "val_accuracy_gain": 0.0006136894226074219,
+        "deep_val_macro_f1": 0.7355243493854222,
+        "anchored25_val_macro_f1": 0.7283773653432418,
+        "val_macro_f1_gain": -0.007146984042180393,
+        "test_accuracy_descriptive_gain": -0.0020456910133361816
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "sage",
+        "seed": 43,
+        "deep_val_accuracy": 0.8720466494560242,
+        "anchored25_val_accuracy": 0.871842086315155,
+        "val_accuracy_gain": -0.00020456314086914062,
+        "deep_val_macro_f1": 0.7387481616107446,
+        "anchored25_val_macro_f1": 0.7432151519943375,
+        "val_macro_f1_gain": 0.004466990383592884,
+        "test_accuracy_descriptive_gain": 0.0007159709930419922
+      },
+      {
+        "dataset": "ele-fashion",
+        "operator": "sage",
+        "seed": 44,
+        "deep_val_accuracy": 0.8717398047447205,
+        "anchored25_val_accuracy": 0.8687736392021179,
+        "val_accuracy_gain": -0.002966165542602539,
+        "deep_val_macro_f1": 0.7550375838435809,
+        "anchored25_val_macro_f1": 0.7298734862385102,
+        "val_macro_f1_gain": -0.025164097605070657,
+        "test_accuracy_descriptive_gain": -0.003852665424346924
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "gcn",
+        "seed": 42,
+        "deep_val_accuracy": 0.9424347281455994,
+        "anchored25_val_accuracy": 0.9421201348304749,
+        "val_accuracy_gain": -0.0003145933151245117,
+        "deep_val_macro_f1": 0.9021515414262826,
+        "anchored25_val_macro_f1": 0.9012052562268102,
+        "val_macro_f1_gain": -0.0009462851994723742,
+        "test_accuracy_descriptive_gain": 0.00031453371047973633
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "gcn",
+        "seed": 43,
+        "deep_val_accuracy": 0.9421201348304749,
+        "anchored25_val_accuracy": 0.9421201348304749,
+        "val_accuracy_gain": 0.0,
+        "deep_val_macro_f1": 0.9035799032190497,
+        "anchored25_val_macro_f1": 0.9038224093143448,
+        "val_macro_f1_gain": 0.00024250609529508083,
+        "test_accuracy_descriptive_gain": 0.0034601688385009766
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "gcn",
+        "seed": 44,
+        "deep_val_accuracy": 0.9383453726768494,
+        "anchored25_val_accuracy": 0.9414910078048706,
+        "val_accuracy_gain": 0.0031456351280212402,
+        "deep_val_macro_f1": 0.9008723521701893,
+        "anchored25_val_macro_f1": 0.9065822943019877,
+        "val_macro_f1_gain": 0.005709942131798318,
+        "test_accuracy_descriptive_gain": 0.0037748217582702637
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "sage",
+        "seed": 42,
+        "deep_val_accuracy": 0.9575338363647461,
+        "anchored25_val_accuracy": 0.9569047093391418,
+        "val_accuracy_gain": -0.000629127025604248,
+        "deep_val_macro_f1": 0.9229209393173592,
+        "anchored25_val_macro_f1": 0.9239597650540693,
+        "val_macro_f1_gain": 0.0010388257367101028,
+        "test_accuracy_descriptive_gain": 0.0006291866302490234
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "sage",
+        "seed": 43,
+        "deep_val_accuracy": 0.9553318619728088,
+        "anchored25_val_accuracy": 0.9556464552879333,
+        "val_accuracy_gain": 0.0003145933151245117,
+        "deep_val_macro_f1": 0.9192029055796533,
+        "anchored25_val_macro_f1": 0.9170979394778385,
+        "val_macro_f1_gain": -0.0021049661018148758,
+        "test_accuracy_descriptive_gain": 0.000629127025604248
+      },
+      {
+        "dataset": "Reddit-S",
+        "operator": "sage",
+        "seed": 44,
+        "deep_val_accuracy": 0.9578483700752258,
+        "anchored25_val_accuracy": 0.9540736079216003,
+        "val_accuracy_gain": -0.0037747621536254883,
+        "deep_val_macro_f1": 0.923393188862691,
+        "anchored25_val_macro_f1": 0.9168066401643415,
+        "val_macro_f1_gain": -0.006586548698349404,
+        "test_accuracy_descriptive_gain": -0.0018873810768127441
+      }
+    ]
+  },
+  "P8_fixed_mask_low_similarity_high_novelty": {
+    "Movies": {
+      "target_loss_increase_mean": 0.004275282224019368,
+      "matched_control_loss_increase_mean": 0.002386008699735006,
+      "target_minus_control_mean": 0.0018892735242843621,
+      "matched_runs": 3
+    },
+    "Toys": {
+      "target_loss_increase_mean": 0.020026336113611858,
+      "matched_control_loss_increase_mean": 0.010386915504932403,
+      "target_minus_control_mean": 0.009639420608679453,
+      "matched_runs": 3
+    },
+    "Grocery": {
+      "target_loss_increase_mean": 0.010397036870320639,
+      "matched_control_loss_increase_mean": 0.003772461911042531,
+      "target_minus_control_mean": 0.006624574959278107,
+      "matched_runs": 3
+    },
+    "ele-fashion": {
+      "target_loss_increase_mean": -0.005394955476125081,
+      "matched_control_loss_increase_mean": -0.004181955258051554,
+      "target_minus_control_mean": -0.001213000218073527,
+      "matched_runs": 3
+    },
+    "Reddit-S": {
+      "target_loss_increase_mean": 0.012044154107570648,
+      "matched_control_loss_increase_mean": -0.0007062188039223353,
+      "target_minus_control_mean": 0.012750372911492983,
+      "matched_runs": 3
+    }
+  },
+  "modality_specific_fixed_mask_utility": {
+    "Movies": {
+      "text_uniform": 0.02098528544108073,
+      "visual_uniform": 0.022861242294311523,
+      "text_minus_visual": -0.0018759568532307931
+    },
+    "Toys": {
+      "text_uniform": 0.029944380124409992,
+      "visual_uniform": 0.03497383991877238,
+      "text_minus_visual": -0.005029459794362385
+    },
+    "Grocery": {
+      "text_uniform": 0.013294359048207601,
+      "visual_uniform": 0.02586352825164795,
+      "text_minus_visual": -0.012569169203440348
+    },
+    "ele-fashion": {
+      "text_uniform": 7.436672846476237e-05,
+      "visual_uniform": 0.009221196174621582,
+      "text_minus_visual": -0.00914682944615682
+    },
+    "Reddit-S": {
+      "text_uniform": 0.0654480333129565,
+      "visual_uniform": 0.03796820839246114,
+      "text_minus_visual": 0.027479824920495353
+    }
+  },
+  "utility_predictability_G_struct": {
+    "SIMILARITY_ONLY": {
+      "validation_spearman_mean": 0.005709663304601816,
+      "validation_r2_mean": -0.03926421943789144,
+      "sign_auroc_mean": 0.5322335053869252,
+      "finite_spearman_runs": 15
+    },
+    "TOPOLOGY_ONLY": {
+      "validation_spearman_mean": -0.04380820945113773,
+      "validation_r2_mean": -0.0345942350211518,
+      "sign_auroc_mean": 0.5669414308452492,
+      "finite_spearman_runs": 15
+    },
+    "CONFIDENCE_ONLY": {
+      "validation_spearman_mean": NaN,
+      "validation_r2_mean": -0.03702421697071974,
+      "sign_auroc_mean": 0.5,
+      "finite_spearman_runs": 0
+    },
+    "NOVELTY_ONLY": {
+      "validation_spearman_mean": 0.035639331552853606,
+      "validation_r2_mean": -0.03732428902100385,
+      "sign_auroc_mean": 0.5193051473942435,
+      "finite_spearman_runs": 15
+    },
+    "MODAL_DISAGREEMENT_ONLY": {
+      "validation_spearman_mean": NaN,
+      "validation_r2_mean": -0.03702421697071974,
+      "sign_auroc_mean": 0.5,
+      "finite_spearman_runs": 0
+    },
+    "ALL": {
+      "validation_spearman_mean": -0.01132703560490236,
+      "validation_r2_mean": -0.03681929633282667,
+      "sign_auroc_mean": 0.5947904612824585,
+      "finite_spearman_runs": 15
+    }
+  },
+  "real_minus_rewired_val_accuracy_by_dataset": {
+    "Movies": {
+      "mean": 0.08828230698903401,
+      "population_std": 0.0013488035197855885,
+      "runs": 3
+    },
+    "Toys": {
+      "mean": 0.08601111173629761,
+      "population_std": 0.0034676774203652714,
+      "runs": 3
+    },
+    "Grocery": {
+      "mean": 0.0807223121325175,
+      "population_std": 0.005272688446451001,
+      "runs": 3
+    },
+    "ele-fashion": {
+      "mean": 0.019671976566314697,
+      "population_std": 0.0013781679912525683,
+      "runs": 3
+    },
+    "Reddit-S": {
+      "mean": 0.03732828299204508,
+      "population_std": 0.00014830071096033246,
+      "runs": 3
+    }
+  },
+  "intervention_semantics": {
+    "FIXED_NORM_MASK": "frozen normalized operator with target message weights zeroed; no renormalization and no retraining",
+    "RENORMALIZED_DELETE": "remove target undirected pairs and rebuild the symmetric normalized operator; frozen checkpoint"
+  },
+  "thresholds": "semantic, novelty, and embeddedness thresholds are derived from edges whose endpoints are both in train split",
+  "raw_node_effect_manifest": "results/problem_deep_dive_v1/node_intervention_effects_manifest.csv",
+  "raw_node_effect_data_root": "outputs/problem_deep_dive_v1/node_intervention_effects"
+}
