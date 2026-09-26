@@ -1,0 +1,4 @@
+name: adaptive_relation_pilot
+hidden_dim: 256
+dropout: 0.2
+variant: h1r_dual_agg_signed
