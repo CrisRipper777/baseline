@@ -1,0 +1,4 @@
+name: relation_basis_pilot
+hidden_dim: 256
+dropout: 0.2
+variant: p0_relation_only
