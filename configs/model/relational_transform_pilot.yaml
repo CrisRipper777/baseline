@@ -1,0 +1,7 @@
+name: relational_transform_pilot
+hidden_dim: 256
+dropout: 0.2
+relation_dim: 32
+lowrank_rank: 8
+edge_chunk_size: 16384
+variant: s44_scalar_global
