@@ -25,6 +25,7 @@ SOURCE_SHA = "24c3eec6325a6606d6a4c222ab418b4e616148c1"
 OUTPUT_ROOT = ROOT / "outputs/s45_relcal_statepres_v1"
 RESULT_ROOT = ROOT / "results/s45_relcal_statepres_v1"
 G0_ROOT = RESULT_ROOT / "granularity_audit"
+_DIRICHLET_CACHE: dict[tuple[int, int, int, tuple[int, ...]], tuple[torch.Tensor, torch.Tensor, torch.Tensor]] = {}
 
 
 def _config(dataset: str, model_name: str, variant: str, seed: int = 42):
@@ -454,26 +455,51 @@ def _row_operator_audit(p, p_self, p_rel, modality: str, operator, dataset, seed
 
 
 def _shuffle_by_target(raw: torch.Tensor, rows: torch.Tensor, seed: int):
-    shuffled = raw.detach().clone()
-    rows_cpu, raw_cpu = rows.detach().cpu(), raw.detach().cpu()
+    rows_cpu, raw_cpu = rows.detach().cpu().long(), raw.detach().cpu()
     generator = torch.Generator(device="cpu").manual_seed(seed)
-    for target in torch.unique_consecutive(rows_cpu):
-        index = (rows_cpu == target).nonzero().flatten()
-        if index.numel() > 1:
-            permutation = torch.randperm(index.numel(), generator=generator)
-            shuffled[index.to(shuffled.device)] = raw_cpu[index[permutation]].to(shuffled.device)
-    return shuffled
+    n_edges = rows_cpu.numel()
+    random_rank = torch.randperm(n_edges, generator=generator)
+    key = rows_cpu * max(n_edges, 1) + random_rank
+    source_order = torch.argsort(key)
+    destination_order = torch.argsort(rows_cpu, stable=True)
+    shuffled = torch.empty_like(raw_cpu)
+    shuffled[destination_order] = raw_cpu[source_order]
+    return shuffled.to(raw.device)
+
+
+def _normalized_dirichlet_energy_cached(state: torch.Tensor, edge_index: torch.Tensor) -> float:
+    """Historical normalized A+I Dirichlet energy with graph structure cached."""
+    x = state.detach().float().cpu()
+    key = (edge_index.data_ptr(), int(getattr(edge_index, "_version", 0)), x.size(0), tuple(edge_index.shape))
+    structure = _DIRICHLET_CACHE.get(key)
+    if structure is None:
+        edge = edge_index.long().cpu()
+        edge = torch.cat((edge, edge.flip(0)), dim=1)
+        edge = edge[:, edge[0] != edge[1]]
+        edge = torch.unique(edge.T, dim=0).T
+        loops = torch.arange(x.size(0), dtype=torch.long).repeat(2, 1)
+        edge = torch.cat((edge, loops), dim=1)
+        row, col = edge
+        degree = torch.zeros(x.size(0)).index_add_(0, row, torch.ones(row.numel()))
+        inv = degree.clamp_min(1).pow(-0.5)
+        structure = (row, col, inv[row] * inv[col])
+        _DIRICHLET_CACHE[key] = structure
+    row, col, weights = structure
+    px = torch.zeros_like(x)
+    px.index_add_(0, row, weights[:, None] * x[col])
+    energy = (x * (x - px)).sum().item()
+    return float(energy / max(float(x.square().sum().item()), 1e-20))
 
 
 def _geometry_rows(dataset, seed, variant, modality, states, edge_index):
-    from src.analysis.mechanism_discovery import geometry_summary, normalized_dirichlet_energy
+    from src.analysis.mechanism_discovery import geometry_summary
     rows = []
     for row in geometry_summary(states):
         order = int(row["order"])
         row.update({"dataset": dataset, "seed": seed, "variant": variant,
                     "modality": modality,
-                    "normalized_dirichlet_energy": normalized_dirichlet_energy(
-                        states[order].detach().cpu(), edge_index.cpu())})
+                    "normalized_dirichlet_energy": _normalized_dirichlet_energy_cached(
+                        states[order], edge_index)})
         rows.append(row)
     return rows
 
