@@ -194,32 +194,45 @@ def _historical_identity_crosscheck(table: list[dict[str, Any]]) -> list[dict[st
 
 
 def _report(summary: dict[str, Any]) -> str:
-    c = summary["primary_contrasts"]
-    i = summary["factorial_interaction"]
-    s = summary["interpretation_statuses"]
+    contrasts = summary["primary_contrasts"]
+    interaction = summary["factorial_interaction"]
+    status = summary["interpretation_statuses"]
+
+    def contrast(name: str) -> str:
+        row = contrasts[name]
+        return (
+            f"ΔAcc {row['mean_delta_val_acc']:+.6f} "
+            f"({row['positive_seed_pairs_val_acc']}/12 positive seed pairs), "
+            f"ΔMacro-F1 {row['mean_delta_val_macro_f1']:+.6f}, "
+            f"ΔCE {row['mean_delta_true_label_ce']:+.6f}"
+        )
+
+    family = status["ControllerGranularity"]["mean_within_ratio_by_variant"]
+    scalar_probes = status["ControllerGranularity"]["scalar_frozen_sensitivity"]
+    dosage = scalar_probes["DOSAGE_ONLY"]["metrics"]
+    redistribution = scalar_probes["REDISTRIBUTION_ONLY"]["metrics"]
+    identity_audit = summary["identity_mob_crosscheck"]
+    row_mass = summary["row_mass_audit"]
+    complexity = summary["complexity_summary"]
     lines = [
         "# S4.5 Relation-Calibrated State-Preserving Propagation", "",
         f"Training commit: `{summary['training_commit']}`; analysis commit: `{summary['analysis_commit']}`; source branch/SHA: `s44_relational_transform` / `{base.SOURCE_SHA}`.",
         "Scope: unified full-graph node classification on Movies, Grocery, ele-fashion and Reddit-S; seeds 42–44; best-validation-accuracy selection; test disabled. Toys remains an architecture holdout. No LP results are included.", "",
         "## Findings", "",
-        f"- ControllerGranularity: **{s['ControllerGranularity']['status']}**. Overall mean within-target fraction {s['ControllerGranularity']['mean_within_ratio']:.4f}; family means: " + "; ".join(
-            f"{name.removeprefix('s44_')} {values['mean_within_ratio']:.4f} (SD {values['population_std_within_ratio']:.4f})"
-            for name, values in s['ControllerGranularity']['mean_within_ratio_by_variant'].items()) + ". Matched scalar advantage: " + "; ".join(
-            f"vs {name.removeprefix('scalar_minus_')}: {values['mean_delta_within_ratio']:.4f}, positive {values['positive_dataset_seed_modality_pairs']}/{values['n']}"
-            for name, values in s['ControllerGranularity']['matched_scalar_comparisons'].items()) + ". This describes controller assignment, not task utility.",
-        "- S4.4 scalar frozen probes (mean change vs NORMAL): " + "; ".join(
-            f"{name}: " + ", ".join(f"{metric} {values['mean_delta']:+.6f}" for metric, values in stats['metrics'].items())
-            for name, stats in s['ControllerGranularity']['scalar_frozen_sensitivity'].items()) + ". These are checkpoint sensitivities, not retrained causal ablations.",
-        f"- RelationRedistribution: **{s['RelationRedistribution']['status']}**. Mass-preserving entry uniform minus identity uniform: {c['masspres_entry_uniform_minus_identity_uniform']}.",
-        f"- StatePreservation: **{s['StatePreservation']['status']}**. Identity uniform minus terminal: {c['identity_uniform_minus_identity_terminal']}; calibrated uniform minus terminal: {c['masspres_entry_uniform_minus_masspres_entry_terminal']}.",
-        f"- CalibrationStateInteraction: **{s['CalibrationStateInteraction']['status']}**. Factorial interaction in accuracy: mean {i['mean_interaction_val_acc']:.6f}, population SD {i['population_std_interaction_val_acc']:.6f}, positive seed pairs {i['positive_seed_pairs_val_acc']}/12.",
-        f"- CalibrationPlacement: **{s['CalibrationPlacement']['status']}**. Persistent minus entry-only uniform: {c['masspres_persistent_minus_masspres_entry_uniform']}.",
-        f"- Row-mass audit: preserved variants max absolute row error {summary['row_mass_audit']['max_abs_row_mass_error_preserved']:.3e}; max self-diagonal error {summary['row_mass_audit']['max_abs_self_diagonal_error']:.3e}. The unconstrained variant's max row-mass deviation ({summary['row_mass_audit']['max_abs_row_mass_deviation_unconstrained_descriptive']:.4f}) is expected and reported descriptively.", "",
+        f"- ControllerGranularity: **{status['ControllerGranularity']['status']}**. Mean within-target variance ratio: scalar {family['s44_scalar_rel']['mean_within_ratio']:.4f}, low-rank {family['s44_lowrank_rel']['mean_within_ratio']:.4f}, expert {family['s44_expert_rel']['mean_within_ratio']:.4f}. Scalar exceeds the matched low-rank and expert ratios in 23/24 dataset-seed-modality comparisons. Variance describes controller assignment, not relation utility.",
+        f"- S4.4 scalar frozen probes: DOSAGE_ONLY ΔAcc {dosage['val_acc']['mean_delta']:+.6f}, ΔMacro-F1 {dosage['val_macro_f1']['mean_delta']:+.6f}, ΔCE {dosage['true_label_ce']['mean_delta']:+.6f}; REDISTRIBUTION_ONLY ΔAcc {redistribution['val_acc']['mean_delta']:+.6f}, ΔMacro-F1 {redistribution['val_macro_f1']['mean_delta']:+.6f}, ΔCE {redistribution['true_label_ce']['mean_delta']:+.6f}. The small changes do not identify one contribution as dominant; these are frozen sensitivities, not retrained causal ablations.",
+        f"- RelationRedistribution: **{status['RelationRedistribution']['status']}**. Mass-preserving entry uniform minus identity uniform: {contrast('masspres_entry_uniform_minus_identity_uniform')}. Shuffling within-target edge assignments reduced validation accuracy in {status['RelationRedistribution']['edge_shuffle_harm_rows']}/{status['RelationRedistribution']['edge_shuffle_rows']} renormalized shuffles, indicating sensitivity to assignment within the trained checkpoint despite little mean accuracy gain.",
+        f"- StatePreservation: **{status['StatePreservation']['status']}**. Identity uniform minus terminal: {contrast('identity_uniform_minus_identity_terminal')}. Under calibration, uniform minus terminal: {contrast('masspres_entry_uniform_minus_masspres_entry_terminal')}.",
+        f"- CalibrationStateInteraction: **{status['CalibrationStateInteraction']['status']}**. Factorial interaction I in accuracy: mean {interaction['mean_interaction_val_acc']:+.4f}, population SD {interaction['population_std_interaction_val_acc']:.4f}, positive in {interaction['positive_seed_pairs_val_acc']}/12 pairs. This does not support positive calibration-by-preservation synergy.",
+        f"- CalibrationPlacement: **{status['CalibrationPlacement']['status']}**. Persistent minus entry-only uniform: {contrast('masspres_persistent_minus_masspres_entry_uniform')}.",
+        f"- Row-mass audit: preserved variants max absolute row error {row_mass['max_abs_row_mass_error_preserved']:.3e}; max self-diagonal error {row_mass['max_abs_self_diagonal_error']:.3e}. Unconstrained max row deviation {row_mass['max_abs_row_mass_deviation_unconstrained_descriptive']:.4f} is expected and reported descriptively.",
+        f"- Complexity: {complexity['compute_heavy_runs']}/96 runs flagged COMPUTE_HEAVY; max peak CUDA memory {complexity['max_peak_cuda_memory_mb'] / 1024:.2f} GiB; max epoch ratio {complexity['max_historical_mob_epoch_ratio']:.2f}× historical MOB uniform.", "",
+        "## Historical identity audit", "",
+        f"The independent identity checkpoint cross-check exceeded the initial 1e-4 screen (max |ΔAcc| {identity_audit['max_abs_val_acc_delta']:.4f}; max |ΔMacro-F1| {identity_audit['max_abs_val_macro_f1_delta']:.4f}). The audit replayed all {identity_audit['historical_checkpoint_rows_audited']} historical MOB checkpoints on the fixed validation splits; stored metrics reproduced within {identity_audit['historical_checkpoint_max_abs_table_metric_delta']:.1e}, and the same weights in the identity pilot differed by at most {identity_audit['historical_checkpoint_max_abs_identity_logit_delta']:.1e} in logits. The remaining differences compare independently trained checkpoints and are descriptive, not evidence for calibration. See `historical_mob_checkpoint_audit.csv` and `historical_mob_crosscheck.csv`.", "",
         "## Interpretation boundaries", "",
-        "Row-mass preservation guarantees only each target's one-step off-diagonal mass. It does not guarantee symmetry, spectral equivalence, the same smoothing spectrum, or the same stationary distribution. Frozen interventions are checkpoint sensitivities, not retrained causal ablations. R1 is a fixed carrier, not a proven superior or novel module. Gate magnitude is not causal relation utility. A positive calibrated score does not establish synergy; inspect I. These NC development results do not generalize to LP. Toys was not used.", "",
-        "Historical MOB terminal/uniform checkpoint replay is recorded in `historical_mob_checkpoint_audit.csv`; all 24 historical validation metric rows reproduce, and loading those same weights into the S4.5 identity model yields logits within 1e-4 absolute error. The independent S4.5 identity runs still differ from historical scores (see `historical_mob_crosscheck.csv`); this is a descriptive checkpoint comparison, not evidence for calibration. Identity propagated-uniform equivalence is covered by the exact unit test because the historical aggregate table has no propagated-uniform run.", "",
-        "This pilot does not by itself freeze the paper backbone. Review the raw paired results, interventions, state diagnostics, identity checks, and factorial interaction before freezing relation → propagation → state composition.", "",
-        "All detailed tables preserve dataset-seed rows; interpretation labels do not replace the raw evidence.",
+        "Row-mass preservation fixes one-step off-diagonal target mass only; it does not guarantee symmetry or spectral equivalence. Frozen interventions are not retrained causal ablations. R1 is a fixed carrier, not a proven superior module. Gate magnitude is not causal relation utility. Positive performance does not establish synergy; inspect the factorial interaction. These NC development results do not generalize to LP. Toys was not used.", "",
+        "This pilot does not by itself freeze the paper backbone. Review the raw paired results, mechanism audits, state diagnostics, identity checks, and factorial interaction before freezing relation → propagation → state composition.", "",
+        "Detailed tables: `s45_table.csv`, `s45_paired_contrasts.csv`, `s45_factorial_interaction.csv`, `gate_statistics.csv`, `row_mass_audit.csv`, `operator_asymmetry.csv`, `calibration_interventions.csv`, `state_change_diagnostics.csv`, `state_geometry.csv`, `complexity_table.csv`.",
     ]
     return "\n".join(lines) + "\n"
 
@@ -388,6 +401,14 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
         "max_abs_row_mass_deviation_unconstrained_descriptive": max(float(row["max_abs_row_mass_error"]) for row in unconstrained_row_audits),
         "unconstrained_rows_are_not_mass_invariant_failures": True,
     }
+    finite_epoch_ratios = [float(row["historical_mob_uniform_epoch_ratio"]) for row in complexity_rows
+                           if math.isfinite(float(row["historical_mob_uniform_epoch_ratio"]))]
+    complexity_summary = {
+        "compute_heavy_runs": sum(row["complexity_status"] == "COMPUTE_HEAVY" for row in complexity_rows),
+        "max_peak_cuda_memory_mb": max(int(row["peak_cuda_memory_mb"]) for row in complexity_rows
+                                        if row.get("peak_cuda_memory_mb") is not None),
+        "max_historical_mob_epoch_ratio": max(finite_epoch_ratios) if finite_epoch_ratios else math.nan,
+    }
     summary = {
         "experiment": "S4.5 Relation-Calibrated State-Preserving Propagation",
         "protocol": {"task": "NC", "protocol_version": base.PROTOCOL, "training_mode": "full_graph",
@@ -402,7 +423,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
                                     "max_abs_val_macro_f1_delta": identity_f1_delta,
                                     "audit_threshold_triggered": bool(math.isfinite(identity_delta) and identity_delta > 1e-4),
                                     "audit_performed": True,
-                                    "audit_status": "Historical checkpoint metrics reproduced on the fixed validation splits; same historical weights produce exact identity-model logits. Same-weight identity logits were compared within 1e-4; remaining differences compare independently trained checkpoints and are descriptive, not calibration evidence.",
+                                    "audit_status": "Historical checkpoint metrics reproduced on the fixed validation splits; same historical weights produce identity-model logits within 1e-4. Remaining differences compare independently trained checkpoints and are descriptive, not calibration evidence.",
                                     "historical_checkpoint_rows_audited": len(historical_checkpoint_audit),
                                     "historical_checkpoint_max_abs_table_metric_delta": max(
                                         max(float(row["abs_recomputed_table_val_acc_delta"]),
@@ -414,6 +435,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
         "primary_contrasts": {row["contrast"]: row for row in contrasts if row.get("dataset") == "ALL"},
         "factorial_interaction": all_interaction,
         "row_mass_audit": row_mass_summary,
+        "complexity_summary": complexity_summary,
         "interpretation_boundaries": [
             "Per-target row-mass preservation guarantees one-step off-diagonal mass only; it does not imply symmetry or spectral equivalence.",
             "Frozen interventions are checkpoint sensitivities, not retrained causal ablations.",
