@@ -1,0 +1,925 @@
+{
+  "experiment": "S4.5 Relation-Calibrated State-Preserving Propagation",
+  "protocol": {
+    "task": "NC",
+    "protocol_version": "unified_full_graph_nc_v1",
+    "training_mode": "full_graph",
+    "selection": "best_val_accuracy",
+    "base_seed": 42,
+    "run_seeds": [
+      42,
+      43,
+      44
+    ],
+    "test_evaluation": false,
+    "lp_evaluation": false,
+    "datasets": [
+      "Movies",
+      "Grocery",
+      "ele-fashion",
+      "Reddit-S"
+    ],
+    "variants": [
+      "s45_identity_terminal",
+      "s45_identity_uniform",
+      "s45_identity_propagated_uniform",
+      "s45_unconstrained_entry_uniform",
+      "s45_masspres_entry_terminal",
+      "s45_masspres_entry_uniform",
+      "s45_masspres_entry_propagated_uniform",
+      "s45_masspres_persistent_uniform"
+    ],
+    "completed_runs": 96,
+    "expected_runs": 96
+  },
+  "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659",
+  "analysis_commit": "8460c1a0368f944ffd76f6ef7b7195d609f42fdc",
+  "identity_mob_crosscheck": {
+    "rows": 24,
+    "max_abs_metric_delta": 0.03101879202380231,
+    "max_abs_val_acc_delta": 0.006298720836639404,
+    "max_abs_val_macro_f1_delta": 0.03101879202380231,
+    "audit_threshold_triggered": true,
+    "audit_performed": true,
+    "audit_status": "Historical checkpoint metrics reproduce on the fixed validation splits; same historical weights produce identity-model logits within 1e-4. Remaining differences compare independently trained checkpoints and are descriptive, not calibration evidence.",
+    "historical_checkpoint_rows_audited": 24,
+    "historical_checkpoint_max_abs_table_metric_delta": 5.960464477539063e-08,
+    "historical_checkpoint_max_abs_identity_logit_delta": 7.62939453125e-06
+  },
+  "primary_contrasts": {
+    "identity_uniform_minus_identity_propagated_uniform": {
+      "contrast": "identity_uniform_minus_identity_propagated_uniform",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": 0.01596584419409434,
+      "population_std_delta_val_acc": 0.004302280199617318,
+      "positive_seed_pairs_val_acc": 12,
+      "positive_dataset_means_val_acc": 4,
+      "mean_delta_val_macro_f1": 0.03060694036978098,
+      "population_std_delta_val_macro_f1": 0.008557161724428655,
+      "positive_seed_pairs_val_macro_f1": 12,
+      "positive_dataset_means_val_macro_f1": 4,
+      "mean_delta_true_label_ce": -0.042226398984591164,
+      "population_std_delta_true_label_ce": 0.025679570358305998,
+      "positive_seed_pairs_true_label_ce": 2,
+      "positive_dataset_means_true_label_ce": 0
+    },
+    "identity_uniform_minus_identity_terminal": {
+      "contrast": "identity_uniform_minus_identity_terminal",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": 0.029061655203501385,
+      "population_std_delta_val_acc": 0.009379756333700024,
+      "positive_seed_pairs_val_acc": 12,
+      "positive_dataset_means_val_acc": 4,
+      "mean_delta_val_macro_f1": 0.044539060063360635,
+      "population_std_delta_val_macro_f1": 0.02000496101607646,
+      "positive_seed_pairs_val_macro_f1": 12,
+      "positive_dataset_means_val_macro_f1": 4,
+      "mean_delta_true_label_ce": -0.07736464217305183,
+      "population_std_delta_true_label_ce": 0.03662189146716317,
+      "positive_seed_pairs_true_label_ce": 1,
+      "positive_dataset_means_true_label_ce": 0
+    },
+    "masspres_entry_uniform_minus_identity_uniform": {
+      "contrast": "masspres_entry_uniform_minus_identity_uniform",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": -0.00019687414169311523,
+      "population_std_delta_val_acc": 0.002547577657748571,
+      "positive_seed_pairs_val_acc": 5,
+      "positive_dataset_means_val_acc": 1,
+      "mean_delta_val_macro_f1": -0.0023394614469337085,
+      "population_std_delta_val_macro_f1": 0.010052322060325814,
+      "positive_seed_pairs_val_macro_f1": 4,
+      "positive_dataset_means_val_macro_f1": 2,
+      "mean_delta_true_label_ce": 0.01693589612841606,
+      "population_std_delta_true_label_ce": 0.041016950702198,
+      "positive_seed_pairs_true_label_ce": 7,
+      "positive_dataset_means_true_label_ce": 3
+    },
+    "masspres_entry_uniform_minus_masspres_entry_propagated_uniform": {
+      "contrast": "masspres_entry_uniform_minus_masspres_entry_propagated_uniform",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": 0.012885858615239462,
+      "population_std_delta_val_acc": 0.002231788964026873,
+      "positive_seed_pairs_val_acc": 12,
+      "positive_dataset_means_val_acc": 4,
+      "mean_delta_val_macro_f1": 0.018533398690805374,
+      "population_std_delta_val_macro_f1": 0.008790332947818119,
+      "positive_seed_pairs_val_macro_f1": 12,
+      "positive_dataset_means_val_macro_f1": 4,
+      "mean_delta_true_label_ce": -0.06660909081498782,
+      "population_std_delta_true_label_ce": 0.047253734046900954,
+      "positive_seed_pairs_true_label_ce": 2,
+      "positive_dataset_means_true_label_ce": 0
+    },
+    "masspres_entry_uniform_minus_masspres_entry_terminal": {
+      "contrast": "masspres_entry_uniform_minus_masspres_entry_terminal",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": 0.028012255827585857,
+      "population_std_delta_val_acc": 0.007062415410739061,
+      "positive_seed_pairs_val_acc": 12,
+      "positive_dataset_means_val_acc": 4,
+      "mean_delta_val_macro_f1": 0.04027631933913088,
+      "population_std_delta_val_macro_f1": 0.013528899157777007,
+      "positive_seed_pairs_val_macro_f1": 12,
+      "positive_dataset_means_val_macro_f1": 4,
+      "mean_delta_true_label_ce": -0.07374519606431325,
+      "population_std_delta_true_label_ce": 0.04621908688537179,
+      "positive_seed_pairs_true_label_ce": 1,
+      "positive_dataset_means_true_label_ce": 0
+    },
+    "masspres_persistent_minus_masspres_entry_uniform": {
+      "contrast": "masspres_persistent_minus_masspres_entry_uniform",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": -0.0011827647686004639,
+      "population_std_delta_val_acc": 0.0021931591575625816,
+      "positive_seed_pairs_val_acc": 3,
+      "positive_dataset_means_val_acc": 1,
+      "mean_delta_val_macro_f1": 0.0058978096506231885,
+      "population_std_delta_val_macro_f1": 0.007782095983743395,
+      "positive_seed_pairs_val_macro_f1": 9,
+      "positive_dataset_means_val_macro_f1": 3,
+      "mean_delta_true_label_ce": 0.02572191630800565,
+      "population_std_delta_true_label_ce": 0.030165096705399113,
+      "positive_seed_pairs_true_label_ce": 8,
+      "positive_dataset_means_true_label_ce": 3
+    },
+    "masspres_propagated_uniform_minus_identity_propagated_uniform": {
+      "contrast": "masspres_propagated_uniform_minus_identity_propagated_uniform",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": 0.0028831114371617637,
+      "population_std_delta_val_acc": 0.003960493625210169,
+      "positive_seed_pairs_val_acc": 10,
+      "positive_dataset_means_val_acc": 3,
+      "mean_delta_val_macro_f1": 0.009734080232041897,
+      "population_std_delta_val_macro_f1": 0.00889461843980274,
+      "positive_seed_pairs_val_macro_f1": 10,
+      "positive_dataset_means_val_macro_f1": 4,
+      "mean_delta_true_label_ce": 0.041318587958812714,
+      "population_std_delta_true_label_ce": 0.03404751824161801,
+      "positive_seed_pairs_true_label_ce": 10,
+      "positive_dataset_means_true_label_ce": 3
+    },
+    "unconstrained_minus_masspres_entry_uniform": {
+      "contrast": "unconstrained_minus_masspres_entry_uniform",
+      "dataset": "ALL",
+      "seed": "ALL",
+      "mean_delta_val_acc": 0.0031157732009887695,
+      "population_std_delta_val_acc": 0.004539030893858428,
+      "positive_seed_pairs_val_acc": 9,
+      "positive_dataset_means_val_acc": 3,
+      "mean_delta_val_macro_f1": 0.006078629119150553,
+      "population_std_delta_val_macro_f1": 0.01230385714874288,
+      "positive_seed_pairs_val_macro_f1": 8,
+      "positive_dataset_means_val_macro_f1": 3,
+      "mean_delta_true_label_ce": 0.003968600183725357,
+      "population_std_delta_true_label_ce": 0.046652131240207256,
+      "positive_seed_pairs_true_label_ce": 7,
+      "positive_dataset_means_true_label_ce": 3
+    }
+  },
+  "factorial_interaction": {
+    "dataset": "ALL",
+    "seed": "ALL",
+    "mean_interaction_val_acc": -0.0010493993759155273,
+    "population_std_interaction_val_acc": 0.003819908242478533,
+    "positive_seed_pairs_val_acc": 5,
+    "mean_interaction_val_macro_f1": -0.004262740724229751,
+    "population_std_interaction_val_macro_f1": 0.018867720729835627,
+    "positive_seed_pairs_val_macro_f1": 6,
+    "mean_interaction_true_label_ce": 0.003619446108738581,
+    "population_std_interaction_true_label_ce": 0.04546358895224622,
+    "positive_seed_pairs_true_label_ce": 6
+  },
+  "row_mass_audit": {
+    "preserved_rows": 96,
+    "max_abs_row_mass_error_preserved": 6.654697006780452e-07,
+    "mean_abs_row_mass_error_preserved": 5.88498524844972e-09,
+    "max_abs_self_diagonal_error": 0.0,
+    "max_abs_row_mass_deviation_unconstrained_descriptive": 15.075246004900464,
+    "unconstrained_rows_are_not_mass_invariant_failures": true
+  },
+  "interpretation_boundaries": [
+    "Per-target row-mass preservation guarantees one-step off-diagonal mass only; it does not imply symmetry or spectral equivalence.",
+    "Frozen interventions are checkpoint sensitivities, not retrained causal ablations.",
+    "R1 is a fixed experimental carrier, not a proven superior or novel module.",
+    "Gate magnitude is not causal relation utility.",
+    "Positive calibrated performance does not establish calibration-by-preservation synergy; inspect factorial interaction I.",
+    "These are development-set NC results and do not generalize to LP.",
+    "Toys was not run and remains an architecture holdout."
+  ],
+  "provenance": {
+    "source_branch": "s44_relational_transform",
+    "source_sha": "24c3eec6325a6606d6a4c222ab418b4e616148c1",
+    "training_branch": "s45_relcal_statepres",
+    "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659",
+    "checkpoint_sources_and_sha256": {
+      "Movies/42/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_terminal/best_run1.pt",
+        "sha256": "cbdef31d6869edc6203ed99fb1f61ee355e415051828334803b245b1ca648719",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_uniform/best_run1.pt",
+        "sha256": "52561e911f140274fb58a4277ed7bedbd250939804b157df4ce41d45606be0c1",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_propagated_uniform/best_run1.pt",
+        "sha256": "f19b10a6facb058710d79589c76acbe34d078b6565d9659bc6e831b3e5c1ed3c",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_unconstrained_entry_uniform/best_run1.pt",
+        "sha256": "c04fdc601cd64217171331eac7da767957b564eddab3f6dfe01aad0f22ce92d3",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_terminal/best_run1.pt",
+        "sha256": "885f48ac35477f5cf30b6a1cd4b829548241182c55add81781a343a780bb4c08",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_uniform/best_run1.pt",
+        "sha256": "b104ff49d1c804319b422d5be52f74bc8d891bec2e710c9c638a8b54b43ba193",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_propagated_uniform/best_run1.pt",
+        "sha256": "307f93dcdaf3121957632c6d696f496c229057e41877bc1e4bc7bdb460394de9",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/42/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_persistent_uniform/best_run1.pt",
+        "sha256": "29e93e23eb975f26645a4337122c42adb4515a946b1ea86b79cc66e656fe7782",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_terminal/best_run2.pt",
+        "sha256": "366c8b50e52496a86ae7edb9eda79c2004925eba0fc95cb8a5394b8aa1a8ece8",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_uniform/best_run2.pt",
+        "sha256": "fe602c9e78eaf031241dd29915bddc74f30a2aab6a7eccca3c3f01fd91552b7b",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_propagated_uniform/best_run2.pt",
+        "sha256": "42a9bd26e33fe2d2671073d14555b3f4971aaec7fd210c8da7f984ea4602d947",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_unconstrained_entry_uniform/best_run2.pt",
+        "sha256": "4b56e09bf9aef6b4ddf40c4e3b5a5c0d7f2b511018d6a8123cedaad1f7d393cf",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_terminal/best_run2.pt",
+        "sha256": "20e9340014f2c3685100a836a170f8c66956bb0f28b81b327e135c2fc169a59c",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_uniform/best_run2.pt",
+        "sha256": "d105026ee7eb766043c37960fb1189736563c5b017e17d67889ba8510f191411",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_propagated_uniform/best_run2.pt",
+        "sha256": "3a8df237358a8fcb941a3d235ae687289c62ed449091a2b912e61dad45729c87",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/43/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_persistent_uniform/best_run2.pt",
+        "sha256": "bf34ceb1aa2b4ce1ee95b3da7dbb9ab83c12064ac576017076216274fbd4187e",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_terminal/best_run3.pt",
+        "sha256": "6a9ef009e15194c46241e069735d3e1648230cb34219666b7ed1d68768e63728",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_uniform/best_run3.pt",
+        "sha256": "3f9b255b319e06e94539dc2a56d5af01352e321038273488c5be0e8b8d262e9e",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_identity_propagated_uniform/best_run3.pt",
+        "sha256": "901519a9391b8792b0165f10f4b158657f3b08b8ca3b29328ba7433b9624cdf1",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_unconstrained_entry_uniform/best_run3.pt",
+        "sha256": "d0c9d4579dbbd584963698ec7f3b8dd98df6d96e6acdaa2ac920163f44b6da50",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_terminal/best_run3.pt",
+        "sha256": "f17856e87672cb64bc5aa573dd4aa988bfd0ce5f3b1b814e2ad2496365e01b1a",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_uniform/best_run3.pt",
+        "sha256": "a4f6da522550d1d34ba83ad286a742679e9f89e5c755947c440ad6e502cc2d5a",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_entry_propagated_uniform/best_run3.pt",
+        "sha256": "f6c74d731354c07c0b4f0ead5b0bd48a63e91225ad4ada71e557a58893cb354b",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Movies/44/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Movies/s45_masspres_persistent_uniform/best_run3.pt",
+        "sha256": "d407409eef73de11dcd8592084496d6b4fedaad9604974ac89103bb4588d6750",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_terminal/best_run1.pt",
+        "sha256": "89f2fe443165b9d21e60a896151d231ff8e8308eb7e539d2a3de33bc1b01cc57",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_uniform/best_run1.pt",
+        "sha256": "99cd4186861bd8b5d5d2555fc1c68d170c1e2e298e668f7904e720eff5a24be2",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_propagated_uniform/best_run1.pt",
+        "sha256": "eb754621b815eebd383bd7950c3e23e364eaee029b37ab9c2ec653813645c2fc",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_unconstrained_entry_uniform/best_run1.pt",
+        "sha256": "c185989fde0375933d0000f5fe3d88d5fcaa5a3909b0cc7be1bc99f01385f097",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_terminal/best_run1.pt",
+        "sha256": "2f09d982a04c2fa50bb168f1e29a9922fc16f13d2426c8c888a5eac8e744e247",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_uniform/best_run1.pt",
+        "sha256": "97bd03b4801c94c3aa826a2ea0abe797c306e8f50615cbec7e6e6555be8367d0",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_propagated_uniform/best_run1.pt",
+        "sha256": "f474889006078ad7cfa77033baa5871a9a3b840309fc79375d8bdc059bb1fb5f",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/42/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_persistent_uniform/best_run1.pt",
+        "sha256": "14208b9f608e1d9199a8eededfb6d72da37b0b24aa42d7f67db260626cbf5ff7",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_terminal/best_run2.pt",
+        "sha256": "329f98a35059bbbf78bd6f3406e658a7e59d4ad9f1ac9efac5ff57d80daa9107",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_uniform/best_run2.pt",
+        "sha256": "d3b3851a30667e26f81317cb2333c50515cca19474bb68bd0da202ff86c0f784",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_propagated_uniform/best_run2.pt",
+        "sha256": "f7d15909aa00ff2ce22b24b13ab12367fd4b5f165d3d47313adb16fbf4600e56",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_unconstrained_entry_uniform/best_run2.pt",
+        "sha256": "ee86ed4e4d013e75c4a5e4b6724c14e45da01a59664bac8490734419a63481d8",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_terminal/best_run2.pt",
+        "sha256": "7614db3c13a4bdaad25c41c17323bc7edce155ab7209d32c445f1d22acc3f2d5",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_uniform/best_run2.pt",
+        "sha256": "f9f04a03c204052732f4f7ecf37427cb2840bc462cfb0edb9b65bc7d3b97d250",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_propagated_uniform/best_run2.pt",
+        "sha256": "b9e4fa2eb0fb2216311986c30f73509c5e41c14dc66480db8f609ce7e96aa2a7",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/43/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_persistent_uniform/best_run2.pt",
+        "sha256": "33ea25c9f5ac6c1c0b1d1880fbbf203a3a85881e2e6e52e79cdab864a8a926df",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_terminal/best_run3.pt",
+        "sha256": "325326720d2e229bbafc3014c9d1a8455da70c02ff854ff5f805890fd63133a1",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_uniform/best_run3.pt",
+        "sha256": "5f6a4c3f3771f5ac6f2dfcaacf6ab39d979863b48d45762876ac3e3bcde977b6",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_identity_propagated_uniform/best_run3.pt",
+        "sha256": "2ed6c333104d256ba57d60a401c37fe07a463c545f612bed89db69d44cd17e04",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_unconstrained_entry_uniform/best_run3.pt",
+        "sha256": "f4ab781a542d36785ca2a684610d86af46948c5e7bfd28a1138756b38b12817e",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_terminal/best_run3.pt",
+        "sha256": "05312f80caa3a293baf5139c6052ec03d6e52d8025a5b279b9c1b9762a1fe141",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_uniform/best_run3.pt",
+        "sha256": "178c7a1b119a8b105049ef513b4240435b8cd9b9292d948b25b646328e2fe06d",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_entry_propagated_uniform/best_run3.pt",
+        "sha256": "e78d4cd589be88a5719b046acfa4189251a8d229fac33cf4293d441562f5c873",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Grocery/44/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Grocery/s45_masspres_persistent_uniform/best_run3.pt",
+        "sha256": "1baaa5a629fca5b7f74f70fc45d4f05372d9aebebaa8eec7e54c1bbee4a6ea8f",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_terminal/best_run1.pt",
+        "sha256": "617f820f8aecf4230921e720d1b70a9cdfd8eb74a54f63dc5be02fc0ffa53374",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_uniform/best_run1.pt",
+        "sha256": "2e0e17a553ac25df534259a59e14adbb84c8cead3c68cc65fd42d17bdd9ef547",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_propagated_uniform/best_run1.pt",
+        "sha256": "a6ff40a8c31a5ae473f6ceddcabc49b85b651cf660ce186474beaa55f50f6154",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_unconstrained_entry_uniform/best_run1.pt",
+        "sha256": "bde8d1730743e4563071242be20f811dc418ac6d40737a0087796f6aa1a9a97c",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_terminal/best_run1.pt",
+        "sha256": "a1a35520237541a02d48adcace93477314d8b7412ac50a3e7fcfc7e6e9d1a515",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_uniform/best_run1.pt",
+        "sha256": "ba04e156507c7cf66e370f53e9b4103b3983824bbde0bf8f004322776c41c50d",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_propagated_uniform/best_run1.pt",
+        "sha256": "6ac2741a002a1307e683e457c106ebf7a4a9884e20fa3966ae92ce73bb25adf9",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/42/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_persistent_uniform/best_run1.pt",
+        "sha256": "b0e4787c591c8d6b595a6a49a8ad820b38b30d1ff09dae869d0e6e67359f2558",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_terminal/best_run2.pt",
+        "sha256": "5d7b1382605dace76b98e0bd20805b007ff2fde3730329b123b031cae6f6cbfd",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_uniform/best_run2.pt",
+        "sha256": "f21b8f3105e9dde4c4a5b205ffcb907bdfc2a2ba12b85680c248afde718d4459",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_propagated_uniform/best_run2.pt",
+        "sha256": "81a349f6a6f7b2337e9285da32399536ff46b719eccc011d152d7e2493ae39ea",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_unconstrained_entry_uniform/best_run2.pt",
+        "sha256": "facc9167534949fe1b7f0704b70e30c5683d93621ad628381008d01f188546b3",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_terminal/best_run2.pt",
+        "sha256": "d41dec2df42660daf76201462886c809990abc7ccbc8c8c2eb08a6e2c1ce8899",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_uniform/best_run2.pt",
+        "sha256": "49702f314ca09473b439d41ac2fb672585fec77da5d7069d279a04e822f24cd3",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_propagated_uniform/best_run2.pt",
+        "sha256": "1f744de1b1a7babdfb990f7a02eca01022c500e9700ef8aa46019ff6446dc512",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/43/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_persistent_uniform/best_run2.pt",
+        "sha256": "179dc4bf9cfcfa73eae1be85a30e6dab435765e1b68b3d7527f8aeeb694ad651",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_terminal/best_run3.pt",
+        "sha256": "99d5873f00b7382a680683c227dc71912bd50ee5dec77b52aac7f07c186b6a3a",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_uniform/best_run3.pt",
+        "sha256": "0a32f998497a23e8fa957ce6090837e9cb336de13ebcfed5bbc54b3d0c257037",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_identity_propagated_uniform/best_run3.pt",
+        "sha256": "6ed940f48cf0c40710eed56b53bf92fad08b9655b9075311e283729f970b29e8",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_unconstrained_entry_uniform/best_run3.pt",
+        "sha256": "e4d9277df7e61002eae20ee9c4e4d73854a3e991d7db8527ec0e78bca7026934",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_terminal/best_run3.pt",
+        "sha256": "18e69b29af3cfe2aded4c9eddb13085e8fd6bedbd30ccfdd8830e095b7d4914a",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_uniform/best_run3.pt",
+        "sha256": "f51c4d95836acca376c5126f095498a6bf9e01d10a3e7238be9cf344b0a0c10a",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_entry_propagated_uniform/best_run3.pt",
+        "sha256": "e3726baa1567c16188916eab0825f492ef6a5ea797d728d9faec803a358efbe2",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "ele-fashion/44/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/ele-fashion/s45_masspres_persistent_uniform/best_run3.pt",
+        "sha256": "4741e7cf3114debaebce0c2274352e6b58e2ae46019f4e3864bb5554aa7de63f",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_terminal/best_run1.pt",
+        "sha256": "7e6f4dbf54330265736f782957d469df920cafdda9da6f11b9e6acfc5217b9b2",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_uniform/best_run1.pt",
+        "sha256": "9bc7b32ef26827c5e0cff8e70e538f5eebeaa0757b64627e8e99ec11467cff43",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_propagated_uniform/best_run1.pt",
+        "sha256": "22245512e62a5d58243b77ee0fd587810f3fde59138d90220a371ca56d123a45",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_unconstrained_entry_uniform/best_run1.pt",
+        "sha256": "c6d3c2b50f60ebb3a93cfb054799d559f3e01cfd22b801bef9eb04a16ef93e18",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_terminal/best_run1.pt",
+        "sha256": "18973c882ce5e68832f555bed6f78ddf4fa70f0aad3331ff7484a765e1137539",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_uniform/best_run1.pt",
+        "sha256": "74585a1ac5590c8e53131280adf6e8b6ac9556644fdecbc89e84e48083175e16",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_propagated_uniform/best_run1.pt",
+        "sha256": "65edc94b55da70ca9ecd6049bf327ba50a25cf7c232254d37ba623a56f820227",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/42/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_persistent_uniform/best_run1.pt",
+        "sha256": "0958afef735c31f64113557fc5eca4c28414c75d676550f85e9042d1dcadfa30",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_terminal/best_run2.pt",
+        "sha256": "d948391628422b11dd94f4739c603819b4b91a8057747a95dcd6a41ca8695256",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_uniform/best_run2.pt",
+        "sha256": "45f7dc3308b5758eae9c9ff178211afac2f964ea2ace64a9667b77981a57c1fe",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_propagated_uniform/best_run2.pt",
+        "sha256": "31e1ccac7b43f9820e780b55e72918f166a23d93f058d3b12dc0aeab114d7fcd",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_unconstrained_entry_uniform/best_run2.pt",
+        "sha256": "8d04c070b4a02baffda702638db7eb1cd250e86e643b9e67f948c3e61f6b309a",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_terminal/best_run2.pt",
+        "sha256": "725159ec574a05b52a8cd0fd48ae1718bb514e4e5e577fb61f4c64323fa2e149",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_uniform/best_run2.pt",
+        "sha256": "48c86eddebadc2c85999921c640ea08d54a07e5b5575cecdf02097196f4c7d54",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_propagated_uniform/best_run2.pt",
+        "sha256": "4b4288b630cd5da5b89d1df3b3b50224095d0d6028c1517f1b40e5c10678fafc",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/43/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_persistent_uniform/best_run2.pt",
+        "sha256": "fb459fb4d678432c49bbf763bbb0dafdb96a9ad37dded338d8fa69152e421feb",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_identity_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_terminal/best_run3.pt",
+        "sha256": "b23f13b08ba13991bbf0b835a8ca07fbcf9e2191ed94a93ff0cebcc0c60c4b9c",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_identity_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_uniform/best_run3.pt",
+        "sha256": "74f0e9252c2c98984042e8f6a796f875e5298f17228c1759cfb884613be12187",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_identity_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_identity_propagated_uniform/best_run3.pt",
+        "sha256": "3ac92f511cf107a6e07d3a80e20e685816637a82ce36c828cd6841fe00b1fe30",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_unconstrained_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_unconstrained_entry_uniform/best_run3.pt",
+        "sha256": "538785769e48badb76f6702e4ffd988d5614f7e7fc4fd42900260f976c9f64a9",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_masspres_entry_terminal": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_terminal/best_run3.pt",
+        "sha256": "3ca384944bd9a2cd150b1850c45c86b3da6a2eff5d6a33b1915c00e4e390ef83",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_masspres_entry_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_uniform/best_run3.pt",
+        "sha256": "5589df9b11b516f2e7948e8aa5678f1ab60be78ad625a0a1ae234539f89a7155",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_masspres_entry_propagated_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_entry_propagated_uniform/best_run3.pt",
+        "sha256": "f4b12e8536a1ab1ccf4cd90775243e52ac883883ab6fb4b44de3989e1769e097",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      },
+      "Reddit-S/44/s45_masspres_persistent_uniform": {
+        "path": "/hdd1/DataInHere/YHF/baseline/outputs/s45_relcal_statepres_v1/formal/Reddit-S/s45_masspres_persistent_uniform/best_run3.pt",
+        "sha256": "2c116dce5fc7fde7c5b32a00f9ad7971de7f9472126345a1dd2d089310c921a8",
+        "training_commit": "3693d351d2d722dde2d2d34c421ddb342440d659"
+      }
+    },
+    "dataset_file_sha256": {
+      "Movies": {
+        "/hdd1/DataInHere/YHF/data/Movies/MoviesGraph.pt": "f6798e6951f29b1d76aa7938684f44d502600c31f3a5987722f5bc450511700f",
+        "/hdd1/DataInHere/YHF/data/Movies/TextFeature/Movies_roberta_base_512_mean.npy": "38cc09ef3192eac8a022303fd48a9954bea9c3064078846aa5d2db31e137eece",
+        "/hdd1/DataInHere/YHF/data/Movies/ImageFeature/Movies_openai_clip-vit-large-patch14.npy": "c422191f1a7cdc85598f00b52e0f60a02f65d6a48548e9c42a8530b3e572dfeb",
+        "/hdd1/DataInHere/YHF/data/MAGB_split/Movies_nc_seed42_train0.6_val0.2.pt": "9089d5eb1d5a3edeae46bd9296e4f85815fccf8e489452bc87a2126a88546211"
+      },
+      "Grocery": {
+        "/hdd1/DataInHere/YHF/data/Grocery/GroceryGraph.pt": "af203035d655275a20da353f481e67f4b595eeb73ef1d397d0d9b603cefc70d7",
+        "/hdd1/DataInHere/YHF/data/Grocery/TextFeature/Grocery_roberta_base_256_mean.npy": "b67ab7600b842807b53805e31b9d969d860e9c48b1a56f76799d44367f33c516",
+        "/hdd1/DataInHere/YHF/data/Grocery/ImageFeature/Grocery_openai_clip-vit-large-patch14.npy": "ac50f63312488f3e94271532e7fd863c27a332c6ca8a4b9cc801afb9ce0b2470",
+        "/hdd1/DataInHere/YHF/data/MAGB_split/Grocery_nc_seed42_train0.6_val0.2.pt": "3ca4581592fcb705b42672b18412375d33bf6109c72e4714786066878a54d58e"
+      },
+      "ele-fashion": {
+        "/hdd1/DataInHere/YHF/data/ele-fashion/clip_feat.pt": "b2bd3cc6d9c4c2581a70567ee282580c44e486f0e55a83e62abf8935116a86c6",
+        "/hdd1/DataInHere/YHF/data/ele-fashion/nc_edges-nodeid.pt": "6c732c72ea8e1c8e2a5ae1a53a81a80d0b122ea8bb2475801ed20776f3fdcff2",
+        "/hdd1/DataInHere/YHF/data/ele-fashion/labels-w-missing.pt": "888e80c154a18d61a6b8f75ed2f02f0cb9440613e631810432362857b6a33065",
+        "/hdd1/DataInHere/YHF/data/ele-fashion/split.pt": "e48e74afd502df5bc5e4d638e611fc4fbfdecee461aa920f3f47a6446826c52f"
+      },
+      "Reddit-S": {
+        "/hdd1/DataInHere/YHF/data/Reddit-S/RedditSGraph.pt": "06af9e010df31f5a6537afa5c96f5cbdb9687b5722c1a1acc80d094bd216309b",
+        "/hdd1/DataInHere/YHF/data/Reddit-S/TextFeature/RedditS_roberta_base_100_mean.npy": "da41d78a8b65902ee902295949da437228d7b6d6de303a748f6c324072d65abd",
+        "/hdd1/DataInHere/YHF/data/Reddit-S/ImageFeature/RedditS_openai_clip-vit-large-patch14.npy": "936191dcf3c06e367674cfedd2e80fd87e3120485a9f45acb8ff48e7b3bad58b",
+        "/hdd1/DataInHere/YHF/data/MAGB_split/Reddit-S_nc_seed42_train0.6_val0.2.pt": "2154e82ef061de9d3c018aa19674ea6e2220953f272bedebb1559396e43750a5"
+      }
+    },
+    "historical_evidence_commits": {
+      "multi_order_bank": "31468c5a1439b3561487936bf5d83749b502f61e",
+      "mechanism_discovery": "d31b095faa4f98538e60cfac293a831138dde3db",
+      "problem_deep_dive": "e535ad91911557790658ddc87bfaa516da531aad",
+      "s44_training": "8e53b1b8f1eed4aac6a61082222327f4dca17da3"
+    },
+    "config_sha256": {
+      "model": "752c8e66cb47e6f78b8b61d98dfbb84e2b3fe9d73d3a11ea427982df50ed91fd",
+      "task": "f959a73d5256d2e51b2ce3600c4f7252e7d79122c267aa70dc84abeddedb3852",
+      "dataset/Movies": "81b803b0ed79ad86d483aee5dceadac149ca9ba2263e31160b22951a7812f5c8",
+      "dataset/Grocery": "18969c97a0f06ab33fd3094624d524f03de48139405159bb06d19cf107105e56",
+      "dataset/ele-fashion": "50e683dcae43c505c999ecbc22a6b5b380a8b897d4942933c01f266f8169b917",
+      "dataset/Reddit-S": "010129b2a4b7de2969286de9a74108a7cd08a481feaac067dc5cae62db36246a"
+    },
+    "code_sha256": {
+      "src/models/relcal_statepres_pilot.py": "e295110e709715cdf80a35b9bfa5c4965dfcc4df6bb4fd2592c466c43260d5c3",
+      "scripts/run_s45_relcal_statepres_nc.py": "2d727e5cb6eab558279b027abf8f6699ddf0420411a859227a8fdc6a82090616",
+      "scripts/analyze_s45_relcal_statepres.py": "dc245ef5f82bdd614145b326e341114ac76e4c314aa894bcb15333806da639ac",
+      "scripts/analyze_s45_relcal_statepres_v2.py": "d1f83dca1fb3b6090995bc90f72090fa0d213aa197a079715148d45f998ca7c6",
+      "tests/test_relcal_statepres_pilot.py": "94cc72374546e4154a8838bc4fe7254c3f924ad9451e4e803cb7eac3a8d6d761"
+    }
+  },
+  "interpretation_statuses": {
+    "ControllerGranularity": {
+      "status": "STRONG_SUPPORT",
+      "mean_within_ratio": 0.09680037207071159,
+      "mean_within_ratio_by_variant": {
+        "s44_scalar_rel": {
+          "mean_within_ratio": 0.2614516675442153,
+          "population_std_within_ratio": 0.11196929553553953,
+          "mean_weighted_within_target_pairwise_L2": 0.21838507201225565,
+          "rows": 24
+        },
+        "s44_lowrank_rel": {
+          "mean_within_ratio": 0.07855262811962012,
+          "population_std_within_ratio": 0.05921602415397163,
+          "mean_weighted_within_target_pairwise_L2": 0.732651107966298,
+          "rows": 192
+        },
+        "s44_expert_rel": {
+          "mean_within_ratio": 0.08746570013832565,
+          "population_std_within_ratio": 0.09308655981516523,
+          "mean_weighted_within_target_pairwise_L2": 0.08548114779208273,
+          "rows": 48
+        }
+      },
+      "matched_scalar_comparisons": {
+        "scalar_minus_lowrank_rel": {
+          "mean_delta_within_ratio": 0.18289903942459515,
+          "population_std_delta_within_ratio": 0.1087597780197822,
+          "positive_dataset_seed_modality_pairs": 23,
+          "n": 24
+        },
+        "scalar_minus_expert_rel": {
+          "mean_delta_within_ratio": 0.17398596740588965,
+          "population_std_delta_within_ratio": 0.12477940119202129,
+          "positive_dataset_seed_modality_pairs": 23,
+          "n": 24
+        }
+      },
+      "scalar_frozen_sensitivity": {
+        "DOSAGE_ONLY": {
+          "rows": 24,
+          "metrics": {
+            "val_acc": {
+              "mean_delta": -0.00038831432660420734,
+              "population_std_delta": 0.000992071267175219,
+              "positive_rows": 6
+            },
+            "val_macro_f1": {
+              "mean_delta": -0.0010515821072979552,
+              "population_std_delta": 0.0027129043391776733,
+              "positive_rows": 8
+            },
+            "true_label_ce": {
+              "mean_delta": -1.015948752562205e-05,
+              "population_std_delta": 0.0022649370659785406,
+              "positive_rows": 11
+            }
+          }
+        },
+        "REDISTRIBUTION_ONLY": {
+          "rows": 24,
+          "metrics": {
+            "val_acc": {
+              "mean_delta": -0.000726101299126943,
+              "population_std_delta": 0.001236704236508569,
+              "positive_rows": 7
+            },
+            "val_macro_f1": {
+              "mean_delta": -0.0016051801671508627,
+              "population_std_delta": 0.00265584988298613,
+              "positive_rows": 8
+            },
+            "true_label_ce": {
+              "mean_delta": 0.0009770796944697697,
+              "population_std_delta": 0.0032790245703632833,
+              "positive_rows": 18
+            }
+          }
+        }
+      },
+      "evidence_boundary": "variance indicates edge-specific assignment, not task utility"
+    },
+    "RelationRedistribution": {
+      "status": "MIXED",
+      "masspres_uniform_vs_identity_uniform": {
+        "contrast": "masspres_entry_uniform_minus_identity_uniform",
+        "dataset": "ALL",
+        "seed": "ALL",
+        "mean_delta_val_acc": -0.00019687414169311523,
+        "population_std_delta_val_acc": 0.002547577657748571,
+        "positive_seed_pairs_val_acc": 5,
+        "positive_dataset_means_val_acc": 1,
+        "mean_delta_val_macro_f1": -0.0023394614469337085,
+        "population_std_delta_val_macro_f1": 0.010052322060325814,
+        "positive_seed_pairs_val_macro_f1": 4,
+        "positive_dataset_means_val_macro_f1": 2,
+        "mean_delta_true_label_ce": 0.01693589612841606,
+        "population_std_delta_true_label_ce": 0.041016950702198,
+        "positive_seed_pairs_true_label_ce": 7,
+        "positive_dataset_means_true_label_ce": 3
+      },
+      "edge_shuffle_harm_rows": 428,
+      "edge_shuffle_rows": 480
+    },
+    "StatePreservation": {
+      "status": "STRONG_SUPPORT",
+      "identity_uniform_minus_terminal": {
+        "contrast": "identity_uniform_minus_identity_terminal",
+        "dataset": "ALL",
+        "seed": "ALL",
+        "mean_delta_val_acc": 0.029061655203501385,
+        "population_std_delta_val_acc": 0.009379756333700024,
+        "positive_seed_pairs_val_acc": 12,
+        "positive_dataset_means_val_acc": 4,
+        "mean_delta_val_macro_f1": 0.044539060063360635,
+        "population_std_delta_val_macro_f1": 0.02000496101607646,
+        "positive_seed_pairs_val_macro_f1": 12,
+        "positive_dataset_means_val_macro_f1": 4,
+        "mean_delta_true_label_ce": -0.07736464217305183,
+        "population_std_delta_true_label_ce": 0.03662189146716317,
+        "positive_seed_pairs_true_label_ce": 1,
+        "positive_dataset_means_true_label_ce": 0
+      },
+      "calibrated_uniform_minus_terminal": {
+        "contrast": "masspres_entry_uniform_minus_masspres_entry_terminal",
+        "dataset": "ALL",
+        "seed": "ALL",
+        "mean_delta_val_acc": 0.028012255827585857,
+        "population_std_delta_val_acc": 0.007062415410739061,
+        "positive_seed_pairs_val_acc": 12,
+        "positive_dataset_means_val_acc": 4,
+        "mean_delta_val_macro_f1": 0.04027631933913088,
+        "population_std_delta_val_macro_f1": 0.013528899157777007,
+        "positive_seed_pairs_val_macro_f1": 12,
+        "positive_dataset_means_val_macro_f1": 4,
+        "mean_delta_true_label_ce": -0.07374519606431325,
+        "population_std_delta_true_label_ce": 0.04621908688537179,
+        "positive_seed_pairs_true_label_ce": 1,
+        "positive_dataset_means_true_label_ce": 0
+      }
+    },
+    "CalibrationStateInteraction": {
+      "status": "MIXED",
+      "mean_factorial_interaction_val_acc": -0.0010493993759155273,
+      "positive_seed_pairs": 5,
+      "pairs": 12
+    },
+    "CalibrationPlacement": {
+      "status": "MIXED",
+      "persistent_minus_entry_uniform": {
+        "contrast": "masspres_persistent_minus_masspres_entry_uniform",
+        "dataset": "ALL",
+        "seed": "ALL",
+        "mean_delta_val_acc": -0.0011827647686004639,
+        "population_std_delta_val_acc": 0.0021931591575625816,
+        "positive_seed_pairs_val_acc": 3,
+        "positive_dataset_means_val_acc": 1,
+        "mean_delta_val_macro_f1": 0.0058978096506231885,
+        "population_std_delta_val_macro_f1": 0.007782095983743395,
+        "positive_seed_pairs_val_macro_f1": 9,
+        "positive_dataset_means_val_macro_f1": 3,
+        "mean_delta_true_label_ce": 0.02572191630800565,
+        "population_std_delta_true_label_ce": 0.030165096705399113,
+        "positive_seed_pairs_true_label_ce": 8,
+        "positive_dataset_means_true_label_ce": 3
+      }
+    }
+  },
+  "complexity_summary": {
+    "compute_heavy_runs": 0,
+    "max_peak_cuda_memory_mb": 9786,
+    "max_historical_mob_epoch_ratio": 2.0312924336067253
+  }
+}
