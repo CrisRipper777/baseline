@@ -533,6 +533,8 @@ def _paired_contrasts(metric_map, datasets):
         ("masspres_entry_uniform_minus_identity_uniform", "s45_masspres_entry_uniform", "s45_identity_uniform"),
         ("unconstrained_minus_masspres_entry_uniform", "s45_unconstrained_entry_uniform", "s45_masspres_entry_uniform"),
         ("masspres_entry_uniform_minus_masspres_entry_terminal", "s45_masspres_entry_uniform", "s45_masspres_entry_terminal"),
+        ("identity_uniform_minus_identity_propagated_uniform", "s45_identity_uniform", "s45_identity_propagated_uniform"),
+        ("masspres_entry_uniform_minus_masspres_entry_propagated_uniform", "s45_masspres_entry_uniform", "s45_masspres_entry_propagated_uniform"),
         ("masspres_propagated_uniform_minus_identity_propagated_uniform", "s45_masspres_entry_propagated_uniform", "s45_identity_propagated_uniform"),
         ("masspres_persistent_minus_masspres_entry_uniform", "s45_masspres_persistent_uniform", "s45_masspres_entry_uniform"),
     )
