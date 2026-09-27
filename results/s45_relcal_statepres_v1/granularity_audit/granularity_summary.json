@@ -1,0 +1,107 @@
+{
+  "source_training_branch": "s44_relational_transform",
+  "source_training_sha": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+  "source_commit_for_s45": "24c3eec6325a6606d6a4c222ab418b4e616148c1",
+  "scope": {
+    "datasets": [
+      "Movies",
+      "Grocery",
+      "ele-fashion",
+      "Reddit-S"
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "variants": [
+      "s44_scalar_rel",
+      "s44_lowrank_rel",
+      "s44_expert_rel"
+    ],
+    "test_evaluation": false,
+    "retraining": false
+  },
+  "checkpoint_metadata_checks": {
+    "count": 36,
+    "training_shas": {
+      "Movies/42/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/42/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/42/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/43/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/43/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/43/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/44/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/44/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Movies/44/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/42/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/42/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/42/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/43/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/43/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/43/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/44/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/44/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Grocery/44/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/42/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/42/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/42/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/43/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/43/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/43/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/44/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/44/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "ele-fashion/44/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/42/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/42/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/42/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/43/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/43/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/43/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/44/s44_scalar_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/44/s44_lowrank_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3",
+      "Reddit-S/44/s44_expert_rel": "8e53b1b8f1eed4aac6a61082222327f4dca17da3"
+    },
+    "all_task_protocol_seed_best_val_test_disabled": true
+  },
+  "controller_variance": {
+    "mean_within_ratio": 0.09680037207071159,
+    "population_std_within_ratio": 0.08937551072337739,
+    "rows": 264,
+    "by_variant": {
+      "s44_scalar_rel": {
+        "mean_within_ratio": 0.2614516675442153,
+        "population_std_within_ratio": 0.11196929553553953,
+        "mean_weighted_within_target_pairwise_L2": 0.21838507201225565,
+        "rows": 24
+      },
+      "s44_lowrank_rel": {
+        "mean_within_ratio": 0.07855262811962012,
+        "population_std_within_ratio": 0.05921602415397163,
+        "mean_weighted_within_target_pairwise_L2": 0.732651107966298,
+        "rows": 192
+      },
+      "s44_expert_rel": {
+        "mean_within_ratio": 0.08746570013832565,
+        "population_std_within_ratio": 0.09308655981516523,
+        "mean_weighted_within_target_pairwise_L2": 0.08548114779208273,
+        "rows": 48
+      }
+    },
+    "matched_scalar_comparisons": {
+      "scalar_minus_lowrank_rel": {
+        "mean_delta_within_ratio": 0.18289903942459515,
+        "population_std_delta_within_ratio": 0.1087597780197822,
+        "positive_dataset_seed_modality_pairs": 23,
+        "n": 24
+      },
+      "scalar_minus_expert_rel": {
+        "mean_delta_within_ratio": 0.17398596740588965,
+        "population_std_delta_within_ratio": 0.12477940119202129,
+        "positive_dataset_seed_modality_pairs": 23,
+        "n": 24
+      }
+    }
+  },
+  "interpretation": "Weighted variance decomposition and frozen checkpoint sensitivities. Controller variance or gate size alone does not establish causal relation utility."
+}

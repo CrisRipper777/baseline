@@ -1,0 +1,7 @@
+name: relcal_statepres_pilot
+hidden_dim: 256
+dropout: 0.2
+max_order: 3
+relation_dim: 32
+edge_chunk_size: 16384
+variant: s45_identity_terminal
