@@ -81,6 +81,86 @@ def _all_interaction_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return summary
 
 
+def _audit_historical_mob_checkpoints(datasets: tuple[str, ...], device: torch.device) -> list[dict[str, Any]]:
+    """Replay historical MOB validation checkpoints and test exact identity loading."""
+    from hydra import compose, initialize_config_dir
+    from src.data import load_mag_data
+    from src.models import build_model
+    from src.tasks.nc import _resolve_nc_eval_labels
+    from torch import nn
+
+    reference = {}
+    with (ROOT / "results/nc_benchmark_v1/nc_per_run.csv").open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            if row.get("model") == "multi_order_bank":
+                reference[(row["dataset"], int(row["seed"]), row["variant"])] = row
+    audit_rows = []
+    for dataset in datasets:
+        data = _load_data(dataset)
+        labels = _resolve_nc_eval_labels(data)
+        x, edge = data.x.to(device), data.edge_index.to(device)
+        for readout in ("terminal", "uniform"):
+            historical_variant = f"mob_{readout}_plain"
+            identity_variant = f"s45_identity_{readout}"
+            with initialize_config_dir(config_dir=str((ROOT / "configs").resolve()), version_base=None):
+                mob_cfg = compose(config_name="config", overrides=[
+                    f"dataset={dataset}", "task=nc", "model=multi_order_bank",
+                    f"model.readout={readout}", "model.fusion_mode=plain_mlp",
+                    "seed=42", "num_runs=1", f"device={device}",
+                    "task.evaluate_test=false", "task.training_mode=full_graph",
+                    f"task.protocol_version={base.PROTOCOL}",
+                ])
+            identity_cfg = base._config(dataset, "relcal_statepres_pilot", identity_variant, 42)
+            for seed in SEEDS:
+                checkpoint = ROOT / "outputs/mob_factorial_nc_v1" / dataset / historical_variant / f"best_run{SEEDS.index(seed) + 1}.pt"
+                payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+                if payload.get("task") != "nc" or payload.get("protocol_version") != base.PROTOCOL:
+                    raise ValueError(f"invalid historical MOB checkpoint metadata: {checkpoint}")
+                if int(payload.get("seed", -1)) != seed or payload.get("selection") != "best_val_accuracy":
+                    raise ValueError(f"wrong historical seed/selection in {checkpoint}")
+                mob = build_model(mob_cfg, payload["data_info"]).to(device).eval()
+                mob.load_state_dict(payload["model_state"], strict=True)
+                head = nn.Linear(mob.out_dim, int(data.num_classes)).to(device)
+                head.load_state_dict(payload["head_state"], strict=True)
+                head.eval()
+                identity = build_model(identity_cfg, payload["data_info"]).to(device).eval()
+                identity.load_state_dict(payload["model_state"], strict=True)
+                with torch.no_grad():
+                    historical = mob.analyze(x, edge)
+                    pilot = identity.analyze(x, edge)
+                    historical_metrics, _ = _metrics(head(historical["fused_z"]), data, labels)
+                    logit_delta = float((historical["fused_z"] - pilot["fused_z"]).abs().max().item())
+                ref = reference.get((dataset, seed, historical_variant))
+                if ref is None:
+                    raise ValueError(f"historical reference metric row missing: {dataset}/{seed}/{historical_variant}")
+                table_acc, table_f1 = float(ref["val_acc"]), float(ref["val_macro_f1"])
+                checkpoint_acc = float(payload["metrics"]["val_acc"])
+                checkpoint_f1 = float(payload["metrics"]["val_macro_f1"])
+                audit_rows.append({
+                    "dataset": dataset, "seed": seed, "historical_variant": historical_variant,
+                    "checkpoint": str(checkpoint),
+                    "recomputed_val_acc": historical_metrics["val_acc"],
+                    "historical_table_val_acc": table_acc,
+                    "abs_recomputed_table_val_acc_delta": abs(historical_metrics["val_acc"] - table_acc),
+                    "recomputed_val_macro_f1": historical_metrics["val_macro_f1"],
+                    "historical_table_val_macro_f1": table_f1,
+                    "abs_recomputed_table_val_macro_f1_delta": abs(historical_metrics["val_macro_f1"] - table_f1),
+                    "abs_recomputed_checkpoint_val_acc_delta": abs(historical_metrics["val_acc"] - checkpoint_acc),
+                    "abs_recomputed_checkpoint_val_macro_f1_delta": abs(historical_metrics["val_macro_f1"] - checkpoint_f1),
+                    "identity_model_max_abs_logit_delta_from_same_weights": logit_delta,
+                    "test_evaluation": False,
+                })
+                if (abs(historical_metrics["val_acc"] - table_acc) > 1e-6 or
+                        abs(historical_metrics["val_macro_f1"] - table_f1) > 1e-6 or
+                        logit_delta > 1e-5):
+                    raise RuntimeError(f"historical identity audit failed: {dataset}/{seed}/{historical_variant}")
+                del mob, identity, head, historical, pilot, payload
+                if device.type == "cuda":
+                    torch.cuda.empty_cache()
+        del x, edge, data
+    return audit_rows
+
+
 def _historical_identity_crosscheck(table: list[dict[str, Any]]) -> list[dict[str, Any]]:
     reference_map = {
         "s45_identity_terminal": "mob_terminal_plain",
@@ -133,7 +213,7 @@ def _report(summary: dict[str, Any]) -> str:
         f"- CalibrationPlacement: **{s['CalibrationPlacement']['status']}**. Persistent minus entry-only uniform: {c['masspres_persistent_minus_masspres_entry_uniform']}.", "",
         "## Interpretation boundaries", "",
         "Row-mass preservation guarantees only each target's one-step off-diagonal mass. It does not guarantee symmetry, spectral equivalence, the same smoothing spectrum, or the same stationary distribution. Frozen interventions are checkpoint sensitivities, not retrained causal ablations. R1 is a fixed carrier, not a proven superior or novel module. Gate magnitude is not causal relation utility. A positive calibrated score does not establish synergy; inspect I. These NC development results do not generalize to LP. Toys was not used.", "",
-        "Historical MOB terminal/uniform metrics are cross-checked in `historical_mob_crosscheck.csv`; identity discrepancies above 1e-4 stop interpretation pending audit. Identity propagated-uniform equivalence is covered by the exact unit test because the historical aggregate table has no propagated-uniform run.", "",
+        "Historical MOB terminal/uniform checkpoint replay is recorded in `historical_mob_checkpoint_audit.csv`; all 24 historical validation metric rows reproduce, and loading those same weights into the S4.5 identity model yields logits within 1e-5 absolute error. The independent S4.5 identity runs still differ from historical scores (see `historical_mob_crosscheck.csv`); this is a descriptive checkpoint comparison, not evidence for calibration. Identity propagated-uniform equivalence is covered by the exact unit test because the historical aggregate table has no propagated-uniform run.", "",
         "This pilot does not by itself freeze the paper backbone. Review the raw paired results, interventions, state diagnostics, identity checks, and factorial interaction before freezing relation → propagation → state composition.", "",
         "All detailed tables preserve dataset-seed rows; interpretation labels do not replace the raw evidence.",
     ]
@@ -280,9 +360,11 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
         raise ValueError(f"formal checkpoints span multiple training commits: {sorted(training_commits)}")
     identity_crosscheck = _historical_identity_crosscheck(table)
     _write_csv(RESULT_ROOT / "historical_mob_crosscheck.csv", identity_crosscheck)
+    historical_checkpoint_audit = _audit_historical_mob_checkpoints(requested, device)
+    _write_csv(RESULT_ROOT / "historical_mob_checkpoint_audit.csv", historical_checkpoint_audit)
     identity_delta = max((float(row["max_abs_metric_delta"]) for row in identity_crosscheck), default=math.nan)
-    if math.isfinite(identity_delta) and identity_delta > 1e-4:
-        raise RuntimeError(f"identity/MOB discrepancy {identity_delta:g}; audit before interpreting S4.5")
+    identity_acc_delta = max((abs(float(row["delta_val_acc"])) for row in identity_crosscheck), default=math.nan)
+    identity_f1_delta = max((abs(float(row["delta_val_macro_f1"])) for row in identity_crosscheck), default=math.nan)
 
     contrasts = _all_contrast_rows(_paired_contrasts(metrics_by_run, requested), requested)
     interaction = _interaction_rows(metrics_by_run, requested)
@@ -302,7 +384,19 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
         "training_commit": training_commit, "analysis_commit": analysis_commit,
         "identity_mob_crosscheck": {"rows": len(identity_crosscheck),
                                     "max_abs_metric_delta": identity_delta,
-                                    "audit_required": False},
+                                    "max_abs_val_acc_delta": identity_acc_delta,
+                                    "max_abs_val_macro_f1_delta": identity_f1_delta,
+                                    "audit_threshold_triggered": bool(math.isfinite(identity_delta) and identity_delta > 1e-4),
+                                    "audit_performed": True,
+                                    "audit_status": "Historical checkpoint metrics reproduced on the fixed validation splits; same historical weights produce exact identity-model logits. Same-weight identity logits were compared within 1e-5; remaining differences compare independently trained checkpoints and are descriptive, not calibration evidence.",
+                                    "historical_checkpoint_rows_audited": len(historical_checkpoint_audit),
+                                    "historical_checkpoint_max_abs_table_metric_delta": max(
+                                        max(float(row["abs_recomputed_table_val_acc_delta"]),
+                                            float(row["abs_recomputed_table_val_macro_f1_delta"]))
+                                        for row in historical_checkpoint_audit),
+                                    "historical_checkpoint_max_abs_identity_logit_delta": max(
+                                        float(row["identity_model_max_abs_logit_delta_from_same_weights"])
+                                        for row in historical_checkpoint_audit)},
         "primary_contrasts": {row["contrast"]: row for row in contrasts if row.get("dataset") == "ALL"},
         "factorial_interaction": all_interaction,
         "interpretation_boundaries": [
