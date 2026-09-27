@@ -207,10 +207,14 @@ def _report(summary: dict[str, Any]) -> str:
             for name, values in s['ControllerGranularity']['mean_within_ratio_by_variant'].items()) + ". Matched scalar advantage: " + "; ".join(
             f"vs {name.removeprefix('scalar_minus_')}: {values['mean_delta_within_ratio']:.4f}, positive {values['positive_dataset_seed_modality_pairs']}/{values['n']}"
             for name, values in s['ControllerGranularity']['matched_scalar_comparisons'].items()) + ". This describes controller assignment, not task utility.",
+        "- S4.4 scalar frozen probes (mean change vs NORMAL): " + "; ".join(
+            f"{name}: " + ", ".join(f"{metric} {values['mean_delta']:+.6f}" for metric, values in stats['metrics'].items())
+            for name, stats in s['ControllerGranularity']['scalar_frozen_sensitivity'].items()) + ". These are checkpoint sensitivities, not retrained causal ablations.",
         f"- RelationRedistribution: **{s['RelationRedistribution']['status']}**. Mass-preserving entry uniform minus identity uniform: {c['masspres_entry_uniform_minus_identity_uniform']}.",
         f"- StatePreservation: **{s['StatePreservation']['status']}**. Identity uniform minus terminal: {c['identity_uniform_minus_identity_terminal']}; calibrated uniform minus terminal: {c['masspres_entry_uniform_minus_masspres_entry_terminal']}.",
         f"- CalibrationStateInteraction: **{s['CalibrationStateInteraction']['status']}**. Factorial interaction in accuracy: mean {i['mean_interaction_val_acc']:.6f}, population SD {i['population_std_interaction_val_acc']:.6f}, positive seed pairs {i['positive_seed_pairs_val_acc']}/12.",
-        f"- CalibrationPlacement: **{s['CalibrationPlacement']['status']}**. Persistent minus entry-only uniform: {c['masspres_persistent_minus_masspres_entry_uniform']}.", "",
+        f"- CalibrationPlacement: **{s['CalibrationPlacement']['status']}**. Persistent minus entry-only uniform: {c['masspres_persistent_minus_masspres_entry_uniform']}.",
+        f"- Row-mass audit: preserved variants max absolute row error {summary['row_mass_audit']['max_abs_row_mass_error_preserved']:.3e}; max self-diagonal error {summary['row_mass_audit']['max_abs_self_diagonal_error']:.3e}. The unconstrained variant's max row-mass deviation ({summary['row_mass_audit']['max_abs_row_mass_deviation_unconstrained_descriptive']:.4f}) is expected and reported descriptively.", "",
         "## Interpretation boundaries", "",
         "Row-mass preservation guarantees only each target's one-step off-diagonal mass. It does not guarantee symmetry, spectral equivalence, the same smoothing spectrum, or the same stationary distribution. Frozen interventions are checkpoint sensitivities, not retrained causal ablations. R1 is a fixed carrier, not a proven superior or novel module. Gate magnitude is not causal relation utility. A positive calibrated score does not establish synergy; inspect I. These NC development results do not generalize to LP. Toys was not used.", "",
         "Historical MOB terminal/uniform checkpoint replay is recorded in `historical_mob_checkpoint_audit.csv`; all 24 historical validation metric rows reproduce, and loading those same weights into the S4.5 identity model yields logits within 1e-5 absolute error. The independent S4.5 identity runs still differ from historical scores (see `historical_mob_crosscheck.csv`); this is a descriptive checkpoint comparison, not evidence for calibration. Identity propagated-uniform equivalence is covered by the exact unit test because the historical aggregate table has no propagated-uniform run.", "",
@@ -374,6 +378,16 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
     analysis_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dataset_config_hashes = {dataset: _file_sha256(ROOT / "configs/dataset" / f"{dataset}.yaml")
                              for dataset in requested}
+    preserved_row_audits = [row for row in row_rows if row.get("row_mass_constraint") == "PRESERVED"]
+    unconstrained_row_audits = [row for row in row_rows if row.get("row_mass_constraint") == "UNCONSTRAINED"]
+    row_mass_summary = {
+        "preserved_rows": len(preserved_row_audits),
+        "max_abs_row_mass_error_preserved": max(float(row["max_abs_row_mass_error"]) for row in preserved_row_audits),
+        "mean_abs_row_mass_error_preserved": statistics.fmean(float(row["mean_abs_row_mass_error"]) for row in preserved_row_audits),
+        "max_abs_self_diagonal_error": max(float(row["max_abs_self_diagonal_error"]) for row in row_rows),
+        "max_abs_row_mass_deviation_unconstrained_descriptive": max(float(row["max_abs_row_mass_error"]) for row in unconstrained_row_audits),
+        "unconstrained_rows_are_not_mass_invariant_failures": True,
+    }
     summary = {
         "experiment": "S4.5 Relation-Calibrated State-Preserving Propagation",
         "protocol": {"task": "NC", "protocol_version": base.PROTOCOL, "training_mode": "full_graph",
@@ -399,6 +413,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
                                         for row in historical_checkpoint_audit)},
         "primary_contrasts": {row["contrast"]: row for row in contrasts if row.get("dataset") == "ALL"},
         "factorial_interaction": all_interaction,
+        "row_mass_audit": row_mass_summary,
         "interpretation_boundaries": [
             "Per-target row-mass preservation guarantees one-step off-diagonal mass only; it does not imply symmetry or spectral equivalence.",
             "Frozen interventions are checkpoint sensitivities, not retrained causal ablations.",

@@ -329,6 +329,17 @@ def run_granularity_audit(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any
                     torch.cuda.empty_cache()
         del x, edge, data
 
+    scalar_sensitivity = {}
+    for intervention_name in ("DOSAGE_ONLY", "REDISTRIBUTION_ONLY"):
+        group = [row for row in intervention_rows if row.get("intervention") == intervention_name]
+        scalar_sensitivity[intervention_name] = {"rows": len(group), "metrics": {}}
+        for metric in ("val_acc", "val_macro_f1", "true_label_ce"):
+            deltas = [float(row[f"delta_{metric}"]) for row in group]
+            scalar_sensitivity[intervention_name]["metrics"][metric] = {
+                "mean_delta": statistics.fmean(deltas),
+                "population_std_delta": statistics.pstdev(deltas),
+                "positive_rows": sum(value > 0 for value in deltas),
+            }
     training_shas = sorted(set(training_sha_by_checkpoint.values()))
     if len(training_shas) != 1:
         raise ValueError(f"S4.4 G0 checkpoints span multiple training SHAs: {training_shas}")
@@ -376,6 +387,7 @@ def run_granularity_audit(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any
                                 "population_std_within_ratio": statistics.pstdev(ratios) if ratios else math.nan,
                                 "by_variant": by_variant, "matched_scalar_comparisons": matched,
                                 "rows": len(variance_rows)},
+        "scalar_frozen_sensitivity": scalar_sensitivity,
         "interpretation": "Weighted variance decomposition and frozen checkpoint sensitivities. Controller variance or gate size alone does not establish causal relation utility.",
     }
     (G0_ROOT / "granularity_summary.json").write_text(json.dumps(summary, indent=2, allow_nan=True), encoding="utf-8")
@@ -390,6 +402,9 @@ def run_granularity_audit(datasets: tuple[str, ...] = DATASETS) -> dict[str, Any
             f"{name.removeprefix('scalar_minus_')}: mean {values['mean_delta_within_ratio']:.4f}, positive in {values['positive_dataset_seed_modality_pairs']}/{values['n']} pairs"
             for name, values in summary["controller_variance"]["matched_scalar_comparisons"].items()) + ".", "",
         "The CSV retains modality, controller dimension, total/within/between variance, within ratio, decomposition error, and weighted within-target pairwise L2. Frozen target-mean, dosage-only, and redistribution-only results are checkpoint sensitivity probes, not retrained causal ablations.", "",
+        "Scalar frozen sensitivity, mean delta vs NORMAL: " + "; ".join(
+            f"{name}: " + ", ".join(f"{metric} {values['mean_delta']:+.6f}" for metric, values in stats["metrics"].items())
+            for name, stats in summary["scalar_frozen_sensitivity"].items()) + ". No retraining was performed, so these probes do not separate retrained causal contributions.", "",
         "A high within-target variance fraction indicates edge-specific controller assignment at the checkpoint; it does not establish that the assigned magnitudes are useful. See the intervention CSV for validation accuracy, macro-F1, true-label CE, and prediction flips.", "",
         "Row-mass preservation in the later S4.5 model constrains only one-step off-diagonal target mass. It does not imply symmetry or spectral equivalence.",
     ]
@@ -450,6 +465,14 @@ def _row_operator_audit(p, p_self, p_rel, modality: str, operator, dataset, seed
         "max_abs_self_diagonal_error": float(diag_error.max().item()) if n else 0.0,
         "operator_asymmetry_frobenius_ratio": asym_norm / max(op_norm, 1e-30),
         "edge_support_matches_original": bool(torch.equal(operator.indices()[:, off], p_rel.indices())),
+        "row_mass_constraint": "PRESERVED" if variant in {
+            "s45_masspres_entry_terminal", "s45_masspres_entry_uniform",
+            "s45_masspres_entry_propagated_uniform", "s45_masspres_persistent_uniform",
+        } else "UNCONSTRAINED",
+        "row_mass_invariant_pass": (float(mass_error.max().item()) <= 1e-6) if variant in {
+            "s45_masspres_entry_terminal", "s45_masspres_entry_uniform",
+            "s45_masspres_entry_propagated_uniform", "s45_masspres_persistent_uniform",
+        } else "NOT_APPLICABLE",
         "one_step_row_mass_only": True,
     }
 
@@ -607,6 +630,7 @@ def _statuses(contrasts, interaction, interventions):
         "ControllerGranularity": {"status": gran_status, "mean_within_ratio": ratio,
                                    "mean_within_ratio_by_variant": by_variant,
                                    "matched_scalar_comparisons": matched,
+                                   "scalar_frozen_sensitivity": gran.get("scalar_frozen_sensitivity", {}),
                                    "evidence_boundary": "variance indicates edge-specific assignment, not task utility"},
         "RelationRedistribution": {"status": redistribution, "masspres_uniform_vs_identity_uniform": contrast("masspres_entry_uniform_minus_identity_uniform"),
                                    "edge_shuffle_harm_rows": shuffle_positive, "edge_shuffle_rows": len(shuffle_rows)},

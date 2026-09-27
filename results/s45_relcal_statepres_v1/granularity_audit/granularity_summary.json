@@ -103,5 +103,47 @@
       }
     }
   },
-  "interpretation": "Weighted variance decomposition and frozen checkpoint sensitivities. Controller variance or gate size alone does not establish causal relation utility."
+  "interpretation": "Weighted variance decomposition and frozen checkpoint sensitivities. Controller variance or gate size alone does not establish causal relation utility.",
+  "scalar_frozen_sensitivity": {
+    "DOSAGE_ONLY": {
+      "rows": 24,
+      "metrics": {
+        "val_acc": {
+          "mean_delta": -0.00038831432660420734,
+          "population_std_delta": 0.000992071267175219,
+          "positive_rows": 6
+        },
+        "val_macro_f1": {
+          "mean_delta": -0.0010515821072979552,
+          "population_std_delta": 0.0027129043391776733,
+          "positive_rows": 8
+        },
+        "true_label_ce": {
+          "mean_delta": -1.015948752562205e-05,
+          "population_std_delta": 0.0022649370659785406,
+          "positive_rows": 11
+        }
+      }
+    },
+    "REDISTRIBUTION_ONLY": {
+      "rows": 24,
+      "metrics": {
+        "val_acc": {
+          "mean_delta": -0.000726101299126943,
+          "population_std_delta": 0.001236704236508569,
+          "positive_rows": 7
+        },
+        "val_macro_f1": {
+          "mean_delta": -0.0016051801671508627,
+          "population_std_delta": 0.00265584988298613,
+          "positive_rows": 8
+        },
+        "true_label_ce": {
+          "mean_delta": 0.0009770796944697697,
+          "population_std_delta": 0.0032790245703632833,
+          "positive_rows": 18
+        }
+      }
+    }
+  }
 }

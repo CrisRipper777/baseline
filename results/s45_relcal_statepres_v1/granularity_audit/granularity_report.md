@@ -10,6 +10,8 @@ Matched scalar-minus-family within-ratio differences: lowrank_rel: mean 0.1829, 
 
 The CSV retains modality, controller dimension, total/within/between variance, within ratio, decomposition error, and weighted within-target pairwise L2. Frozen target-mean, dosage-only, and redistribution-only results are checkpoint sensitivity probes, not retrained causal ablations.
 
+Scalar frozen sensitivity, mean delta vs NORMAL: DOSAGE_ONLY: val_acc -0.000388, val_macro_f1 -0.001052, true_label_ce -0.000010; REDISTRIBUTION_ONLY: val_acc -0.000726, val_macro_f1 -0.001605, true_label_ce +0.000977. No retraining was performed, so these probes do not separate retrained causal contributions.
+
 A high within-target variance fraction indicates edge-specific controller assignment at the checkpoint; it does not establish that the assigned magnitudes are useful. See the intervention CSV for validation accuracy, macro-F1, true-label CE, and prediction flips.
 
 Row-mass preservation in the later S4.5 model constrains only one-step off-diagonal target mass. It does not imply symmetry or spectral equivalence.
