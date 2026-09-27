@@ -4,6 +4,7 @@ import csv
 import json
 import math
 import statistics
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -118,7 +119,7 @@ def _report(summary: dict[str, Any]) -> str:
     s = summary["interpretation_statuses"]
     lines = [
         "# S4.5 Relation-Calibrated State-Preserving Propagation", "",
-        f"Training commit: `{summary['training_commit']}`; source branch/SHA: `s44_relational_transform` / `{base.SOURCE_SHA}`.",
+        f"Training commit: `{summary['training_commit']}`; analysis commit: `{summary['analysis_commit']}`; source branch/SHA: `s44_relational_transform` / `{base.SOURCE_SHA}`.",
         "Scope: unified full-graph node classification on Movies, Grocery, ele-fashion and Reddit-S; seeds 42–44; best-validation-accuracy selection; test disabled. Toys remains an architecture holdout. No LP results are included.", "",
         "## Findings", "",
         f"- ControllerGranularity: **{s['ControllerGranularity']['status']}**. Overall mean within-target fraction {s['ControllerGranularity']['mean_within_ratio']:.4f}; family means: " + "; ".join(
@@ -288,6 +289,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
     all_interaction = _all_interaction_rows(interaction)
     interpretation = _statuses(contrasts, interaction, intervention_rows)
     training_commit = next(iter(training_commits))
+    analysis_commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     dataset_config_hashes = {dataset: _file_sha256(ROOT / "configs/dataset" / f"{dataset}.yaml")
                              for dataset in requested}
     summary = {
@@ -297,7 +299,7 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
                      "test_evaluation": False, "lp_evaluation": False,
                      "datasets": list(requested), "variants": list(VARIANTS),
                      "completed_runs": len(table), "expected_runs": len(requested) * len(SEEDS) * len(VARIANTS)},
-        "training_commit": training_commit,
+        "training_commit": training_commit, "analysis_commit": analysis_commit,
         "identity_mob_crosscheck": {"rows": len(identity_crosscheck),
                                     "max_abs_metric_delta": identity_delta,
                                     "audit_required": False},
@@ -349,5 +351,6 @@ def run_analysis(datasets: tuple[str, ...] = DATASETS, device_name: str | None =
     (RESULT_ROOT / "s45_summary.json").write_text(json.dumps(summary, indent=2, allow_nan=True), encoding="utf-8")
     (RESULT_ROOT / "s45_report.md").write_text(_report(summary), encoding="utf-8")
     return {"completed_runs": len(table), "expected_runs": len(requested) * len(SEEDS) * len(VARIANTS),
-            "training_commit": training_commit, "interpretation_statuses": interpretation,
+            "training_commit": training_commit, "analysis_commit": analysis_commit,
+            "interpretation_statuses": interpretation,
             "result_directory": str(RESULT_ROOT)}

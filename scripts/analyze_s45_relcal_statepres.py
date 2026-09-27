@@ -472,7 +472,8 @@ def _geometry_rows(dataset, seed, variant, modality, states, edge_index):
         order = int(row["order"])
         row.update({"dataset": dataset, "seed": seed, "variant": variant,
                     "modality": modality,
-                    "normalized_dirichlet_energy": normalized_dirichlet_energy(states[order], edge_index)})
+                    "normalized_dirichlet_energy": normalized_dirichlet_energy(
+                        states[order].detach().cpu(), edge_index.cpu())})
         rows.append(row)
     return rows
 
