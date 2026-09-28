@@ -173,10 +173,10 @@ def test_smoke_command_disables_test_and_uses_only_requested_nc_path(tmp_path):
     assert not any("test=true" in item.lower() for item in command)
 
 
-def test_variant_surface_and_screening_dataset_staging():
-    from scripts.run_risa_v05 import CONFIRM_DATASETS, SCREEN_DATASETS, SEEDS
+def test_variant_surface_and_nc_dataset_staging():
+    from scripts.run_risa_v05 import COMPATIBILITY_DATASETS, NC_DATASETS, SEEDS
 
     assert Model.VARIANTS == ("v05_full", "v05_no_crst", "v05_no_relation_context", "v05_no_imci")
-    assert SCREEN_DATASETS == ("Movies", "ele-fashion", "Reddit-S")
-    assert CONFIRM_DATASETS == ("Grocery",)
+    assert NC_DATASETS == ("Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S")
+    assert COMPATIBILITY_DATASETS == ("Toys", "Grocery", "ele-fashion", "Reddit-S")
     assert SEEDS == (42, 43, 44)
