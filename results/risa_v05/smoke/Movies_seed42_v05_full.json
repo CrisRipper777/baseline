@@ -1,0 +1,161 @@
+{
+  "dataset": "Movies",
+  "seed": 42,
+  "variant": "v05_full",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v05_v1/smoke/Movies/v05_full/best.pt",
+  "checkpoint_metrics": {
+    "val_acc": 0.3293341398239136,
+    "val_macro_f1": 0.02477436823104693
+  },
+  "device": "cuda:0",
+  "parameter_audit": {
+    "v05_full": {
+      "s45_backbone": 591872,
+      "modality_relation_encoders": 55552,
+      "shared_relation_encoder": 6336,
+      "rotation_angle_heads": 8448,
+      "imci": 1054720,
+      "total_model": 1716928,
+      "classifier": 5140,
+      "total_with_classifier": 1722068
+    },
+    "v05_no_crst": {
+      "s45_backbone": 591872,
+      "modality_relation_encoders": 0,
+      "shared_relation_encoder": 0,
+      "rotation_angle_heads": 0,
+      "imci": 1054720,
+      "total_model": 1646592,
+      "classifier": 5140,
+      "total_with_classifier": 1651732
+    },
+    "v05_no_relation_context": {
+      "s45_backbone": 591872,
+      "modality_relation_encoders": 55552,
+      "shared_relation_encoder": 6336,
+      "rotation_angle_heads": 8448,
+      "imci": 1054720,
+      "total_model": 1716928,
+      "classifier": 5140,
+      "total_with_classifier": 1722068
+    },
+    "v05_no_imci": {
+      "s45_backbone": 591872,
+      "modality_relation_encoders": 55552,
+      "shared_relation_encoder": 6336,
+      "rotation_angle_heads": 8448,
+      "imci": 0,
+      "total_model": 662208,
+      "classifier": 5140,
+      "total_with_classifier": 667348
+    }
+  },
+  "smoke_gradient_audit": {
+    "modality_relation_encoders": {
+      "parameters": 18,
+      "parameters_with_grad": 18,
+      "parameters_with_nonzero_grad": 18,
+      "global_grad_l2_norm": 0.00014099208055995405,
+      "nonzero": true
+    },
+    "shared_relation_encoder": {
+      "parameters": 10,
+      "parameters_with_grad": 10,
+      "parameters_with_nonzero_grad": 10,
+      "global_grad_l2_norm": 3.241718513891101e-05,
+      "nonzero": true
+    },
+    "angle_heads": {
+      "parameters": 4,
+      "parameters_with_grad": 4,
+      "parameters_with_nonzero_grad": 4,
+      "global_grad_l2_norm": 0.004164380487054586,
+      "nonzero": true
+    },
+    "multihead_attention": {
+      "parameters": 8,
+      "parameters_with_grad": 8,
+      "parameters_with_nonzero_grad": 8,
+      "global_grad_l2_norm": 0.03990102559328079,
+      "nonzero": true
+    },
+    "imci_ffn": {
+      "parameters": 8,
+      "parameters_with_grad": 8,
+      "parameters_with_nonzero_grad": 8,
+      "global_grad_l2_norm": 0.05905595421791077,
+      "nonzero": true
+    }
+  },
+  "smoke_gradient_audit_loss": "train-split cross-entropy; no optimizer step",
+  "gpu_memory": {
+    "peak_allocated_bytes": 4808550912,
+    "peak_reserved_bytes": 5060427776
+  },
+  "crst_sanity": {
+    "text": {
+      "mean_abs_theta_radians": 0.03112376124849395,
+      "p95_abs_theta_radians": 0.05062403157353401,
+      "norm_preservation_max_abs_error": 1.9073486328125e-06,
+      "mean_cos_base_rotated": 0.9992918817296796,
+      "valid_context_edge_ratio": 0.9788248902376836
+    },
+    "visual": {
+      "mean_abs_theta_radians": 0.020945414385712523,
+      "p95_abs_theta_radians": 0.03893788903951645,
+      "norm_preservation_max_abs_error": 1.9073486328125e-06,
+      "mean_cos_base_rotated": 0.9997288855525137,
+      "valid_context_edge_ratio": 0.9788248902376836
+    }
+  },
+  "imci_sanity": {
+    "text": {
+      "attention_shape": [
+        16672,
+        4,
+        1,
+        3
+      ],
+      "max_hop_probability_sum_error": 1.1920928955078125e-07,
+      "mean_hop_attention": [
+        0.33131143450737,
+        0.33553433418273926,
+        0.33315417170524597
+      ],
+      "mean_hop_attention_entropy": 1.0982037782669067
+    },
+    "visual": {
+      "attention_shape": [
+        16672,
+        4,
+        1,
+        3
+      ],
+      "max_hop_probability_sum_error": 1.1920928955078125e-07,
+      "mean_hop_attention": [
+        0.3349205553531647,
+        0.33316096663475037,
+        0.3319184184074402
+      ],
+      "mean_hop_attention_entropy": 1.0983558893203735
+    }
+  },
+  "diagnostic_sample": {
+    "seed": 42042,
+    "edge_count": 512,
+    "sampling": "deterministic random sample over P_rel edges"
+  },
+  "p_rel_unchanged": true,
+  "sanity": {
+    "finite_embeddings": true,
+    "physical_p_rel_unchanged": true,
+    "nonzero_rotation_angles": true,
+    "rotation_norm_preserved": true,
+    "attention_probabilities_sum_to_one": true,
+    "required_gradients_nonzero": true
+  },
+  "sanity_passed": true,
+  "test_evaluated": false,
+  "lp_evaluated": false
+}

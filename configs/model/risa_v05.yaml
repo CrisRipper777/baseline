@@ -1,0 +1,12 @@
+name: risa_v05
+hidden_dim: 256
+dropout: 0.2
+max_order: 3
+relation_dim: 32
+edge_chunk_size: 16384
+rotation_group_size: 2
+max_rotation_angle: 1.57079632679
+iamr_num_heads: 4
+iamr_ff_mult: 2
+node_chunk_size: 32768
+variant: v05_full

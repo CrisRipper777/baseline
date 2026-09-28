@@ -1,0 +1,11 @@
+# RISA v0.5 smoke diagnostics: Movies seed 42
+
+- Checkpoint: `/hdd1/DataInHere/YHF/baseline/outputs/risa_v05_v1/smoke/Movies/v05_full/best.pt`
+- Checkpoint validation metrics: `{"val_acc": 0.3293341398239136, "val_macro_f1": 0.02477436823104693}`
+- CRST sanity: `{"text": {"mean_abs_theta_radians": 0.03112376124849395, "mean_cos_base_rotated": 0.9992918817296796, "norm_preservation_max_abs_error": 1.9073486328125e-06, "p95_abs_theta_radians": 0.05062403157353401, "valid_context_edge_ratio": 0.9788248902376836}, "visual": {"mean_abs_theta_radians": 0.020945414385712523, "mean_cos_base_rotated": 0.9997288855525137, "norm_preservation_max_abs_error": 1.9073486328125e-06, "p95_abs_theta_radians": 0.03893788903951645, "valid_context_edge_ratio": 0.9788248902376836}}`
+- IMCI sanity: `{"text": {"attention_shape": [16672, 4, 1, 3], "max_hop_probability_sum_error": 1.1920928955078125e-07, "mean_hop_attention": [0.33131143450737, 0.33553433418273926, 0.33315417170524597], "mean_hop_attention_entropy": 1.0982037782669067}, "visual": {"attention_shape": [16672, 4, 1, 3], "max_hop_probability_sum_error": 1.1920928955078125e-07, "mean_hop_attention": [0.3349205553531647, 0.33316096663475037, 0.3319184184074402], "mean_hop_attention_entropy": 1.0983558893203735}}`
+- Gradient audit: `{"angle_heads": {"global_grad_l2_norm": 0.004164380487054586, "nonzero": true, "parameters": 4, "parameters_with_grad": 4, "parameters_with_nonzero_grad": 4}, "imci_ffn": {"global_grad_l2_norm": 0.05905595421791077, "nonzero": true, "parameters": 8, "parameters_with_grad": 8, "parameters_with_nonzero_grad": 8}, "modality_relation_encoders": {"global_grad_l2_norm": 0.00014099208055995405, "nonzero": true, "parameters": 18, "parameters_with_grad": 18, "parameters_with_nonzero_grad": 18}, "multihead_attention": {"global_grad_l2_norm": 0.03990102559328079, "nonzero": true, "parameters": 8, "parameters_with_grad": 8, "parameters_with_nonzero_grad": 8}, "shared_relation_encoder": {"global_grad_l2_norm": 3.241718513891101e-05, "nonzero": true, "parameters": 10, "parameters_with_grad": 10, "parameters_with_nonzero_grad": 10}}`
+- Peak GPU allocation: `4808550912` bytes
+- Physical P_rel unchanged: `True`
+- Sanity checks: `PASS`
+- Test and LP evaluation: disabled.
