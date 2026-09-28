@@ -172,7 +172,8 @@ class Model(nn.Module):
                 edge_subset: torch.Tensor | None = None,
                 router_shuffle_permutation=None,
                 shuffle_seed: int | None = None,
-                return_edge_state: bool = True) -> dict[str, Any]:
+                return_edge_state: bool = True,
+                collect_diagnostics: bool = True) -> dict[str, Any]:
         if intervention not in {None, "router_uniform", "router_mean", "router_shuffle", "delta_off",
                                 "delta_parallel_only", "delta_orthogonal_only"}:
             raise ValueError(f"unknown RISA P0 intervention {intervention!r}")
@@ -213,12 +214,14 @@ class Model(nn.Module):
             elif self.variant == "p0_single_dynamic_transform":
                 edge_result = self._dynamic_edges(
                     modality, h, row, col, weight, intervention, selected, return_edge_state,
+                    collect_diagnostics,
                 )
                 correction = edge_result["correction"]
             else:
                 edge_result = self._routed_edges(
                     modality, h, row, col, weight, intervention,
                     router_shuffle_permutation, shuffle_seed, selected, return_edge_state,
+                    collect_diagnostics,
                 )
                 correction = edge_result["correction"]
             c0 = h
@@ -260,7 +263,8 @@ class Model(nn.Module):
                                                   for m in ("text", "visual")},
         }
 
-    def _dynamic_edges(self, modality, h, row, col, weight, intervention, selected, collect):
+    def _dynamic_edges(self, modality, h, row, col, weight, intervention, selected, collect,
+                       collect_diagnostics):
         n_edges = row.numel()
         correction = h.new_zeros(h.shape)
         edge_base, edge_delta, edge_corrected, edge_relation = [], [], [], []
@@ -286,7 +290,7 @@ class Model(nn.Module):
                 delta = parallel if intervention == "delta_parallel_only" else delta - parallel
             correction.index_add_(0, row[start:end], weight[start:end, None] * delta)
             chosen = selected[start:end]
-            if bool(chosen.any()):
+            if collect_diagnostics and bool(chosen.any()):
                 b, d = base[chosen], delta[chosen]
                 norm_denom = b.square().sum(dim=-1, keepdim=True).clamp_min(1e-12)
                 parallel = (d * b).sum(dim=-1, keepdim=True) / norm_denom * b
@@ -336,14 +340,15 @@ class Model(nn.Module):
         }
 
     def _routed_edges(self, modality, h, row, col, weight, intervention,
-                      router_shuffle_permutation, shuffle_seed, selected, collect):
+                      router_shuffle_permutation, shuffle_seed, selected, collect,
+                      collect_diagnostics):
         # A streaming implementation retaining the exact edge order. For a
         # router shuffle, compute all probabilities once and apply the supplied
         # permutation globally; the analysis script can construct matched bins.
         if intervention == "router_shuffle" and self.variant == "p0_operator_routed":
             return self._routed_edges_shuffled(modality, h, row, col, weight,
                                                router_shuffle_permutation, shuffle_seed,
-                                               selected, collect)
+                                               selected, collect, collect_diagnostics)
         n_edges = row.numel()
         correction = h.new_zeros(h.shape)
         ops = getattr(self, f"operators_{modality}")
@@ -406,7 +411,7 @@ class Model(nn.Module):
                 delta = parallel if intervention == "delta_parallel_only" else delta - parallel
             correction.index_add_(0, erow, weight[start:end, None] * delta)
             chosen = selected[start:end]
-            if bool(chosen.any()):
+            if collect_diagnostics and bool(chosen.any()):
                 b, d = base[chosen], delta[chosen]
                 denom = b.square().sum(dim=-1, keepdim=True).clamp_min(1e-12)
                 parallel = (d * b).sum(dim=-1, keepdim=True) / denom * b
@@ -433,7 +438,7 @@ class Model(nn.Module):
                                    usage_sq_sum, operator_norm_sum, entropy_sum, pair_sum, count)
 
     def _routed_edges_shuffled(self, modality, h, row, col, weight, permutation,
-                               shuffle_seed, selected, collect):
+                               shuffle_seed, selected, collect, collect_diagnostics):
         enc = getattr(self, f"relation_encoder_{modality}")
         q, k = enc.project(h)
         probs = []
@@ -460,10 +465,10 @@ class Model(nn.Module):
         parallel_coeff = h.new_zeros(()); cosine_sum = h.new_zeros(()); pair_sum = h.new_zeros(6)
         usage_sq_sum = torch.zeros(4, dtype=torch.float64, device=h.device)
         operator_norm_sum = h.new_zeros(4)
-        count = selected.sum().to(dtype=torch.float64)
-        usage_sum = shuffled[selected].double().sum(dim=0) if bool(selected.any()) else torch.zeros(4, dtype=torch.float64, device=h.device)
+        count = selected.sum().to(dtype=torch.float64) if collect_diagnostics else torch.zeros((), dtype=torch.float64, device=h.device)
+        usage_sum = (shuffled[selected].double().sum(dim=0) if bool(selected.any()) else torch.zeros(4, dtype=torch.float64, device=h.device)) if collect_diagnostics else torch.zeros(4, dtype=torch.float64, device=h.device)
         entropy_sum = (-(shuffled[selected].double().clamp_min(1e-12).log() * shuffled[selected].double()).sum(dim=-1).sum()
-                       if bool(selected.any()) else torch.zeros((), dtype=torch.float64, device=h.device))
+                       if bool(selected.any()) else torch.zeros((), dtype=torch.float64, device=h.device)) if collect_diagnostics else torch.zeros((), dtype=torch.float64, device=h.device)
         selected_prob, selected_relation = [], []
         for start in range(0, row.numel(), self.edge_chunk_size):
             end = min(start + self.edge_chunk_size, row.numel())
@@ -472,7 +477,7 @@ class Model(nn.Module):
             delta = (outputs * shuffled[start:end, :, None]).sum(dim=1)
             correction.index_add_(0, row[start:end], weight[start:end, None] * delta)
             chosen = selected[start:end]
-            if bool(chosen.any()):
+            if collect_diagnostics and bool(chosen.any()):
                 b, d = base[chosen], delta[chosen]
                 denom = b.square().sum(dim=-1, keepdim=True).clamp_min(1e-12)
                 parallel = (d * b).sum(dim=-1, keepdim=True) / denom * b
@@ -612,7 +617,11 @@ class Model(nn.Module):
         return result
 
     def forward(self, x: torch.Tensor, edge_index=None):
-        result = self.analyze(x, edge_index, return_edge_state=False)
+        # Training consumes fused_z only. Avoid building autograd graphs for
+        # edge diagnostic summaries such as pairwise cosine over the full graph.
+        collect_diagnostics = not (self.training and torch.is_grad_enabled())
+        result = self.analyze(x, edge_index, return_edge_state=False,
+                              collect_diagnostics=collect_diagnostics)
         z = result["fused_z"]
         return z, None, None, z.new_zeros(()), {}
 

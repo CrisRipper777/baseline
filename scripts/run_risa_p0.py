@@ -68,6 +68,46 @@ def _validate_checkpoint(path: Path, seed: int) -> dict[str, Any]:
     return payload
 
 
+def _validate_run_metrics(path: Path, run_seeds: tuple[int, ...]) -> dict[str, Any]:
+    if not path.is_file():
+        raise FileNotFoundError(path)
+    run_metrics = json.loads(path.read_text(encoding="utf-8"))
+    if run_metrics.get("run_seeds") != list(run_seeds):
+        raise RuntimeError("run seed aggregation does not match the requested seeds")
+    run_rows = run_metrics.get("runs", [])
+    if len(run_rows) != len(run_seeds):
+        raise RuntimeError(f"expected {len(run_seeds)} run_metrics rows, found {len(run_rows)}")
+    if [int(row.get("seed", -1)) for row in run_rows] != list(run_seeds):
+        raise RuntimeError("run_metrics rows are not in the requested seed order")
+    if any(any(key.startswith("test_") for key in row.get("metrics", {}))
+           for row in run_rows):
+        raise RuntimeError("test evaluation detected in run metrics")
+    return run_metrics
+
+
+def _reuse_completed_job(dataset: str, variant: str, phase: str,
+                         run_seeds: tuple[int, ...], output_dir: Path,
+                         complete_path: Path, metrics_path: Path) -> dict[str, Any] | None:
+    if not complete_path.is_file():
+        return None
+    previous = json.loads(complete_path.read_text(encoding="utf-8"))
+    checkpoint_paths = expected_checkpoint_paths(output_dir, len(run_seeds))
+    expected = {
+        "phase": phase, "dataset": dataset, "variant": variant,
+        "protocol_version": PROTOCOL, "run_seeds": list(run_seeds),
+        "num_runs": len(run_seeds), "test_evaluation": False,
+        "lp_evaluation": False,
+        "checkpoint_paths": [str(path) for path in checkpoint_paths],
+    }
+    mismatched = [key for key, value in expected.items() if previous.get(key) != value]
+    if mismatched:
+        raise RuntimeError(f"existing complete manifest mismatch in {complete_path}: {mismatched}")
+    for checkpoint, seed in zip(checkpoint_paths, run_seeds, strict=True):
+        _validate_checkpoint(checkpoint, seed)
+    _validate_run_metrics(metrics_path, run_seeds)
+    return {**previous, "reused_existing": True}
+
+
 def _run_job(dataset: str, variant: str, phase: str, gpu: str) -> dict[str, Any]:
     _check_branch()
     if phase not in {"smoke", "preflight", "formal"}:
@@ -84,6 +124,10 @@ def _run_job(dataset: str, variant: str, phase: str, gpu: str) -> dict[str, Any]
     checkpoint = checkpoint_base_path(output_dir)
     metrics_path = output_dir / "run_metrics.json"
     complete_path = output_dir / "complete.json"
+    reused = _reuse_completed_job(dataset, variant, phase, run_seeds,
+                                  output_dir, complete_path, metrics_path)
+    if reused is not None:
+        return reused
     command = [
         sys.executable, "-m", "src.main", f"dataset={dataset}", "task=nc", "model=risa_v04",
         f"model.variant={variant}", "model.hidden_dim=256", "model.dropout=0.2",
@@ -109,17 +153,7 @@ def _run_job(dataset: str, variant: str, phase: str, gpu: str) -> dict[str, Any]
     checkpoint_paths = expected_checkpoint_paths(output_dir, num_runs)
     payloads = [_validate_checkpoint(path, seed)
                 for path, seed in zip(checkpoint_paths, run_seeds, strict=True)]
-    run_metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
-    if run_metrics.get("run_seeds") != list(run_seeds):
-        raise RuntimeError("run seed aggregation does not match the requested seeds")
-    run_rows = run_metrics.get("runs", [])
-    if len(run_rows) != num_runs:
-        raise RuntimeError(f"expected {num_runs} run_metrics rows, found {len(run_rows)}")
-    if [int(row.get("seed", -1)) for row in run_rows] != list(run_seeds):
-        raise RuntimeError("run_metrics rows are not in the requested seed order")
-    if any(any(key.startswith("test_") for key in row.get("metrics", {}))
-           for row in run_rows):
-        raise RuntimeError("test evaluation detected in run metrics")
+    _validate_run_metrics(metrics_path, run_seeds)
     record = {
         "phase": phase, "dataset": dataset, "variant": variant,
         "training_branch": _git("branch", "--show-current"),
@@ -173,7 +207,8 @@ def main() -> None:
     for dataset, variant in jobs:
         results.append(_run_job(dataset, variant, args.phase, args.gpu))
         print(json.dumps({"dataset": dataset, "variant": variant,
-                          "status": "complete", "checkpoint_paths": results[-1]["checkpoint_paths"]}),
+                          "status": "reused" if results[-1].get("reused_existing") else "complete",
+                          "checkpoint_paths": results[-1]["checkpoint_paths"]}),
               flush=True)
     summary = {"phase": args.phase, "requested_jobs": len(jobs), "completed": len(results),
                "failed": [], "test_evaluation": False, "lp_evaluation": False,

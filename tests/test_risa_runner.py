@@ -50,3 +50,34 @@ def test_matched_shuffle_is_deterministic_and_stays_inside_structural_bins():
     assert report == report2
     assert sorted(first.tolist()) == list(range(p_rel._nnz()))
     assert report["preserves_edge_marginal_within_each_bin"] is True
+
+
+def test_completed_formal_job_can_be_reused_after_interruption(tmp_path: Path, monkeypatch):
+    import json
+
+    from scripts import run_risa_p0
+
+    out = tmp_path / "formal" / "Movies" / "p0_identity"
+    out.mkdir(parents=True)
+    checkpoints = run_risa_p0.expected_checkpoint_paths(out, 3)
+    for checkpoint in checkpoints:
+        checkpoint.write_bytes(b"validated by mocked loader")
+    metrics = out / "run_metrics.json"
+    metrics.write_text(json.dumps({
+        "run_seeds": [42, 43, 44],
+        "runs": [{"seed": seed, "metrics": {"val_acc": 0.5, "val_macro_f1": 0.4}}
+                 for seed in (42, 43, 44)],
+    }))
+    complete = out / "complete.json"
+    complete.write_text(json.dumps({
+        "phase": "formal", "dataset": "Movies", "variant": "p0_identity",
+        "protocol_version": run_risa_p0.PROTOCOL, "run_seeds": [42, 43, 44],
+        "num_runs": 3, "test_evaluation": False, "lp_evaluation": False,
+        "checkpoint_paths": [str(path) for path in checkpoints],
+    }))
+    monkeypatch.setattr(run_risa_p0, "_validate_checkpoint", lambda path, seed: {})
+    monkeypatch.setattr(run_risa_p0, "_validate_run_metrics", lambda path, seeds: {})
+    reused = run_risa_p0._reuse_completed_job(
+        "Movies", "p0_identity", "formal", (42, 43, 44), out, complete, metrics
+    )
+    assert reused is not None and reused["reused_existing"] is True

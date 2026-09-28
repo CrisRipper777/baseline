@@ -1,0 +1,53 @@
+{
+  "phase": "formal",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "datasets": [
+    "Movies"
+  ],
+  "variants": [
+    "p0_identity"
+  ],
+  "seeds": [
+    42
+  ],
+  "checkpoint_selection": "validation accuracy only; CE is post-hoc and does not select checkpoints",
+  "test_evaluated": false,
+  "lp_evaluated": false,
+  "records": [
+    {
+      "dataset": "Movies",
+      "seed": 42,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_identity/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5713857412338257,
+        "val_macro_f1": 0.4907663485892929
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5713856816291809,
+          "val_macro_f1": 0.4907663485892929,
+          "val_cross_entropy": 1.384656548500061
+        }
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    }
+  ]
+}

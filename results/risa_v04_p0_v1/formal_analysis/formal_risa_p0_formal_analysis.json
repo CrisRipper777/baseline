@@ -1,0 +1,3870 @@
+{
+  "phase": "formal",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "datasets": [
+    "Movies",
+    "ele-fashion",
+    "Reddit-S"
+  ],
+  "variants": [
+    "p0_identity",
+    "p0_masspres_scalar",
+    "p0_operator_uniform",
+    "p0_operator_global",
+    "p0_operator_routed"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "checkpoint_selection": "validation accuracy only; CE is post-hoc and does not select checkpoints",
+  "posthoc_macro_f1_label_policy": "class IDs observed in train and validation labels only; test labels are not read",
+  "test_evaluated": false,
+  "lp_evaluated": false,
+  "records": [
+    {
+      "dataset": "Movies",
+      "seed": 42,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_identity/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5713857412338257,
+        "val_macro_f1": 0.4907663485892929
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5713856816291809,
+          "val_macro_f1": 0.4907663485892929,
+          "val_cross_entropy": 1.384656548500061
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 43,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_identity/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5788842439651489,
+        "val_macro_f1": 0.49245064520937304
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5788841843605042,
+          "val_macro_f1": 0.49245064520937304,
+          "val_cross_entropy": 1.3771263360977173
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 44,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_identity/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.573185384273529,
+        "val_macro_f1": 0.4651067690214309
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5731853246688843,
+          "val_macro_f1": 0.4651067690214309,
+          "val_cross_entropy": 1.3406845331192017
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 42,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_masspres_scalar/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5818836092948914,
+        "val_macro_f1": 0.48371744020103086
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5818836092948914,
+          "val_macro_f1": 0.48371744020103086,
+          "val_cross_entropy": 1.3963679075241089
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 635202,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 635202,
+        "classifier": 5140,
+        "total_with_classifier": 640342
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 43,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_masspres_scalar/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.573185384273529,
+        "val_macro_f1": 0.47315744776561514
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5731853246688843,
+          "val_macro_f1": 0.47315744776561514,
+          "val_cross_entropy": 1.3962275981903076
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 635202,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 635202,
+        "classifier": 5140,
+        "total_with_classifier": 640342
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 44,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_masspres_scalar/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5782843232154846,
+        "val_macro_f1": 0.49858493091846656
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5782843232154846,
+          "val_macro_f1": 0.49858493091846656,
+          "val_cross_entropy": 1.4104238748550415
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 635202,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 635202,
+        "classifier": 5140,
+        "total_with_classifier": 640342
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 42,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_uniform/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.573185384273529,
+        "val_macro_f1": 0.48431864573960237
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5731853246688843,
+          "val_macro_f1": 0.48431864573960237,
+          "val_cross_entropy": 1.3638396263122559
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 725248,
+        "classifier": 5140,
+        "total_with_classifier": 730388
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 43,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_uniform/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5791841745376587,
+        "val_macro_f1": 0.4832834554398702
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5791841149330139,
+          "val_macro_f1": 0.4832834554398702,
+          "val_cross_entropy": 1.4629085063934326
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 725248,
+        "classifier": 5140,
+        "total_with_classifier": 730388
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 44,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_uniform/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5806838870048523,
+        "val_macro_f1": 0.4768677610692961
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5806838274002075,
+          "val_macro_f1": 0.4768677610692961,
+          "val_cross_entropy": 1.3532873392105103
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 725248,
+        "classifier": 5140,
+        "total_with_classifier": 730388
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 42,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_global/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.575584888458252,
+        "val_macro_f1": 0.489039540783368
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.575584888458252,
+          "val_macro_f1": 0.489039540783368,
+          "val_cross_entropy": 1.3543435335159302
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 725256,
+        "classifier": 5140,
+        "total_with_classifier": 730396
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 43,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_global/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5767846703529358,
+        "val_macro_f1": 0.4946614553337808
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.576784610748291,
+          "val_macro_f1": 0.4946614553337808,
+          "val_cross_entropy": 1.3864566087722778
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 725256,
+        "classifier": 5140,
+        "total_with_classifier": 730396
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 44,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_global/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.580083966255188,
+        "val_macro_f1": 0.48677528324245445
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.580083966255188,
+          "val_macro_f1": 0.48677528324245445,
+          "val_cross_entropy": 1.368735671043396
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 725256,
+        "classifier": 5140,
+        "total_with_classifier": 730396
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 42,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_routed/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5788842439651489,
+        "val_macro_f1": 0.44865783780059554
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5788841843605042,
+          "val_macro_f1": 0.44865783780059554,
+          "val_cross_entropy": 1.335588812828064
+        },
+        "router_mean": {
+          "val_acc": 0.5797840356826782,
+          "val_macro_f1": 0.4498925150133294,
+          "val_cross_entropy": 1.3353084325790405
+        },
+        "router_uniform": {
+          "val_acc": 0.5746850371360779,
+          "val_macro_f1": 0.4414172541986576,
+          "val_cross_entropy": 1.3377195596694946
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.5788841843605042,
+          "val_macro_f1": 0.44846947116307484,
+          "val_cross_entropy": 1.3353281021118164
+        },
+        "delta_off": {
+          "val_acc": 0.504499077796936,
+          "val_macro_f1": 0.24433803942125237,
+          "val_cross_entropy": 1.8209301233291626
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.5050989389419556,
+          "val_macro_f1": 0.2431331843139862,
+          "val_cross_entropy": 1.7353157997131348
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.5743851065635681,
+          "val_macro_f1": 0.440370882567047,
+          "val_cross_entropy": 1.3639775514602661
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.15840987193925424,
+            0.3970098759864519,
+            0.2648049764927951,
+            0.17977527573574428
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.023083522679849228,
+            0.0415485813410778,
+            0.004342841771116224,
+            0.021097961988661876
+          ],
+          "mean_router_entropy": 1.3138610026205009,
+          "mean_kl_pi_edge_to_mean_pi": 0.005141227132637205,
+          "operator_output_norm": [
+            2.9793968200683594,
+            5.902662754058838,
+            4.719487190246582,
+            2.684826612472534
+          ],
+          "pairwise_operator_output_cosine": [
+            0.9828367233276367,
+            0.9884674549102783,
+            0.983654797077179,
+            0.9942149519920349,
+            0.9627634286880493,
+            0.974086344242096
+          ],
+          "correction_norm_ratio": 0.4113226532936096,
+          "cos_base_base_plus_delta": 0.9124256850039179,
+          "parallel_norm_ratio": 0.18719208240509033,
+          "orthogonal_norm_ratio": 0.36625874042510986,
+          "orthogonal_fraction": 0.8904414176940918
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.1959753426215606,
+            0.20857287556827428,
+            0.19674937089480748,
+            0.398702410819099
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.026628297057715907,
+            0.025409470895878927,
+            0.06317474453333989,
+            0.10339587997291982
+          ],
+          "mean_router_entropy": 1.3061314458614495,
+          "mean_kl_pi_edge_to_mean_pi": 0.026696412682031934,
+          "operator_output_norm": [
+            2.821542739868164,
+            3.006838321685791,
+            4.242895603179932,
+            2.946831703186035
+          ],
+          "pairwise_operator_output_cosine": [
+            0.8891783356666565,
+            0.9487178921699524,
+            0.90642249584198,
+            0.8854575157165527,
+            0.8469409346580505,
+            0.8975463509559631
+          ],
+          "correction_norm_ratio": 0.28061360120773315,
+          "cos_base_base_plus_delta": 0.9605277375281402,
+          "parallel_norm_ratio": 0.11045584082603455,
+          "orthogonal_norm_ratio": 0.25796031951904297,
+          "orthogonal_fraction": 0.9192723035812378
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            10.0,
+            19.0,
+            36.0
+          ],
+          "source_degree": [
+            10.0,
+            19.0,
+            36.0
+          ],
+          "normalized_weight": [
+            0.03042903169989586,
+            0.04767312854528427,
+            0.07905694097280502
+          ]
+        },
+        "structural_bin_count": 37,
+        "non_singleton_bin_count": 37,
+        "singleton_edge_count": 0,
+        "edge_count": 160802,
+        "shuffled_edge_count": 160802,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 772744,
+        "classifier": 5140,
+        "total_with_classifier": 777884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 43,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_routed/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5770846009254456,
+        "val_macro_f1": 0.4683205880146124
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5770845413208008,
+          "val_macro_f1": 0.4683205880146124,
+          "val_cross_entropy": 1.3513768911361694
+        },
+        "router_mean": {
+          "val_acc": 0.5758848190307617,
+          "val_macro_f1": 0.4669011384809843,
+          "val_cross_entropy": 1.3579285144805908
+        },
+        "router_uniform": {
+          "val_acc": 0.5584883093833923,
+          "val_macro_f1": 0.42673328494482393,
+          "val_cross_entropy": 1.4134888648986816
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.5770845413208008,
+          "val_macro_f1": 0.4712186647165047,
+          "val_cross_entropy": 1.3511550426483154
+        },
+        "delta_off": {
+          "val_acc": 0.5017996430397034,
+          "val_macro_f1": 0.25908836416532943,
+          "val_cross_entropy": 1.9339109659194946
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.5008997917175293,
+          "val_macro_f1": 0.25740117832455356,
+          "val_cross_entropy": 1.8251547813415527
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.5743851065635681,
+          "val_macro_f1": 0.4593560668136261,
+          "val_cross_entropy": 1.394485592842102
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.01939165404575241,
+            0.059198692856879544,
+            0.06564848675838636,
+            0.8557611664160839
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.02920156211439167,
+            0.04576233271668573,
+            0.04795309632694114,
+            0.12155741144054627
+          ],
+          "mean_router_entropy": 0.501933354391999,
+          "mean_kl_pi_edge_to_mean_pi": 0.05395891489758531,
+          "operator_output_norm": [
+            2.7848474979400635,
+            3.16367769241333,
+            2.515223741531372,
+            5.279786586761475
+          ],
+          "pairwise_operator_output_cosine": [
+            0.9721704721450806,
+            0.9583552479743958,
+            0.943405270576477,
+            0.9439997673034668,
+            0.967698335647583,
+            0.89387047290802
+          ],
+          "correction_norm_ratio": 0.45568716526031494,
+          "cos_base_base_plus_delta": 0.8911079308715065,
+          "parallel_norm_ratio": 0.22416022419929504,
+          "orthogonal_norm_ratio": 0.3967404067516327,
+          "orthogonal_fraction": 0.8706420660018921
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.2736719392324931,
+            0.32208296579410545,
+            0.23407068223766275,
+            0.17017441281574572
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.0873104584161919,
+            0.23664716780709205,
+            0.1100744194384434,
+            0.05257522503592627
+          ],
+          "mean_router_entropy": 1.221876129457454,
+          "mean_kl_pi_edge_to_mean_pi": 0.1389262821060553,
+          "operator_output_norm": [
+            3.4416587352752686,
+            3.806098222732544,
+            2.728754997253418,
+            2.3953371047973633
+          ],
+          "pairwise_operator_output_cosine": [
+            0.8786839842796326,
+            0.8677055239677429,
+            0.7439675331115723,
+            0.6891061067581177,
+            0.6198599338531494,
+            0.8823861479759216
+          ],
+          "correction_norm_ratio": 0.2877027988433838,
+          "cos_base_base_plus_delta": 0.9585862971231701,
+          "parallel_norm_ratio": 0.12081275135278702,
+          "orthogonal_norm_ratio": 0.26110759377479553,
+          "orthogonal_fraction": 0.9075601100921631
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            10.0,
+            19.0,
+            36.0
+          ],
+          "source_degree": [
+            10.0,
+            19.0,
+            36.0
+          ],
+          "normalized_weight": [
+            0.03042903169989586,
+            0.04767312854528427,
+            0.07905694097280502
+          ]
+        },
+        "structural_bin_count": 37,
+        "non_singleton_bin_count": 37,
+        "singleton_edge_count": 0,
+        "edge_count": 160802,
+        "shuffled_edge_count": 160802,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 772744,
+        "classifier": 5140,
+        "total_with_classifier": 777884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Movies",
+      "seed": 44,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Movies/p0_operator_routed/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.5761847496032715,
+        "val_macro_f1": 0.47454091855752933
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.5761847496032715,
+          "val_macro_f1": 0.47454091855752933,
+          "val_cross_entropy": 1.4017653465270996
+        },
+        "router_mean": {
+          "val_acc": 0.5746850371360779,
+          "val_macro_f1": 0.4610589888116395,
+          "val_cross_entropy": 1.3914227485656738
+        },
+        "router_uniform": {
+          "val_acc": 0.5632873177528381,
+          "val_macro_f1": 0.4606806627511883,
+          "val_cross_entropy": 1.401167392730713
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.575584888458252,
+          "val_macro_f1": 0.46368103689461676,
+          "val_cross_entropy": 1.3930855989456177
+        },
+        "delta_off": {
+          "val_acc": 0.49340128898620605,
+          "val_macro_f1": 0.24662128439710904,
+          "val_cross_entropy": 2.115856885910034
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.4961007535457611,
+          "val_macro_f1": 0.25290601645373495,
+          "val_cross_entropy": 1.994173526763916
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.5746850371360779,
+          "val_macro_f1": 0.46269296884323985,
+          "val_cross_entropy": 1.455465316772461
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.0001733270914398884,
+            0.9914662208771792,
+            0.0008230740456878434,
+            0.007537377830482114
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.00021356437990233926,
+            0.0051645669029539215,
+            0.0007461091052047835,
+            0.004229752272516375
+          ],
+          "mean_router_entropy": 0.05129373926160281,
+          "mean_kl_pi_edge_to_mean_pi": 0.0013922523873749829,
+          "operator_output_norm": [
+            3.3429160118103027,
+            4.226237773895264,
+            4.818561553955078,
+            4.965407371520996
+          ],
+          "pairwise_operator_output_cosine": [
+            0.8523927927017212,
+            0.972050130367279,
+            0.9712481498718262,
+            0.8915587663650513,
+            0.9186860918998718,
+            0.9745728373527527
+          ],
+          "correction_norm_ratio": 0.40033721923828125,
+          "cos_base_base_plus_delta": 0.9175364928607853,
+          "parallel_norm_ratio": 0.19206923246383667,
+          "orthogonal_norm_ratio": 0.3512538969516754,
+          "orthogonal_fraction": 0.8773950338363647
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.20863389159150447,
+            0.20594814310348053,
+            0.31694299563047995,
+            0.26847496981419455
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.07100030476280014,
+            0.06710209996806958,
+            0.2111103234274246,
+            0.22047952537085558
+          ],
+          "mean_router_entropy": 1.1741024643850744,
+          "mean_kl_pi_edge_to_mean_pi": 0.19551023288638025,
+          "operator_output_norm": [
+            3.9185690879821777,
+            2.842343807220459,
+            1.6413133144378662,
+            5.684221267700195
+          ],
+          "pairwise_operator_output_cosine": [
+            0.9013822078704834,
+            0.36172032356262207,
+            0.9572661519050598,
+            0.4803447127342224,
+            0.8853447437286377,
+            0.25360384583473206
+          ],
+          "correction_norm_ratio": 0.3028595447540283,
+          "cos_base_base_plus_delta": 0.9542074647703387,
+          "parallel_norm_ratio": 0.12713833153247833,
+          "orthogonal_norm_ratio": 0.27488136291503906,
+          "orthogonal_fraction": 0.9076199531555176
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            10.0,
+            19.0,
+            36.0
+          ],
+          "source_degree": [
+            10.0,
+            19.0,
+            36.0
+          ],
+          "normalized_weight": [
+            0.03042903169989586,
+            0.04767312854528427,
+            0.07905694097280502
+          ]
+        },
+        "structural_bin_count": 37,
+        "non_singleton_bin_count": 37,
+        "singleton_edge_count": 0,
+        "edge_count": 160802,
+        "shuffled_edge_count": 160802,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 772744,
+        "classifier": 5140,
+        "total_with_classifier": 777884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 42,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_identity/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8768538236618042,
+        "val_macro_f1": 0.7559548816330448
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8768538236618042,
+          "val_macro_f1": 0.7559548816330448,
+          "val_cross_entropy": 0.4206676483154297
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 460800,
+        "classifier": 3084,
+        "total_with_classifier": 463884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 43,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_identity/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8757287263870239,
+        "val_macro_f1": 0.7518249905254396
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8757287859916687,
+          "val_macro_f1": 0.7518249905254396,
+          "val_cross_entropy": 0.41898003220558167
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 460800,
+        "classifier": 3084,
+        "total_with_classifier": 463884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 44,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_identity/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8767515420913696,
+        "val_macro_f1": 0.7486314714522643
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8767516016960144,
+          "val_macro_f1": 0.7486314714522643,
+          "val_cross_entropy": 0.4360361695289612
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 460800,
+        "classifier": 3084,
+        "total_with_classifier": 463884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 42,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_masspres_scalar/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8756264448165894,
+        "val_macro_f1": 0.7533060771921444
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8756265044212341,
+          "val_macro_f1": 0.7533060771921444,
+          "val_cross_entropy": 0.42309173941612244
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 504130,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 504130,
+        "classifier": 3084,
+        "total_with_classifier": 507214
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 43,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_masspres_scalar/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8776720762252808,
+        "val_macro_f1": 0.7647348783597505
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8776720762252808,
+          "val_macro_f1": 0.7647348783597505,
+          "val_cross_entropy": 0.442023366689682
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 504130,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 504130,
+        "classifier": 3084,
+        "total_with_classifier": 507214
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 44,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_masspres_scalar/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8774675130844116,
+        "val_macro_f1": 0.7560377409295556
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8774675130844116,
+          "val_macro_f1": 0.7560377409295556,
+          "val_cross_entropy": 0.4180888235569
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 504130,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 504130,
+        "classifier": 3084,
+        "total_with_classifier": 507214
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 42,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_uniform/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8785926103591919,
+        "val_macro_f1": 0.7465584961338675
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8785926103591919,
+          "val_macro_f1": 0.7465584961338675,
+          "val_cross_entropy": 0.4083848297595978
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 594176,
+        "classifier": 3084,
+        "total_with_classifier": 597260
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 43,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_uniform/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8811496496200562,
+        "val_macro_f1": 0.7629534590603767
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8811496496200562,
+          "val_macro_f1": 0.7629534590603767,
+          "val_cross_entropy": 0.4258345365524292
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 594176,
+        "classifier": 3084,
+        "total_with_classifier": 597260
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 44,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_uniform/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8771606683731079,
+        "val_macro_f1": 0.7441420404406979
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8771606683731079,
+          "val_macro_f1": 0.7441420404406979,
+          "val_cross_entropy": 0.4068281054496765
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 594176,
+        "classifier": 3084,
+        "total_with_classifier": 597260
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 42,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_global/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8782857656478882,
+        "val_macro_f1": 0.7548623432807225
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8782857656478882,
+          "val_macro_f1": 0.7548623432807225,
+          "val_cross_entropy": 0.40350446105003357
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 594184,
+        "classifier": 3084,
+        "total_with_classifier": 597268
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 43,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_global/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.877365231513977,
+        "val_macro_f1": 0.754077307394811
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.877365231513977,
+          "val_macro_f1": 0.754077307394811,
+          "val_cross_entropy": 0.39333251118659973
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 594184,
+        "classifier": 3084,
+        "total_with_classifier": 597268
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 44,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_global/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8776720762252808,
+        "val_macro_f1": 0.757073273699789
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8776720762252808,
+          "val_macro_f1": 0.757073273699789,
+          "val_cross_entropy": 0.40217703580856323
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 594184,
+        "classifier": 3084,
+        "total_with_classifier": 597268
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 42,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_routed/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8782857656478882,
+        "val_macro_f1": 0.7502176625158395
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8782857656478882,
+          "val_macro_f1": 0.7502176625158395,
+          "val_cross_entropy": 0.4556902050971985
+        },
+        "router_mean": {
+          "val_acc": 0.8738877177238464,
+          "val_macro_f1": 0.7469305129127105,
+          "val_cross_entropy": 0.451590895652771
+        },
+        "router_uniform": {
+          "val_acc": 0.8534315228462219,
+          "val_macro_f1": 0.7377019526579549,
+          "val_cross_entropy": 0.5204876065254211
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.8771606683731079,
+          "val_macro_f1": 0.7489454835984483,
+          "val_cross_entropy": 0.4513934552669525
+        },
+        "delta_off": {
+          "val_acc": 0.8666257858276367,
+          "val_macro_f1": 0.7372874904909384,
+          "val_cross_entropy": 0.554709255695343
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.8691827654838562,
+          "val_macro_f1": 0.7450529311671032,
+          "val_cross_entropy": 0.5096542835235596
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.8778766393661499,
+          "val_macro_f1": 0.7504075102132972,
+          "val_cross_entropy": 0.49045994877815247
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.30444149388404734,
+            0.004324972068362987,
+            0.00569518077086123,
+            0.6855383527641479
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.3482277834528593,
+            0.005713412356922346,
+            0.007640995510075724,
+            0.35428183570782507
+          ],
+          "mean_router_entropy": 0.3323344833128257,
+          "mean_kl_pi_edge_to_mean_pi": 0.3415319586994882,
+          "operator_output_norm": [
+            6.9831862449646,
+            2.3446197509765625,
+            2.986508369445801,
+            5.1756591796875
+          ],
+          "pairwise_operator_output_cosine": [
+            0.5380244255065918,
+            0.6597929000854492,
+            0.45431405305862427,
+            0.8744983077049255,
+            0.6354260444641113,
+            0.6529475450515747
+          ],
+          "correction_norm_ratio": 0.46224549412727356,
+          "cos_base_base_plus_delta": 0.8894525730762679,
+          "parallel_norm_ratio": 0.22349876165390015,
+          "orthogonal_norm_ratio": 0.40462225675582886,
+          "orthogonal_fraction": 0.8753405809402466
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.5770596108923256,
+            0.14017095709044367,
+            0.15232143402770973,
+            0.13044799784948485
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.3253676569686059,
+            0.14528960405218408,
+            0.11873141752133408,
+            0.14138526109243724
+          ],
+          "mean_router_entropy": 0.8333408552752263,
+          "mean_kl_pi_edge_to_mean_pi": 0.31167966354244625,
+          "operator_output_norm": [
+            5.759669780731201,
+            5.787477016448975,
+            5.0181427001953125,
+            6.116580486297607
+          ],
+          "pairwise_operator_output_cosine": [
+            0.22310516238212585,
+            0.29971548914909363,
+            0.6290577054023743,
+            0.8649960160255432,
+            0.4993020296096802,
+            0.4426896870136261
+          ],
+          "correction_norm_ratio": 0.4669964611530304,
+          "cos_base_base_plus_delta": 0.8869876268876574,
+          "parallel_norm_ratio": 0.21543997526168823,
+          "orthogonal_norm_ratio": 0.41433241963386536,
+          "orthogonal_fraction": 0.8872281312942505
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            3.0,
+            9.0,
+            34.0
+          ],
+          "source_degree": [
+            3.0,
+            9.0,
+            34.0
+          ],
+          "normalized_weight": [
+            0.044543538242578506,
+            0.07537783682346344,
+            0.13130642473697662
+          ]
+        },
+        "structural_bin_count": 35,
+        "non_singleton_bin_count": 35,
+        "singleton_edge_count": 0,
+        "edge_count": 399172,
+        "shuffled_edge_count": 399172,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 641672,
+        "classifier": 3084,
+        "total_with_classifier": 644756
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 43,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_routed/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8778766393661499,
+        "val_macro_f1": 0.7563284732235037
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8778766393661499,
+          "val_macro_f1": 0.7563284732235037,
+          "val_cross_entropy": 0.39901816844940186
+        },
+        "router_mean": {
+          "val_acc": 0.8777743577957153,
+          "val_macro_f1": 0.7538446154304371,
+          "val_cross_entropy": 0.39819425344467163
+        },
+        "router_uniform": {
+          "val_acc": 0.8638641834259033,
+          "val_macro_f1": 0.7454814097225342,
+          "val_cross_entropy": 0.4427606165409088
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.8774675130844116,
+          "val_macro_f1": 0.7549390683398212,
+          "val_cross_entropy": 0.3982098698616028
+        },
+        "delta_off": {
+          "val_acc": 0.8589547276496887,
+          "val_macro_f1": 0.7359472001864394,
+          "val_cross_entropy": 0.4978613555431366
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.8615117073059082,
+          "val_macro_f1": 0.7388068800750996,
+          "val_cross_entropy": 0.46405741572380066
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.8757287859916687,
+          "val_macro_f1": 0.7492768080392374,
+          "val_cross_entropy": 0.4210643470287323
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.9082736551531337,
+            0.0032185930461362477,
+            0.008776588977193165,
+            0.07973116343102088
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.15644635328034626,
+            0.01307930719584233,
+            0.022182944399737368,
+            0.12623565467498749
+          ],
+          "mean_router_entropy": 0.23679102300989524,
+          "mean_kl_pi_edge_to_mean_pi": 0.11227516027760792,
+          "operator_output_norm": [
+            5.32600736618042,
+            1.6876999139785767,
+            3.3110127449035645,
+            6.201143264770508
+          ],
+          "pairwise_operator_output_cosine": [
+            0.5451830625534058,
+            0.609329342842102,
+            0.45232027769088745,
+            0.711817741394043,
+            0.753055989742279,
+            0.7045356035232544
+          ],
+          "correction_norm_ratio": 0.44243523478507996,
+          "cos_base_base_plus_delta": 0.899248240733318,
+          "parallel_norm_ratio": 0.22561505436897278,
+          "orthogonal_norm_ratio": 0.3805874288082123,
+          "orthogonal_fraction": 0.8602104783058167
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            7.985291368256298e-17,
+            3.694657962137516e-14,
+            1.0,
+            3.9823819598903684e-16
+          ],
+          "per_operator_across_edge_routing_std": [
+            1.0012038523669693e-15,
+            2.3910730601491797e-13,
+            0.0,
+            4.218362932494538e-15
+          ],
+          "mean_router_entropy": 1.023383384702753e-12,
+          "mean_kl_pi_edge_to_mean_pi": 8.186967996308288e-11,
+          "operator_output_norm": [
+            1.9666844606399536,
+            3.2139315605163574,
+            6.432928085327148,
+            1.7441554069519043
+          ],
+          "pairwise_operator_output_cosine": [
+            0.8093674182891846,
+            0.7683204412460327,
+            0.8916140794754028,
+            0.7766135334968567,
+            0.8891347050666809,
+            0.8196454048156738
+          ],
+          "correction_norm_ratio": 0.5585940480232239,
+          "cos_base_base_plus_delta": 0.8341440218752818,
+          "parallel_norm_ratio": 0.26839807629585266,
+          "orthogonal_norm_ratio": 0.4898875653743744,
+          "orthogonal_fraction": 0.8770010471343994
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            3.0,
+            9.0,
+            34.0
+          ],
+          "source_degree": [
+            3.0,
+            9.0,
+            34.0
+          ],
+          "normalized_weight": [
+            0.044543538242578506,
+            0.07537783682346344,
+            0.13130642473697662
+          ]
+        },
+        "structural_bin_count": 35,
+        "non_singleton_bin_count": 35,
+        "singleton_edge_count": 0,
+        "edge_count": 399172,
+        "shuffled_edge_count": 399172,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 641672,
+        "classifier": 3084,
+        "total_with_classifier": 644756
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "ele-fashion",
+      "seed": 44,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/ele-fashion/p0_operator_routed/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.8766492605209351,
+        "val_macro_f1": 0.7502571117387565
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.8766493201255798,
+          "val_macro_f1": 0.7502571117387565,
+          "val_cross_entropy": 0.40787607431411743
+        },
+        "router_mean": {
+          "val_acc": 0.8768538236618042,
+          "val_macro_f1": 0.7506505913669759,
+          "val_cross_entropy": 0.4072074294090271
+        },
+        "router_uniform": {
+          "val_acc": 0.8703078627586365,
+          "val_macro_f1": 0.7510868842957558,
+          "val_cross_entropy": 0.4396396577358246
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.8767516016960144,
+          "val_macro_f1": 0.7506326802524267,
+          "val_cross_entropy": 0.40752965211868286
+        },
+        "delta_off": {
+          "val_acc": 0.8595683574676514,
+          "val_macro_f1": 0.7279361925045804,
+          "val_cross_entropy": 0.5013304352760315
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.862739086151123,
+          "val_macro_f1": 0.7330011939311011,
+          "val_cross_entropy": 0.46986275911331177
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.8759333491325378,
+          "val_macro_f1": 0.7472691029990205,
+          "val_cross_entropy": 0.4281090497970581
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 5.960464477539063e-08,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            6.22933668804724e-11,
+            1.0,
+            9.261473650166606e-14,
+            1.0248959406305133e-11
+          ],
+          "per_operator_across_edge_routing_std": [
+            2.5315687313444444e-10,
+            0.0,
+            6.191886946882481e-13,
+            4.5859602870421266e-11
+          ],
+          "mean_router_entropy": 1.5709919050938239e-09,
+          "mean_kl_pi_edge_to_mean_pi": 1.798193749932619e-10,
+          "operator_output_norm": [
+            2.2253942489624023,
+            5.166550159454346,
+            1.27956223487854,
+            2.3666887283325195
+          ],
+          "pairwise_operator_output_cosine": [
+            0.5947164297103882,
+            0.6650567650794983,
+            0.5504586100578308,
+            0.47178196907043457,
+            0.6091328859329224,
+            0.3675345778465271
+          ],
+          "correction_norm_ratio": 0.4342724680900574,
+          "cos_base_base_plus_delta": 0.9023010444119327,
+          "parallel_norm_ratio": 0.18996687233448029,
+          "orthogonal_norm_ratio": 0.3905191123485565,
+          "orthogonal_fraction": 0.8992490768432617
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.0002559734331754846,
+            0.9897898763563636,
+            0.009727255756502063,
+            0.00022689483378612432
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.0024827446398989206,
+            0.03944284568657352,
+            0.0353954185950999,
+            0.0021999157943074538
+          ],
+          "mean_router_entropy": 0.04032388857488935,
+          "mean_kl_pi_edge_to_mean_pi": 0.018919484246438772,
+          "operator_output_norm": [
+            2.264064073562622,
+            5.134907245635986,
+            4.928515434265137,
+            1.2515887022018433
+          ],
+          "pairwise_operator_output_cosine": [
+            0.6357818245887756,
+            0.7107731103897095,
+            0.8587819933891296,
+            0.6474097967147827,
+            0.5753138065338135,
+            0.7831023335456848
+          ],
+          "correction_norm_ratio": 0.4485388696193695,
+          "cos_base_base_plus_delta": 0.8961799362179712,
+          "parallel_norm_ratio": 0.2159367799758911,
+          "orthogonal_norm_ratio": 0.39313918352127075,
+          "orthogonal_fraction": 0.8764885663986206
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            3.0,
+            9.0,
+            34.0
+          ],
+          "source_degree": [
+            3.0,
+            9.0,
+            34.0
+          ],
+          "normalized_weight": [
+            0.044543538242578506,
+            0.07537783682346344,
+            0.13130642473697662
+          ]
+        },
+        "structural_bin_count": 35,
+        "non_singleton_bin_count": 35,
+        "singleton_edge_count": 0,
+        "edge_count": 399172,
+        "shuffled_edge_count": 399172,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 460800,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 641672,
+        "classifier": 3084,
+        "total_with_classifier": 644756
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 42,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_identity/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9594212174415588,
+        "val_macro_f1": 0.9180906388440618
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9594212174415588,
+          "val_macro_f1": 0.9180906388440618,
+          "val_cross_entropy": 0.1656678318977356
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 43,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_identity/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9594212174415588,
+        "val_macro_f1": 0.924527897984324
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9594212174415588,
+          "val_macro_f1": 0.924527897984324,
+          "val_cross_entropy": 0.16243892908096313
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 44,
+      "variant": "p0_identity",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_identity/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9600503444671631,
+        "val_macro_f1": 0.9276943609271386
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9600503444671631,
+          "val_macro_f1": 0.9276943609271386,
+          "val_cross_entropy": 0.16515833139419556
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 591872,
+        "classifier": 5140,
+        "total_with_classifier": 597012
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 42,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_masspres_scalar/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9613085985183716,
+        "val_macro_f1": 0.9296719488669012
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9613085985183716,
+          "val_macro_f1": 0.9296719488669012,
+          "val_cross_entropy": 0.16549046337604523
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 635202,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 635202,
+        "classifier": 5140,
+        "total_with_classifier": 640342
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 43,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_masspres_scalar/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9600503444671631,
+        "val_macro_f1": 0.9285685897905982
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9600503444671631,
+          "val_macro_f1": 0.9285685897905982,
+          "val_cross_entropy": 0.1680818349123001
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 635202,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 635202,
+        "classifier": 5140,
+        "total_with_classifier": 640342
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 44,
+      "variant": "p0_masspres_scalar",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_masspres_scalar/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9609940052032471,
+        "val_macro_f1": 0.9257154940336069
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9609940052032471,
+          "val_macro_f1": 0.9257154940336069,
+          "val_cross_entropy": 0.19049735367298126
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 635202,
+        "relation_encoder": 0,
+        "operator_adapters": 0,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 635202,
+        "classifier": 5140,
+        "total_with_classifier": 640342
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 42,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_uniform/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9597357511520386,
+        "val_macro_f1": 0.9272383453754982
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9597357511520386,
+          "val_macro_f1": 0.9272383453754982,
+          "val_cross_entropy": 0.18576397001743317
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 725248,
+        "classifier": 5140,
+        "total_with_classifier": 730388
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 43,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_uniform/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9609940052032471,
+        "val_macro_f1": 0.929659445048291
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9609940052032471,
+          "val_macro_f1": 0.929659445048291,
+          "val_cross_entropy": 0.16491125524044037
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 725248,
+        "classifier": 5140,
+        "total_with_classifier": 730388
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 44,
+      "variant": "p0_operator_uniform",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_uniform/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9619377255439758,
+        "val_macro_f1": 0.9287752746031135
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9619377255439758,
+          "val_macro_f1": 0.9287752746031135,
+          "val_cross_entropy": 0.16365841031074524
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 725248,
+        "classifier": 5140,
+        "total_with_classifier": 730388
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 42,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_global/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9594212174415588,
+        "val_macro_f1": 0.9205128106219516
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9594212174415588,
+          "val_macro_f1": 0.9205128106219516,
+          "val_cross_entropy": 0.16439902782440186
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 725256,
+        "classifier": 5140,
+        "total_with_classifier": 730396
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 43,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_global/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9609940052032471,
+        "val_macro_f1": 0.9243209894611015
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9609940052032471,
+          "val_macro_f1": 0.9243209894611015,
+          "val_cross_entropy": 0.1634894758462906
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 725256,
+        "classifier": 5140,
+        "total_with_classifier": 730396
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 44,
+      "variant": "p0_operator_global",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_global/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9619377255439758,
+        "val_macro_f1": 0.9307213840896956
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9619377255439758,
+          "val_macro_f1": 0.9307213840896956,
+          "val_cross_entropy": 0.17735618352890015
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": null,
+      "router_matched_shuffle": null,
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 0,
+        "operator_adapters": 133376,
+        "router": 0,
+        "global_mixture_logits": 8,
+        "dynamic_conditioner": 0,
+        "model_total": 725256,
+        "classifier": 5140,
+        "total_with_classifier": 730396
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 42,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_routed/best_run1.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9603648781776428,
+        "val_macro_f1": 0.9215731303734633
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9603648781776428,
+          "val_macro_f1": 0.9215731303734633,
+          "val_cross_entropy": 0.1612221598625183
+        },
+        "router_mean": {
+          "val_acc": 0.9578483700752258,
+          "val_macro_f1": 0.9190745654935893,
+          "val_cross_entropy": 0.1592312902212143
+        },
+        "router_uniform": {
+          "val_acc": 0.9572192430496216,
+          "val_macro_f1": 0.9159256898384462,
+          "val_cross_entropy": 0.16299542784690857
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.9594212174415588,
+          "val_macro_f1": 0.9192828703974161,
+          "val_cross_entropy": 0.15627601742744446
+        },
+        "delta_off": {
+          "val_acc": 0.9550173282623291,
+          "val_macro_f1": 0.9143270116809882,
+          "val_cross_entropy": 0.16715073585510254
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.9569047093391418,
+          "val_macro_f1": 0.9171983666829193,
+          "val_cross_entropy": 0.16717620193958282
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.9603648781776428,
+          "val_macro_f1": 0.9225502185272377,
+          "val_cross_entropy": 0.1590404510498047
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.6433862290673372,
+            0.05768068996612697,
+            0.12575813252301016,
+            0.17317494845904238
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.23484232116438755,
+            0.09665582433226826,
+            0.1534598160274163,
+            0.04997083821366308
+          ],
+          "mean_router_entropy": 0.8241475633578591,
+          "mean_kl_pi_edge_to_mean_pi": 0.18854598605548645,
+          "operator_output_norm": [
+            1.8197855949401855,
+            3.638413190841675,
+            2.9733684062957764,
+            1.6604077816009521
+          ],
+          "pairwise_operator_output_cosine": [
+            0.13469204306602478,
+            0.584097683429718,
+            0.6260624527931213,
+            0.4268251061439514,
+            0.544226348400116,
+            0.7071696519851685
+          ],
+          "correction_norm_ratio": 0.19298802316188812,
+          "cos_base_base_plus_delta": 0.9857959764024304,
+          "parallel_norm_ratio": 0.05565568059682846,
+          "orthogonal_norm_ratio": 0.18478858470916748,
+          "orthogonal_fraction": 0.9575132131576538
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.08977392066062707,
+            0.14472255293128425,
+            0.1104444696956692,
+            0.6550590569478345
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.0884459335600163,
+            0.1385826749855661,
+            0.1333128480139326,
+            0.3485197121762939
+          ],
+          "mean_router_entropy": 0.6891108681339199,
+          "mean_kl_pi_edge_to_mean_pi": 0.32747069079896807,
+          "operator_output_norm": [
+            3.6439969539642334,
+            4.053160190582275,
+            3.9203789234161377,
+            6.1878275871276855
+          ],
+          "pairwise_operator_output_cosine": [
+            0.7284285426139832,
+            0.814433217048645,
+            0.34904196858406067,
+            0.8150795102119446,
+            0.5788477063179016,
+            0.44763076305389404
+          ],
+          "correction_norm_ratio": 0.4115464389324188,
+          "cos_base_base_plus_delta": 0.9384730023314964,
+          "parallel_norm_ratio": 0.11621982604265213,
+          "orthogonal_norm_ratio": 0.39479538798332214,
+          "orthogonal_fraction": 0.9592972993850708
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            35.0,
+            108.0,
+            141.0
+          ],
+          "source_degree": [
+            35.0,
+            108.0,
+            141.0
+          ],
+          "normalized_weight": [
+            0.00704225292429328,
+            0.009174310602247715,
+            0.02777777425944805
+          ]
+        },
+        "structural_bin_count": 7,
+        "non_singleton_bin_count": 7,
+        "singleton_edge_count": 0,
+        "edge_count": 283080,
+        "shuffled_edge_count": 283080,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 772744,
+        "classifier": 5140,
+        "total_with_classifier": 777884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 43,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_routed/best_run2.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9628813862800598,
+        "val_macro_f1": 0.9317852511339393
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9628813862800598,
+          "val_macro_f1": 0.9317852511339393,
+          "val_cross_entropy": 0.1510266214609146
+        },
+        "router_mean": {
+          "val_acc": 0.9625668525695801,
+          "val_macro_f1": 0.9312713314677843,
+          "val_cross_entropy": 0.15113846957683563
+        },
+        "router_uniform": {
+          "val_acc": 0.9613085985183716,
+          "val_macro_f1": 0.9280158162781416,
+          "val_cross_entropy": 0.15636661648750305
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.9625668525695801,
+          "val_macro_f1": 0.9308277596523743,
+          "val_cross_entropy": 0.15004895627498627
+        },
+        "delta_off": {
+          "val_acc": 0.9606794714927673,
+          "val_macro_f1": 0.9244896271758754,
+          "val_cross_entropy": 0.15111061930656433
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.9603648781776428,
+          "val_macro_f1": 0.9237071145155861,
+          "val_cross_entropy": 0.15102839469909668
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.9628813862800598,
+          "val_macro_f1": 0.9325907499545971,
+          "val_cross_entropy": 0.14983484148979187
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.2425489463983821,
+            0.24421406245377333,
+            0.24931001939006878,
+            0.2639269716520232
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.012546023465765117,
+            0.01317233345543634,
+            0.008806085364524817,
+            0.008364129411800975
+          ],
+          "mean_router_entropy": 1.3847632085408594,
+          "mean_kl_pi_edge_to_mean_pi": 0.0009696546929374161,
+          "operator_output_norm": [
+            2.093754529953003,
+            2.4877939224243164,
+            2.3549904823303223,
+            3.378688335418701
+          ],
+          "pairwise_operator_output_cosine": [
+            0.7801912426948547,
+            0.8481922745704651,
+            0.6677061319351196,
+            0.8172225952148438,
+            0.7304956316947937,
+            0.7016085386276245
+          ],
+          "correction_norm_ratio": 0.22605407238006592,
+          "cos_base_base_plus_delta": 0.9786924191041402,
+          "parallel_norm_ratio": 0.04033128544688225,
+          "orthogonal_norm_ratio": 0.2224271297454834,
+          "orthogonal_fraction": 0.983955442905426
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.02971408793183844,
+            0.7563951890550841,
+            0.1646109704510968,
+            0.049279751724273825
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.03443645833290106,
+            0.2563912494913171,
+            0.15986327725993274,
+            0.06458566127055466
+          ],
+          "mean_router_entropy": 0.566054896708866,
+          "mean_kl_pi_edge_to_mean_pi": 0.19493298578142393,
+          "operator_output_norm": [
+            4.154929161071777,
+            4.344610691070557,
+            4.5078253746032715,
+            4.069156169891357
+          ],
+          "pairwise_operator_output_cosine": [
+            0.5392499566078186,
+            0.5427550077438354,
+            0.7725479006767273,
+            0.6141987442970276,
+            0.6453918218612671,
+            0.7458788156509399
+          ],
+          "correction_norm_ratio": 0.33341270685195923,
+          "cos_base_base_plus_delta": 0.9557058737812633,
+          "parallel_norm_ratio": 0.08306090533733368,
+          "orthogonal_norm_ratio": 0.32290077209472656,
+          "orthogonal_fraction": 0.9684717059135437
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            35.0,
+            108.0,
+            141.0
+          ],
+          "source_degree": [
+            35.0,
+            108.0,
+            141.0
+          ],
+          "normalized_weight": [
+            0.00704225292429328,
+            0.009174310602247715,
+            0.02777777425944805
+          ]
+        },
+        "structural_bin_count": 7,
+        "non_singleton_bin_count": 7,
+        "singleton_edge_count": 0,
+        "edge_count": 283080,
+        "shuffled_edge_count": 283080,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 772744,
+        "classifier": 5140,
+        "total_with_classifier": 777884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    },
+    {
+      "dataset": "Reddit-S",
+      "seed": 44,
+      "variant": "p0_operator_routed",
+      "phase": "formal",
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/formal/Reddit-S/p0_operator_routed/best_run3.pt",
+      "selection": "best_val_accuracy",
+      "selected_checkpoint_metrics": {
+        "val_acc": 0.9606794714927673,
+        "val_macro_f1": 0.9287434121129978
+      },
+      "posthoc_validation_metrics": {
+        "normal": {
+          "val_acc": 0.9606794714927673,
+          "val_macro_f1": 0.9287434121129978,
+          "val_cross_entropy": 0.17337223887443542
+        },
+        "router_mean": {
+          "val_acc": 0.9594212174415588,
+          "val_macro_f1": 0.9282207057462379,
+          "val_cross_entropy": 0.17116227746009827
+        },
+        "router_uniform": {
+          "val_acc": 0.9597357511520386,
+          "val_macro_f1": 0.9256258844714875,
+          "val_cross_entropy": 0.17465007305145264
+        },
+        "router_matched_shuffle": {
+          "val_acc": 0.9609940052032471,
+          "val_macro_f1": 0.9304524854640791,
+          "val_cross_entropy": 0.16924111545085907
+        },
+        "delta_off": {
+          "val_acc": 0.9578483700752258,
+          "val_macro_f1": 0.9211709981952124,
+          "val_cross_entropy": 0.17300982773303986
+        },
+        "delta_parallel_only": {
+          "val_acc": 0.9591066241264343,
+          "val_macro_f1": 0.9246044652802615,
+          "val_cross_entropy": 0.1713671088218689
+        },
+        "delta_orthogonal_only": {
+          "val_acc": 0.9600503444671631,
+          "val_macro_f1": 0.9281307223971442,
+          "val_cross_entropy": 0.17316453158855438
+        }
+      },
+      "posthoc_macro_f1_label_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "checkpoint_metric_audit": {
+        "val_acc_abs_diff": 0.0,
+        "val_macro_f1_abs_diff": 0.0,
+        "val_macro_f1_matches_checkpoint": true,
+        "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read"
+      },
+      "routed_mechanism_diagnostics": {
+        "text": {
+          "per_operator_mean_routing_probability": [
+            0.3473439105549637,
+            0.22487090258138914,
+            0.21416820321711186,
+            0.2136169837815235
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.24548383460191917,
+            0.10214906735513375,
+            0.08271072598093133,
+            0.0655623659423682
+          ],
+          "mean_router_entropy": 1.2197331398955555,
+          "mean_kl_pi_edge_to_mean_pi": 0.1428857413175697,
+          "operator_output_norm": [
+            3.501791477203369,
+            1.7754814624786377,
+            1.8718641996383667,
+            2.43799090385437
+          ],
+          "pairwise_operator_output_cosine": [
+            0.33887210488319397,
+            0.44304803013801575,
+            0.8543559908866882,
+            0.6848954558372498,
+            0.3994561433792114,
+            0.4985765814781189
+          ],
+          "correction_norm_ratio": 0.2610257565975189,
+          "cos_base_base_plus_delta": 0.9780667125900805,
+          "parallel_norm_ratio": 0.07846669852733612,
+          "orthogonal_norm_ratio": 0.24895262718200684,
+          "orthogonal_fraction": 0.9537473917007446
+        },
+        "visual": {
+          "per_operator_mean_routing_probability": [
+            0.078686706521219,
+            0.09990462925527427,
+            0.26152124598101556,
+            0.5598874186541082
+          ],
+          "per_operator_across_edge_routing_std": [
+            0.0815754183870827,
+            0.10011055280637425,
+            0.10424409808696618,
+            0.17723299251117886
+          ],
+          "mean_router_entropy": 0.9435672263571129,
+          "mean_kl_pi_edge_to_mean_pi": 0.16211907368329292,
+          "operator_output_norm": [
+            3.5294010639190674,
+            4.926177024841309,
+            5.821025371551514,
+            3.4596786499023438
+          ],
+          "pairwise_operator_output_cosine": [
+            0.7788487076759338,
+            0.6091120839118958,
+            0.590419352054596,
+            0.7363494038581848,
+            0.6296787261962891,
+            0.6920384764671326
+          ],
+          "correction_norm_ratio": 0.31071701645851135,
+          "cos_base_base_plus_delta": 0.9597306856718949,
+          "parallel_norm_ratio": 0.09158217906951904,
+          "orthogonal_norm_ratio": 0.2969137728214264,
+          "orthogonal_fraction": 0.9555760622024536
+        }
+      },
+      "router_matched_shuffle": {
+        "method": "deterministic cyclic shift within target-degree/source-degree/normalized-weight quantile bins",
+        "quantile_bins_per_feature": 4,
+        "quantile_cutpoints": {
+          "target_degree": [
+            35.0,
+            108.0,
+            141.0
+          ],
+          "source_degree": [
+            35.0,
+            108.0,
+            141.0
+          ],
+          "normalized_weight": [
+            0.00704225292429328,
+            0.009174310602247715,
+            0.02777777425944805
+          ]
+        },
+        "structural_bin_count": 7,
+        "non_singleton_bin_count": 7,
+        "singleton_edge_count": 0,
+        "edge_count": 283080,
+        "shuffled_edge_count": 283080,
+        "preserves_edge_marginal_within_each_bin": true
+      },
+      "parameter_audit": {
+        "s45_backbone": 591872,
+        "relation_encoder": 47232,
+        "operator_adapters": 133376,
+        "router": 264,
+        "global_mixture_logits": 0,
+        "dynamic_conditioner": 0,
+        "model_total": 772744,
+        "classifier": 5140,
+        "total_with_classifier": 777884
+      },
+      "physical_P_rel_unchanged": true,
+      "test_evaluated": false,
+      "lp_evaluated": false
+    }
+  ]
+}

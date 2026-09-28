@@ -72,16 +72,29 @@ def _validate_payload(payload: dict[str, Any], seed: int, checkpoint: Path) -> N
         raise ValueError(f"test metrics are present in {checkpoint}")
 
 
-def _evaluate_val(classifier, z: torch.Tensor, data, device: torch.device) -> dict[str, float]:
+def _validation_label_ids(data) -> list[int]:
+    """Use labels observable in train/val only; never inspect test labels."""
+    train_idx = data.train_idx.detach().cpu().long().reshape(-1)
+    val_idx = data.val_idx.detach().cpu().long().reshape(-1)
+    indices = torch.cat((train_idx, val_idx))
+    observed = data.y.detach().cpu().reshape(-1)[indices]
+    valid = observed[(observed >= 0) & (observed < int(data.num_classes))]
+    label_ids = sorted({int(value) for value in valid.tolist()})
+    if not label_ids:
+        raise ValueError("training and validation splits contain no valid class labels")
+    return label_ids
+
+
+def _evaluate_val(classifier, z: torch.Tensor, data, device: torch.device,
+                  eval_labels: list[int]) -> dict[str, float]:
     val_idx = data.val_idx.detach().to(device=device, dtype=torch.long)
     labels_all = data.y.to(device=device, dtype=torch.long)
     labels = labels_all[val_idx]
     logits = classifier(z[val_idx])
     preds = logits.argmax(dim=-1)
-    class_ids = list(range(int(data.num_classes)))
     return {
         "val_acc": float((preds == labels).float().mean().item()),
-        "val_macro_f1": float(f1_score(labels.cpu().numpy(), preds.cpu().numpy(), labels=class_ids,
+        "val_macro_f1": float(f1_score(labels.cpu().numpy(), preds.cpu().numpy(), labels=list(eval_labels),
                                         average="macro", zero_division=0)),
         "val_cross_entropy": float(F.cross_entropy(logits, labels, reduction="mean").item()),
     }
@@ -177,6 +190,12 @@ def _mechanism_summary(result: dict[str, Any]) -> dict[str, Any]:
     return summary
 
 
+def _optional_mechanism_summary(variant: str, result: dict[str, Any]) -> dict[str, Any] | None:
+    if variant != "p0_operator_routed":
+        return None
+    return _mechanism_summary(result)
+
+
 def _parameter_count(model: torch.nn.Module, classifier: torch.nn.Module) -> dict[str, int]:
     groups = {"s45_backbone": 0, "relation_encoder": 0, "operator_adapters": 0,
               "router": 0, "global_mixture_logits": 0, "dynamic_conditioner": 0}
@@ -228,6 +247,7 @@ def analyze_checkpoint(checkpoint: Path, dataset: str, variant: str, seed: int,
     data = _load_data(dataset)
     model, classifier = _load_model(payload, dataset, variant, seed, device, data)
     parameter_audit = _parameter_count(model, classifier)
+    eval_labels = _validation_label_ids(data)
     x = data.x.to(device)
     edge = data.edge_index.to(device)
     p_rel = model.backbone._get_operators(edge, int(x.size(0)), x.dtype)[2]
@@ -236,13 +256,13 @@ def analyze_checkpoint(checkpoint: Path, dataset: str, variant: str, seed: int,
 
     with torch.no_grad():
         normal = model.analyze(x, edge, return_edge_state=False)
-        normal_metrics = _evaluate_val(classifier, normal["fused_z"], data, device)
+        normal_metrics = _evaluate_val(classifier, normal["fused_z"], data, device, eval_labels)
         official = payload["metrics"]
-        if abs(normal_metrics["val_acc"] - float(official["val_acc"])) > 1e-5:
+        val_acc_abs_diff = abs(normal_metrics["val_acc"] - float(official["val_acc"]))
+        val_macro_f1_abs_diff = abs(normal_metrics["val_macro_f1"] - float(official["val_macro_f1"]))
+        if val_acc_abs_diff > 1e-5:
             raise RuntimeError(f"post-hoc normal Val Acc differs from selected checkpoint: {normal_metrics} vs {official}")
-        if abs(normal_metrics["val_macro_f1"] - float(official["val_macro_f1"])) > 1e-5:
-            raise RuntimeError(f"post-hoc normal Val Macro-F1 differs from selected checkpoint: {normal_metrics} vs {official}")
-        mechanisms = _mechanism_summary(normal)
+        mechanisms = _optional_mechanism_summary(variant, normal)
         intervention_metrics = {"normal": normal_metrics}
         matched_report = None
         if variant == "p0_operator_routed":
@@ -259,7 +279,7 @@ def analyze_checkpoint(checkpoint: Path, dataset: str, variant: str, seed: int,
                 result = model.analyze(x, edge, intervention=intervention,
                                        router_shuffle_permutation=router_permutation,
                                        return_edge_state=False)
-                intervention_metrics[report_name] = _evaluate_val(classifier, result["fused_z"], data, device)
+                intervention_metrics[report_name] = _evaluate_val(classifier, result["fused_z"], data, device, eval_labels)
                 del result
 
     p_rel_unchanged = (torch.equal(p_rel.indices(), p_rel_indices_before) and
@@ -272,7 +292,14 @@ def analyze_checkpoint(checkpoint: Path, dataset: str, variant: str, seed: int,
         "checkpoint": str(checkpoint), "selection": "best_val_accuracy",
         "selected_checkpoint_metrics": official,
         "posthoc_validation_metrics": intervention_metrics,
-        "routed_mechanism_diagnostics": mechanisms if variant == "p0_operator_routed" else None,
+        "posthoc_macro_f1_label_ids": eval_labels,
+        "checkpoint_metric_audit": {
+            "val_acc_abs_diff": val_acc_abs_diff,
+            "val_macro_f1_abs_diff": val_macro_f1_abs_diff,
+            "val_macro_f1_matches_checkpoint": val_macro_f1_abs_diff <= 1e-5,
+            "note": "post-hoc Macro-F1 uses class IDs observed in train/val only; test labels are not read",
+        },
+        "routed_mechanism_diagnostics": mechanisms,
         "router_matched_shuffle": matched_report,
         "parameter_audit": parameter_audit,
         "physical_P_rel_unchanged": p_rel_unchanged,
@@ -309,6 +336,7 @@ def main() -> None:
         "phase": args.phase, "protocol_version": PROTOCOL,
         "datasets": list(datasets), "variants": list(variants), "seeds": list(args.seeds),
         "checkpoint_selection": "validation accuracy only; CE is post-hoc and does not select checkpoints",
+        "posthoc_macro_f1_label_policy": "class IDs observed in train and validation labels only; test labels are not read",
         "test_evaluated": False, "lp_evaluated": False, "records": results,
     }
     output_path = args.report_root / f"{args.phase}_risa_p0_formal_analysis.json"
@@ -316,6 +344,8 @@ def main() -> None:
     summary_path = args.report_root / f"{args.phase}_risa_p0_formal_analysis.md"
     lines = [f"# RISA P0 {args.phase} validation analysis", "",
              "Checkpoints were selected by validation accuracy. Val CE is post-hoc only.",
+             "Post-hoc Macro-F1 uses class IDs observed in train/validation labels only; test labels are not read.",
+             "Stored checkpoint Macro-F1 remains recorded separately as the original selection-time metric.",
              "Test and LP evaluation were disabled.", ""]
     for record in results:
         metrics = record["posthoc_validation_metrics"]

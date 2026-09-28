@@ -213,3 +213,11 @@ def test_router_mean_uses_full_graph_edge_marginal():
         assert "orthogonal_fraction" in stats
         assert result["router_probability_std"][modality].abs().max().item() == 0.0
         assert abs(result["mean_kl_to_mean_router"][modality]) < 1e-7
+
+
+def test_disabling_training_diagnostics_does_not_change_embeddings():
+    x, edge = _graph()
+    model = RisaP0(_cfg("p0_operator_routed"), _info()).eval()
+    normal = model.analyze(x, edge, return_edge_state=False)
+    lean = model.analyze(x, edge, return_edge_state=False, collect_diagnostics=False)
+    torch.testing.assert_close(normal["fused_z"], lean["fused_z"], rtol=0, atol=0)
