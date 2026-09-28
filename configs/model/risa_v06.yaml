@@ -1,0 +1,11 @@
+name: risa_v06
+hidden_dim: 256
+dropout: 0.2
+max_order: 3
+relation_dim: 32
+evidence_dim: 32
+edge_chunk_size: 16384
+node_chunk_size: 32768
+num_heads: 4
+ff_mult: 2
+variant: v06_full

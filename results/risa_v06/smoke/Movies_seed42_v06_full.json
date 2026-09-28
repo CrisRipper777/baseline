@@ -1,0 +1,162 @@
+{
+  "dataset": "Movies",
+  "seed": 42,
+  "variant": "v06_full",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/smoke/Movies/v06_full/best.pt",
+  "checkpoint_selection": "best_val_accuracy",
+  "checkpoint_metrics": {
+    "val_acc": 0.3293341398239136,
+    "val_macro_f1": 0.02477436823104693
+  },
+  "device": "cuda:0",
+  "parameter_count": {
+    "backbone": 591872,
+    "relation_encoders": 55552,
+    "shared_relation": 6336,
+    "same_evidence": 35456,
+    "cross_evidence": 35456,
+    "rho_projection": 16896,
+    "absorption": 1054720,
+    "total_model": 1796288,
+    "classifier": 5140,
+    "total_with_classifier": 1801428
+  },
+  "diagnostics": {
+    "text": {
+      "relational_evidence_strength_E_over_H0": 0.0022052142303436995,
+      "same_evidence_ratio_E_same_over_H0": 0.0013945165555924177,
+      "cross_evidence_ratio_E_cross_over_H0": 0.0008900274988263845,
+      "relation_context_query_shift_over_H0": 0.023430023342370987,
+      "total_query_shift_over_H0": 0.025238648056983948,
+      "mean_cosine_E_S1": -0.08267589658498764,
+      "mean_cosine_E_H0": -0.08153584599494934,
+      "mean_hop_attention": [
+        0.33195623755455017,
+        0.33442777395248413,
+        0.3336159288883209
+      ],
+      "hop_attention_entropy": 1.098388433456421,
+      "per_hop_attention_std_across_nodes_and_heads": [
+        0.008820931427180767,
+        0.00556001765653491,
+        0.006121381185948849
+      ],
+      "attention_shape": [
+        16672,
+        4,
+        1,
+        3
+      ],
+      "max_attention_sum_error": 1.1920928955078125e-07
+    },
+    "visual": {
+      "relational_evidence_strength_E_over_H0": 0.0016962966183200479,
+      "same_evidence_ratio_E_same_over_H0": 0.0009440460707992315,
+      "cross_evidence_ratio_E_cross_over_H0": 0.0008093895157799125,
+      "relation_context_query_shift_over_H0": 0.016491280868649483,
+      "total_query_shift_over_H0": 0.01791282743215561,
+      "mean_cosine_E_S1": 0.115321584045887,
+      "mean_cosine_E_H0": 0.10786853730678558,
+      "mean_hop_attention": [
+        0.33463752269744873,
+        0.33341848850250244,
+        0.33194392919540405
+      ],
+      "hop_attention_entropy": 1.0981860160827637,
+      "per_hop_attention_std_across_nodes_and_heads": [
+        0.012837342917919159,
+        0.006764540448784828,
+        0.008374679833650589
+      ],
+      "attention_shape": [
+        16672,
+        4,
+        1,
+        3
+      ],
+      "max_attention_sum_error": 1.1920928955078125e-07
+    }
+  },
+  "structural_max_abs_errors": {
+    "text": 9.5367431640625e-07,
+    "visual": 9.5367431640625e-07
+  },
+  "gradient_audit": {
+    "relation_encoders": {
+      "parameters": 18,
+      "parameters_with_grad": 18,
+      "parameters_with_nonzero_grad": 18,
+      "global_grad_l2_norm": 1.2764827488354058e-06,
+      "nonzero": true,
+      "status": "audited"
+    },
+    "shared_relation": {
+      "parameters": 10,
+      "parameters_with_grad": 10,
+      "parameters_with_nonzero_grad": 10,
+      "global_grad_l2_norm": 3.3430711710025207e-07,
+      "nonzero": true,
+      "status": "audited"
+    },
+    "same_evidence": {
+      "parameters": 12,
+      "parameters_with_grad": 12,
+      "parameters_with_nonzero_grad": 12,
+      "global_grad_l2_norm": 4.040005023853155e-06,
+      "nonzero": true,
+      "status": "audited"
+    },
+    "cross_evidence": {
+      "parameters": 12,
+      "parameters_with_grad": 12,
+      "parameters_with_nonzero_grad": 12,
+      "global_grad_l2_norm": 3.878965344483731e-06,
+      "nonzero": true,
+      "status": "audited"
+    },
+    "W_rho": {
+      "parameters": 4,
+      "parameters_with_grad": 4,
+      "parameters_with_nonzero_grad": 4,
+      "global_grad_l2_norm": 2.521831265767105e-05,
+      "nonzero": true,
+      "status": "audited"
+    },
+    "MHA": {
+      "parameters": 8,
+      "parameters_with_grad": 8,
+      "parameters_with_nonzero_grad": 8,
+      "global_grad_l2_norm": 0.060954585671424866,
+      "nonzero": true,
+      "status": "audited"
+    },
+    "FFN": {
+      "parameters": 8,
+      "parameters_with_grad": 8,
+      "parameters_with_nonzero_grad": 8,
+      "global_grad_l2_norm": 0.09280164539813995,
+      "nonzero": true,
+      "status": "audited"
+    }
+  },
+  "gradient_audit_loss": "train-split cross-entropy; no optimizer step",
+  "gpu_memory": {
+    "peak_allocated_bytes": 5479176704,
+    "peak_reserved_bytes": 5830082560
+  },
+  "equivalence_v05_absorb_only": null,
+  "sanity": {
+    "finite_embeddings_and_evidence": true,
+    "P_Pself_Prel_unchanged": true,
+    "structural_path_matches_three_plain_P_hops": true,
+    "query_shift_finite": true,
+    "no_relation_variant_Q_equals_H0": true,
+    "attention_probabilities_sum_to_one": true,
+    "required_gradients_nonzero": true,
+    "v05_absorb_only_equivalence": true
+  },
+  "sanity_passed": true,
+  "test_evaluated": false,
+  "lp_evaluated": false
+}
