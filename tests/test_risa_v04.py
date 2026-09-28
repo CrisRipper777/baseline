@@ -67,26 +67,47 @@ def test_router_never_changes_physical_p_rel_values():
     torch.testing.assert_close(result["P_rel"].values(), p_rel.values(), rtol=0, atol=0)
 
 
-def test_uniform_and_routed_match_at_zero_router_initialization():
+def test_uniform_global_and_routed_match_at_initialization():
     x, edge = _graph()
-    torch.manual_seed(71)
-    uniform = RisaP0(_cfg("p0_operator_uniform"), _info()).eval()
-    torch.manual_seed(71)
-    routed = RisaP0(_cfg("p0_operator_routed"), _info()).eval()
+    models = {}
+    for variant in ("p0_operator_uniform", "p0_operator_global", "p0_operator_routed"):
+        torch.manual_seed(71)
+        models[variant] = RisaP0(_cfg(variant), _info()).eval()
+    uniform = models["p0_operator_uniform"]
+    global_model = models["p0_operator_global"]
+    routed = models["p0_operator_routed"]
     for modality in ("text", "visual"):
-        for left, right in zip(getattr(uniform, f"operators_{modality}"),
-                               getattr(routed, f"operators_{modality}"), strict=True):
-            for a, b in zip(left.parameters(), right.parameters(), strict=True):
-                torch.testing.assert_close(a, b, rtol=0, atol=0)
+        banks = [getattr(model, f"operators_{modality}") for model in models.values()]
+        for bank in banks[1:]:
+            for left, right in zip(banks[0], bank, strict=True):
+                for a, b in zip(left.parameters(), right.parameters(), strict=True):
+                    torch.testing.assert_close(a, b, rtol=0, atol=0)
+        torch.testing.assert_close(getattr(global_model, f"theta_{modality}"),
+                                   torch.zeros(4), rtol=0, atol=0)
         assert torch.count_nonzero(getattr(routed, f"router_{modality}").weight) == 0
         assert torch.count_nonzero(getattr(routed, f"router_{modality}").bias) == 0
-    result_uniform = uniform.analyze(x, edge)
-    result_routed = routed.analyze(x, edge)
-    torch.testing.assert_close(result_uniform["fused_z"], result_routed["fused_z"], rtol=0, atol=0)
+        assert not hasattr(global_model, f"relation_encoder_{modality}")
+    outputs = [model.analyze(x, edge)["fused_z"] for model in models.values()]
+    for output in outputs[1:]:
+        torch.testing.assert_close(outputs[0], output, rtol=0, atol=0)
     for modality in ("text", "visual"):
-        torch.testing.assert_close(result_routed["router_probabilities"][modality],
-                                   torch.full_like(result_routed["router_probabilities"][modality], 0.25),
-                                   rtol=0, atol=0)
+        for model in (global_model, routed):
+            probs = model.analyze(x, edge)["router_probabilities"][modality]
+            torch.testing.assert_close(probs, torch.full_like(probs, 0.25), rtol=0, atol=0)
+
+
+def test_global_operator_mixture_is_identical_across_all_edges():
+    x, edge = _graph()
+    model = RisaP0(_cfg("p0_operator_global"), _info()).eval()
+    with torch.no_grad():
+        model.theta_text.copy_(torch.tensor([-2.0, -0.5, 1.0, 2.5]))
+        model.theta_visual.copy_(torch.tensor([2.0, 0.0, -1.0, -3.0]))
+    result = model.analyze(x, edge, return_edge_state=True)
+    for modality in ("text", "visual"):
+        expected = torch.softmax(getattr(model, f"theta_{modality}"), dim=0)
+        probs = result["router_probabilities"][modality]
+        torch.testing.assert_close(probs, expected.expand_as(probs), rtol=0, atol=0)
+        torch.testing.assert_close(probs.std(dim=0, unbiased=False), torch.zeros(4), rtol=0, atol=0)
 
 
 def test_delta_parallel_orthogonal_decomposition():
@@ -158,7 +179,7 @@ def test_targeted_interventions_keep_selected_edge_alignment():
 def test_variant_surface_is_fixed():
     assert RisaP0.VARIANTS == (
         "p0_identity", "p0_masspres_scalar", "p0_single_dynamic_transform",
-        "p0_operator_uniform", "p0_operator_routed",
+        "p0_operator_uniform", "p0_operator_global", "p0_operator_routed",
     )
 
 
@@ -173,3 +194,22 @@ def test_all_variants_run_and_delta_off_is_defined():
         off = model.analyze(x, edge, intervention="delta_off", return_edge_state=False)
         identity = model.backbone.analyze(x, edge, gate_override=("off" if variant == "p0_masspres_scalar" else None))
         torch.testing.assert_close(off["fused_z"], identity["fused_z"], rtol=0, atol=0)
+
+
+def test_router_mean_uses_full_graph_edge_marginal():
+    x, edge = _graph()
+    model = RisaP0(_cfg("p0_operator_routed"), _info()).eval()
+    with torch.no_grad():
+        model.router_text.weight.normal_(std=0.2)
+        model.router_visual.weight.normal_(std=0.2)
+    raw = model.router_probabilities_for_edges(x, edge)
+    result = model.analyze(x, edge, intervention="router_mean", return_edge_state=True)
+    for modality in ("text", "visual"):
+        expected = raw[modality].mean(dim=0)
+        torch.testing.assert_close(result["router_probabilities"][modality],
+                                   expected.expand_as(result["router_probabilities"][modality]),
+                                   rtol=1e-6, atol=1e-7)
+        stats = result["parallel_orthogonal"][modality]
+        assert "orthogonal_fraction" in stats
+        assert result["router_probability_std"][modality].abs().max().item() == 0.0
+        assert abs(result["mean_kl_to_mean_router"][modality]) < 1e-7

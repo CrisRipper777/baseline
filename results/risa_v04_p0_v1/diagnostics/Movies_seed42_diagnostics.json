@@ -17,6 +17,7 @@
       "relation_encoder": 0,
       "operator_adapters": 0,
       "router": 0,
+      "global_mixture_logits": 0,
       "dynamic_conditioner": 0,
       "total_model": 591872,
       "classifier": 5140,
@@ -27,6 +28,7 @@
       "relation_encoder": 0,
       "operator_adapters": 0,
       "router": 0,
+      "global_mixture_logits": 0,
       "dynamic_conditioner": 0,
       "total_model": 635202,
       "classifier": 5140,
@@ -37,6 +39,7 @@
       "relation_encoder": 47232,
       "operator_adapters": 33344,
       "router": 0,
+      "global_mixture_logits": 0,
       "dynamic_conditioner": 2112,
       "total_model": 674560,
       "classifier": 5140,
@@ -47,16 +50,29 @@
       "relation_encoder": 0,
       "operator_adapters": 133376,
       "router": 0,
+      "global_mixture_logits": 0,
       "dynamic_conditioner": 0,
       "total_model": 725248,
       "classifier": 5140,
       "total_with_classifier": 730388
+    },
+    "p0_operator_global": {
+      "s45_backbone": 591872,
+      "relation_encoder": 0,
+      "operator_adapters": 133376,
+      "router": 0,
+      "global_mixture_logits": 8,
+      "dynamic_conditioner": 0,
+      "total_model": 725256,
+      "classifier": 5140,
+      "total_with_classifier": 730396
     },
     "p0_operator_routed": {
       "s45_backbone": 591872,
       "relation_encoder": 47232,
       "operator_adapters": 133376,
       "router": 264,
+      "global_mixture_logits": 0,
       "dynamic_conditioner": 0,
       "total_model": 772744,
       "classifier": 5140,
@@ -109,29 +125,31 @@
     "C3_text": 9.5367431640625e-07,
     "H0_visual": 0.0,
     "C1_visual": 9.5367431640625e-07,
-    "C2_visual": 1.430511474609375e-06,
+    "C2_visual": 9.5367431640625e-07,
     "C3_visual": 9.5367431640625e-07,
-    "fused_z": 5.960464477539062e-07
+    "fused_z": 4.76837158203125e-07
   },
   "delta_off_cuda_tolerance": 2e-06,
   "correction_norm_ratio": {
     "text": 0.008541916497051716,
-    "visual": 0.006079719867557287
+    "visual": 0.006079719401896
   },
   "cos_base_corrected": {
-    "text": 0.9999637603759766,
-    "visual": 0.9999824166297913
+    "text": 0.9999637746454177,
+    "visual": 0.9999824200485116
   },
   "parallel_orthogonal": {
     "text": {
       "parallel_norm_ratio": 0.00070368213346228,
       "orthogonal_norm_ratio": 0.008512882515788078,
-      "mean_parallel_coefficient": 0.0006899081636220217
+      "orthogonal_fraction": 0.9966010451316833,
+      "mean_parallel_coefficient": 0.000689908156073896
     },
     "visual": {
-      "parallel_norm_ratio": 0.0013321590377017856,
-      "orthogonal_norm_ratio": 0.005931975785642862,
-      "mean_parallel_coefficient": 0.001309452229179442
+      "parallel_norm_ratio": 0.0013321589212864637,
+      "orthogonal_norm_ratio": 0.005931975319981575,
+      "orthogonal_fraction": 0.9756988883018494,
+      "mean_parallel_coefficient": 0.0013094522114703781
     }
   },
   "operator_router": {
@@ -144,19 +162,19 @@
         0.2510952651500702,
         0.248867467045784
       ],
-      "entropy": 1.3862839937210083,
+      "entropy": 1.3862840849788882,
       "operator_usage": [
-        0.2511703073978424,
-        0.248867005109787,
-        0.2510952353477478,
-        0.248867467045784
+        0.25117030650600236,
+        0.24886699756630637,
+        0.25109523215198754,
+        0.24886746262374365
       ],
       "pairwise_output_cosine": [
         0.9545018672943115,
         0.9505166411399841,
         0.9497645497322083,
         0.9542223215103149,
-        0.9544891715049744,
+        0.9544891119003296,
         0.9564952254295349
       ]
     },
@@ -169,15 +187,15 @@
         0.25095751881599426,
         0.24916972219944
       ],
-      "entropy": 1.3862886428833008,
+      "entropy": 1.3862887018068826,
       "operator_usage": [
-        0.24915827810764313,
-        0.2507145404815674,
-        0.2509574890136719,
-        0.24916972219944
+        0.24915825421376123,
+        0.25071453238068675,
+        0.25095749748615254,
+        0.2491697147302794
       ],
       "pairwise_output_cosine": [
-        0.9428917765617371,
+        0.9428918957710266,
         0.9442174434661865,
         0.9226291179656982,
         0.9454317688941956,
@@ -189,12 +207,12 @@
   "decomposition_check": {
     "text": {
       "max_abs_delta_minus_parallel_plus_orthogonal": 9.313225746154785e-10,
-      "max_abs_parallel_dot_orthogonal": 2.9103830456733704e-11,
+      "max_abs_parallel_dot_orthogonal": 2.1827872842550278e-11,
       "selected_edges": 401
     },
     "visual": {
       "max_abs_delta_minus_parallel_plus_orthogonal": 4.656612873077393e-10,
-      "max_abs_parallel_dot_orthogonal": 7.548806024715304e-11,
+      "max_abs_parallel_dot_orthogonal": 6.184563972055912e-11,
       "selected_edges": 401
     }
   },

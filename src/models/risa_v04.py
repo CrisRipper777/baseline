@@ -62,9 +62,10 @@ class Model(nn.Module):
         "p0_masspres_scalar",
         "p0_single_dynamic_transform",
         "p0_operator_uniform",
+        "p0_operator_global",
         "p0_operator_routed",
     )
-    OPERATOR_VARIANTS = {"p0_operator_uniform", "p0_operator_routed"}
+    OPERATOR_VARIANTS = {"p0_operator_uniform", "p0_operator_global", "p0_operator_routed"}
     RELATION_VARIANTS = {
         "p0_single_dynamic_transform", "p0_operator_routed",
     }
@@ -134,6 +135,9 @@ class Model(nn.Module):
             for router in (self.router_text, self.router_visual):
                 nn.init.zeros_(router.weight)
                 nn.init.zeros_(router.bias)
+        elif self.variant == "p0_operator_global":
+            self.theta_text = nn.Parameter(torch.zeros(self.NUM_OPERATORS))
+            self.theta_visual = nn.Parameter(torch.zeros(self.NUM_OPERATORS))
 
     @staticmethod
     def _cosine_summary(left: torch.Tensor, right: torch.Tensor) -> torch.Tensor:
@@ -169,7 +173,7 @@ class Model(nn.Module):
                 router_shuffle_permutation=None,
                 shuffle_seed: int | None = None,
                 return_edge_state: bool = True) -> dict[str, Any]:
-        if intervention not in {None, "router_uniform", "router_shuffle", "delta_off",
+        if intervention not in {None, "router_uniform", "router_mean", "router_shuffle", "delta_off",
                                 "delta_parallel_only", "delta_orthogonal_only"}:
             raise ValueError(f"unknown RISA P0 intervention {intervention!r}")
         if edge_index is None or x.dim() != 2 or x.size(1) != self.input_dim:
@@ -245,10 +249,13 @@ class Model(nn.Module):
             "correction_norm_ratio": {m: edge_data[m]["stats"]["correction_norm_ratio"] for m in ("text", "visual")},
             "cos_base_corrected": {m: edge_data[m]["stats"]["cos_base_corrected"] for m in ("text", "visual")},
             "parallel_orthogonal": {m: {k: v for k, v in edge_data[m]["stats"].items()
-                                         if k in {"parallel_norm_ratio", "orthogonal_norm_ratio", "mean_parallel_coefficient"}}
+                                         if k in {"parallel_norm_ratio", "orthogonal_norm_ratio", "orthogonal_fraction", "mean_parallel_coefficient"}}
                                     for m in ("text", "visual")},
             "operator_usage": {m: edge_data[m]["usage"] for m in ("text", "visual")},
             "router_entropy": {m: edge_data[m]["entropy"] for m in ("text", "visual")},
+            "router_probability_std": {m: edge_data[m]["stats"]["router_probability_std"] for m in ("text", "visual")},
+            "mean_kl_to_mean_router": {m: edge_data[m]["stats"]["mean_kl_to_mean_router"] for m in ("text", "visual")},
+            "operator_output_norm": {m: edge_data[m]["stats"]["operator_output_norm"] for m in ("text", "visual")},
             "operator_output_pairwise_cosine": {m: edge_data[m]["stats"]["operator_pairwise_cosine"]
                                                   for m in ("text", "visual")},
         }
@@ -319,8 +326,12 @@ class Model(nn.Module):
                 "cos_base_corrected": float((cosine_sum / denom).detach().cpu()) if count.item() else 1.0,
                 "parallel_norm_ratio": float((parallel_sq.sqrt() / base_norm.clamp_min(1e-12)).detach().cpu()),
                 "orthogonal_norm_ratio": float((orthogonal_sq.sqrt() / base_norm.clamp_min(1e-12)).detach().cpu()),
+                "orthogonal_fraction": float((orthogonal_sq.sqrt() / delta_sq.sqrt().clamp_min(1e-12)).detach().cpu()),
                 "mean_parallel_coefficient": float((parallel_coeff / denom).detach().cpu()) if count.item() else 0.0,
                 "operator_pairwise_cosine": h.new_empty((0,)),
+                "router_probability_std": h.new_empty((0,)),
+                "mean_kl_to_mean_router": 0.0,
+                "operator_output_norm": h.new_empty((0,)),
             },
         }
 
@@ -340,14 +351,33 @@ class Model(nn.Module):
                if self.variant == "p0_operator_routed" else None)
         if enc is not None:
             q, k = enc.project(h)
+        mean_router_prob = None
+        if intervention == "router_mean" and enc is not None:
+            # First pass obtains the all-edge marginal; edge representations
+            # remain chunked, and only compact [E, R] routing probabilities are held.
+            probability_chunks = []
+            for start in range(0, n_edges, self.edge_chunk_size):
+                end = min(start + self.edge_chunk_size, n_edges)
+                relation = enc(q[row[start:end]], k[col[start:end]])
+                probability_chunks.append(torch.softmax(getattr(self, f"router_{modality}")(relation), dim=-1))
+            if probability_chunks:
+                mean_router_prob = torch.cat(probability_chunks, dim=0).mean(dim=0)
+            else:
+                mean_router_prob = h.new_full((self.NUM_OPERATORS,), 1.0 / self.NUM_OPERATORS)
         # Operator transforms depend only on the source message, so compute
         # one output per node and gather it per edge to keep training memory
         # proportional to node count rather than edge count.
         node_outputs = torch.stack([op(h) for op in ops], dim=1)
         edge_base, edge_delta, edge_corrected, edge_probs, edge_relation = [], [], [], [], []
         base_sq = h.new_zeros(()); delta_sq = h.new_zeros(()); parallel_sq = h.new_zeros(()); orthogonal_sq = h.new_zeros(())
-        parallel_coeff = h.new_zeros(()); cosine_sum = h.new_zeros(()); usage_sum = h.new_zeros(self.NUM_OPERATORS)
-        entropy_sum = h.new_zeros(()); pair_sum = h.new_zeros(self.NUM_OPERATORS * (self.NUM_OPERATORS - 1) // 2); count = h.new_zeros(())
+        parallel_coeff = h.new_zeros(()); cosine_sum = h.new_zeros(())
+        stats_dtype = torch.float64
+        usage_sum = torch.zeros(self.NUM_OPERATORS, dtype=stats_dtype, device=h.device)
+        usage_sq_sum = torch.zeros(self.NUM_OPERATORS, dtype=stats_dtype, device=h.device)
+        operator_norm_sum = h.new_zeros(self.NUM_OPERATORS)
+        entropy_sum = torch.zeros((), dtype=stats_dtype, device=h.device)
+        pair_sum = h.new_zeros(self.NUM_OPERATORS * (self.NUM_OPERATORS - 1) // 2)
+        count = torch.zeros((), dtype=stats_dtype, device=h.device)
         for start in range(0, n_edges, self.edge_chunk_size):
             end = min(start + self.edge_chunk_size, n_edges)
             erow, ecol = row[start:end], col[start:end]
@@ -356,10 +386,16 @@ class Model(nn.Module):
                 relation = h.new_empty((end - start, 0))
                 probs = h.new_full((end - start, self.NUM_OPERATORS), 1.0 / self.NUM_OPERATORS)
                 outputs = node_outputs[ecol]
+            elif self.variant == "p0_operator_global":
+                relation = h.new_empty((end - start, 0))
+                probs = torch.softmax(getattr(self, f"theta_{modality}"), dim=-1).expand(end - start, -1)
+                outputs = node_outputs[ecol]
             else:
                 relation = enc(q[erow], k[ecol])
                 probs = torch.softmax(getattr(self, f"router_{modality}")(relation), dim=-1)
                 outputs = node_outputs[ecol]
+            if mean_router_prob is not None:
+                probs = mean_router_prob.expand(end - start, -1)
             delta = (outputs * probs.unsqueeze(-1)).sum(dim=1)
             if intervention == "router_uniform":
                 probs = torch.full_like(probs, 1.0 / self.NUM_OPERATORS)
@@ -379,8 +415,11 @@ class Model(nn.Module):
                 parallel_sq = parallel_sq + parallel.float().square().sum(); orthogonal_sq = orthogonal_sq + orthogonal.float().square().sum()
                 parallel_coeff = parallel_coeff + ((d * b).sum(dim=-1) / denom.squeeze(-1)).float().sum()
                 cosine_sum = cosine_sum + self._cosine_summary(b, b + d).sum()
-                usage_sum = usage_sum + probs[chosen].float().sum(dim=0)
-                entropy_sum = entropy_sum + (-(probs[chosen].float().clamp_min(1e-12).log() * probs[chosen].float()).sum(dim=-1)).sum()
+                selected_probs = probs[chosen].double()
+                usage_sum = usage_sum + selected_probs.sum(dim=0)
+                usage_sq_sum = usage_sq_sum + selected_probs.square().sum(dim=0)
+                operator_norm_sum = operator_norm_sum + outputs[chosen].float().norm(dim=-1).sum(dim=0)
+                entropy_sum = entropy_sum + (-(selected_probs.clamp_min(1e-12).log() * selected_probs).sum(dim=-1)).sum()
                 count = count + chosen.sum()
                 pair_vals = [self._cosine_summary(outputs[chosen, i], outputs[chosen, j]).sum()
                              for i in range(self.NUM_OPERATORS) for j in range(i + 1, self.NUM_OPERATORS)]
@@ -391,7 +430,7 @@ class Model(nn.Module):
         return self._routed_result(h, correction, collect, edge_base, edge_delta, edge_corrected,
                                    edge_probs, edge_relation, base_sq, delta_sq, parallel_sq,
                                    orthogonal_sq, parallel_coeff, cosine_sum, usage_sum,
-                                   entropy_sum, pair_sum, count)
+                                   usage_sq_sum, operator_norm_sum, entropy_sum, pair_sum, count)
 
     def _routed_edges_shuffled(self, modality, h, row, col, weight, permutation,
                                shuffle_seed, selected, collect):
@@ -419,9 +458,12 @@ class Model(nn.Module):
         edge_base, edge_delta, edge_corrected = [], [], []
         base_sq = h.new_zeros(()); delta_sq = h.new_zeros(()); parallel_sq = h.new_zeros(()); orthogonal_sq = h.new_zeros(())
         parallel_coeff = h.new_zeros(()); cosine_sum = h.new_zeros(()); pair_sum = h.new_zeros(6)
-        count = selected.sum().to(dtype=h.dtype); usage_sum = shuffled[selected].float().sum(dim=0) if bool(selected.any()) else h.new_zeros(4)
-        entropy_sum = (-(shuffled[selected].float().clamp_min(1e-12).log() * shuffled[selected].float()).sum(dim=-1).sum()
-                       if bool(selected.any()) else h.new_zeros(()))
+        usage_sq_sum = torch.zeros(4, dtype=torch.float64, device=h.device)
+        operator_norm_sum = h.new_zeros(4)
+        count = selected.sum().to(dtype=torch.float64)
+        usage_sum = shuffled[selected].double().sum(dim=0) if bool(selected.any()) else torch.zeros(4, dtype=torch.float64, device=h.device)
+        entropy_sum = (-(shuffled[selected].double().clamp_min(1e-12).log() * shuffled[selected].double()).sum(dim=-1).sum()
+                       if bool(selected.any()) else torch.zeros((), dtype=torch.float64, device=h.device))
         selected_prob, selected_relation = [], []
         for start in range(0, row.numel(), self.edge_chunk_size):
             end = min(start + self.edge_chunk_size, row.numel())
@@ -441,6 +483,8 @@ class Model(nn.Module):
                 cosine_sum += self._cosine_summary(b, b + d).sum()
                 pair_sum += torch.stack([self._cosine_summary(outputs[chosen, i], outputs[chosen, j]).sum()
                                          for i in range(4) for j in range(i + 1, 4)])
+                usage_sq_sum += shuffled[start:end][chosen].double().square().sum(dim=0)
+                operator_norm_sum += outputs[chosen].float().norm(dim=-1).sum(dim=0)
                 if collect:
                     edge_base.append(b); edge_delta.append(d); edge_corrected.append(b + d)
                     selected_prob.append(shuffled[start:end][chosen])
@@ -449,15 +493,19 @@ class Model(nn.Module):
         # Convert aggregate sums to means in the common result formatter.
         return self._routed_result(h, correction, collect, edge_base, edge_delta, edge_corrected,
                                    selected_prob, selected_relation, base_sq, delta_sq, parallel_sq,
-                                   orthogonal_sq, parallel_coeff, cosine_sum, usage_sum, entropy_sum,
-                                   pair_sum, count)
+                                   orthogonal_sq, parallel_coeff, cosine_sum, usage_sum,
+                                   usage_sq_sum, operator_norm_sum, entropy_sum, pair_sum, count)
 
     def _routed_result(self, h, correction, collect, edge_base, edge_delta,
                        edge_corrected, edge_probs, edge_relation, base_sq, delta_sq,
                        parallel_sq, orthogonal_sq, parallel_coeff, cosine_sum,
-                       usage_sum, entropy_sum, pair_sum, count):
+                       usage_sum, usage_sq_sum, operator_norm_sum, entropy_sum, pair_sum, count):
         denom = count.clamp_min(1.0)
         base_norm = base_sq.sqrt()
+        mean_usage = usage_sum / denom
+        mean_entropy = entropy_sum / denom
+        marginal_entropy = -(mean_usage.clamp_min(1e-12) * mean_usage.clamp_min(1e-12).log()).sum()
+        router_std = (usage_sq_sum / denom - mean_usage.square()).clamp_min(0.0).sqrt()
         empty = h.new_empty((0, self.hidden_dim))
         edge_probs_out = torch.cat(edge_probs, dim=0) if collect and edge_probs else h.new_empty((0, self.NUM_OPERATORS))
         return {
@@ -467,15 +515,19 @@ class Model(nn.Module):
             "base_edge_message": torch.cat(edge_base, dim=0) if collect and edge_base else empty,
             "operator_correction_delta": torch.cat(edge_delta, dim=0) if collect and edge_delta else empty,
             "corrected_edge_message": torch.cat(edge_corrected, dim=0) if collect and edge_corrected else empty,
-            "usage": usage_sum / denom,
-            "entropy": entropy_sum / denom,
+            "usage": mean_usage,
+            "entropy": mean_entropy,
             "stats": {
                 "correction_norm_ratio": float((delta_sq.sqrt() / base_norm.clamp_min(1e-12)).detach().cpu()),
                 "cos_base_corrected": float((cosine_sum / denom).detach().cpu()) if count.item() else 1.0,
                 "parallel_norm_ratio": float((parallel_sq.sqrt() / base_norm.clamp_min(1e-12)).detach().cpu()),
                 "orthogonal_norm_ratio": float((orthogonal_sq.sqrt() / base_norm.clamp_min(1e-12)).detach().cpu()),
+                "orthogonal_fraction": float((orthogonal_sq.sqrt() / delta_sq.sqrt().clamp_min(1e-12)).detach().cpu()),
                 "mean_parallel_coefficient": float((parallel_coeff / denom).detach().cpu()) if count.item() else 0.0,
                 "operator_pairwise_cosine": pair_sum / denom,
+                "router_probability_std": router_std,
+                "mean_kl_to_mean_router": float((marginal_entropy - mean_entropy).clamp_min(0.0).detach().cpu()),
+                "operator_output_norm": operator_norm_sum / denom,
             },
         }
 
@@ -534,6 +586,29 @@ class Model(nn.Module):
             "operator_output_pairwise_cosine": {m: None for m in ("text", "visual")},
             "scalar_gates": {m: outputs[m]["scalar_gates"] for m in ("text", "visual")},
         }
+        return result
+
+    @torch.no_grad()
+    def router_probabilities_for_edges(self, x: torch.Tensor, edge_index: torch.Tensor) -> dict[str, torch.Tensor]:
+        """Return compact full-graph edge probabilities for formal analysis."""
+        if self.variant != "p0_operator_routed":
+            raise ValueError("edge-specific router probabilities exist only for p0_operator_routed")
+        edge_index = edge_index.to(device=x.device, dtype=torch.long)
+        p_rel = self.backbone._get_operators(edge_index, int(x.size(0)), x.dtype)[2]
+        row, col = p_rel.indices()
+        result = {}
+        for modality, h in (
+            ("text", self.backbone.text_projector(x[:, :self.text_dim])),
+            ("visual", self.backbone.visual_projector(x[:, self.text_dim:self.text_dim + self.visual_dim])),
+        ):
+            encoder = getattr(self, f"relation_encoder_{modality}")
+            q, k = encoder.project(h)
+            chunks = []
+            for start in range(0, row.numel(), self.edge_chunk_size):
+                end = min(start + self.edge_chunk_size, row.numel())
+                relation = encoder(q[row[start:end]], k[col[start:end]])
+                chunks.append(torch.softmax(getattr(self, f"router_{modality}")(relation), dim=-1))
+            result[modality] = torch.cat(chunks, dim=0) if chunks else h.new_empty((0, self.NUM_OPERATORS))
         return result
 
     def forward(self, x: torch.Tensor, edge_index=None):

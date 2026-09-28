@@ -16,7 +16,7 @@ DATASETS = ("Movies", "Grocery", "ele-fashion", "Reddit-S")
 SEEDS = (42, 43, 44)
 VARIANTS = (
     "p0_identity", "p0_masspres_scalar", "p0_single_dynamic_transform",
-    "p0_operator_uniform", "p0_operator_routed",
+    "p0_operator_uniform", "p0_operator_global", "p0_operator_routed",
 )
 PROTOCOL = "unified_full_graph_nc_v1"
 DEFAULT_CHECKPOINT = ROOT / "outputs/risa_v04_p0_v1/smoke/Movies/p0_operator_routed/best.pt"
@@ -47,6 +47,7 @@ def _parameter_groups(model: torch.nn.Module) -> dict[str, int]:
         "relation_encoder": ("relation_encoder_",),
         "operator_adapters": ("operators_", "dynamic_"),
         "router": ("router_",),
+        "global_mixture_logits": ("theta_",),
         "dynamic_conditioner": ("condition_",),
     }
     result = {key: 0 for key in prefixes}
