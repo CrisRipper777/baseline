@@ -1,0 +1,202 @@
+{
+  "dataset": "Movies",
+  "seed": 42,
+  "variant": "p0_operator_routed",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "test_evaluated": false,
+  "lp_evaluated": false,
+  "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v04_p0_v1/smoke/Movies/p0_operator_routed/best.pt",
+  "checkpoint_metrics": {
+    "val_acc": 0.3293341398239136,
+    "val_macro_f1": 0.02477436823104693
+  },
+  "device": "cuda:0",
+  "parameter_audit": {
+    "p0_identity": {
+      "s45_backbone": 591872,
+      "relation_encoder": 0,
+      "operator_adapters": 0,
+      "router": 0,
+      "dynamic_conditioner": 0,
+      "total_model": 591872,
+      "classifier": 5140,
+      "total_with_classifier": 597012
+    },
+    "p0_masspres_scalar": {
+      "s45_backbone": 635202,
+      "relation_encoder": 0,
+      "operator_adapters": 0,
+      "router": 0,
+      "dynamic_conditioner": 0,
+      "total_model": 635202,
+      "classifier": 5140,
+      "total_with_classifier": 640342
+    },
+    "p0_single_dynamic_transform": {
+      "s45_backbone": 591872,
+      "relation_encoder": 47232,
+      "operator_adapters": 33344,
+      "router": 0,
+      "dynamic_conditioner": 2112,
+      "total_model": 674560,
+      "classifier": 5140,
+      "total_with_classifier": 679700
+    },
+    "p0_operator_uniform": {
+      "s45_backbone": 591872,
+      "relation_encoder": 0,
+      "operator_adapters": 133376,
+      "router": 0,
+      "dynamic_conditioner": 0,
+      "total_model": 725248,
+      "classifier": 5140,
+      "total_with_classifier": 730388
+    },
+    "p0_operator_routed": {
+      "s45_backbone": 591872,
+      "relation_encoder": 47232,
+      "operator_adapters": 133376,
+      "router": 264,
+      "dynamic_conditioner": 0,
+      "total_model": 772744,
+      "classifier": 5140,
+      "total_with_classifier": 777884
+    }
+  },
+  "diagnostic_subset": {
+    "target_nodes": [
+      9834,
+      10209,
+      4315,
+      8315,
+      11254,
+      5242,
+      13688,
+      7179,
+      12191,
+      12495,
+      13383,
+      14935,
+      1761,
+      5501,
+      871,
+      16326,
+      8766,
+      8695,
+      5217,
+      6954,
+      7117,
+      11616,
+      336,
+      5712,
+      15719,
+      8514,
+      16109,
+      532,
+      12372,
+      10883,
+      8740,
+      14608
+    ],
+    "selected_edges": 401,
+    "available_target_edges": 401
+  },
+  "physical_p_rel_unchanged": true,
+  "delta_off_max_abs_against_s45_identity_uniform": {
+    "H0_text": 0.0,
+    "C1_text": 9.5367431640625e-07,
+    "C2_text": 9.5367431640625e-07,
+    "C3_text": 9.5367431640625e-07,
+    "H0_visual": 0.0,
+    "C1_visual": 9.5367431640625e-07,
+    "C2_visual": 1.430511474609375e-06,
+    "C3_visual": 9.5367431640625e-07,
+    "fused_z": 5.960464477539062e-07
+  },
+  "delta_off_cuda_tolerance": 2e-06,
+  "correction_norm_ratio": {
+    "text": 0.008541916497051716,
+    "visual": 0.006079719867557287
+  },
+  "cos_base_corrected": {
+    "text": 0.9999637603759766,
+    "visual": 0.9999824166297913
+  },
+  "parallel_orthogonal": {
+    "text": {
+      "parallel_norm_ratio": 0.00070368213346228,
+      "orthogonal_norm_ratio": 0.008512882515788078,
+      "mean_parallel_coefficient": 0.0006899081636220217
+    },
+    "visual": {
+      "parallel_norm_ratio": 0.0013321590377017856,
+      "orthogonal_norm_ratio": 0.005931975785642862,
+      "mean_parallel_coefficient": 0.001309452229179442
+    }
+  },
+  "operator_router": {
+    "text": {
+      "selected_edge_count": 401,
+      "max_probability_sum_error": 1.1920928955078125e-07,
+      "mean_probability": [
+        0.2511703372001648,
+        0.24886702001094818,
+        0.2510952651500702,
+        0.248867467045784
+      ],
+      "entropy": 1.3862839937210083,
+      "operator_usage": [
+        0.2511703073978424,
+        0.248867005109787,
+        0.2510952353477478,
+        0.248867467045784
+      ],
+      "pairwise_output_cosine": [
+        0.9545018672943115,
+        0.9505166411399841,
+        0.9497645497322083,
+        0.9542223215103149,
+        0.9544891715049744,
+        0.9564952254295349
+      ]
+    },
+    "visual": {
+      "selected_edge_count": 401,
+      "max_probability_sum_error": 1.1920928955078125e-07,
+      "mean_probability": [
+        0.24915826320648193,
+        0.2507145404815674,
+        0.25095751881599426,
+        0.24916972219944
+      ],
+      "entropy": 1.3862886428833008,
+      "operator_usage": [
+        0.24915827810764313,
+        0.2507145404815674,
+        0.2509574890136719,
+        0.24916972219944
+      ],
+      "pairwise_output_cosine": [
+        0.9428917765617371,
+        0.9442174434661865,
+        0.9226291179656982,
+        0.9454317688941956,
+        0.923478901386261,
+        0.922135591506958
+      ]
+    }
+  },
+  "decomposition_check": {
+    "text": {
+      "max_abs_delta_minus_parallel_plus_orthogonal": 9.313225746154785e-10,
+      "max_abs_parallel_dot_orthogonal": 2.9103830456733704e-11,
+      "selected_edges": 401
+    },
+    "visual": {
+      "max_abs_delta_minus_parallel_plus_orthogonal": 4.656612873077393e-10,
+      "max_abs_parallel_dot_orthogonal": 7.548806024715304e-11,
+      "selected_edges": 401
+    }
+  },
+  "sanity_passed": true
+}
