@@ -16,9 +16,12 @@ if str(ROOT) not in sys.path:
 NC_DATASETS = ("Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S")
 COMPATIBILITY_DATASETS = ("Toys", "Grocery", "ele-fashion", "Reddit-S")
 SEEDS = (42, 43, 44)
-VARIANTS = ("v05_full", "v05_no_crst", "v05_no_relation_context", "v05_no_imci")
+VARIANTS = ("v05_full", "v05_no_crst", "v05_no_relation_context", "v05_no_imci",
+            "v05_plain", "v05_crst_only", "v05_absorb_only")
+MAIN_ABLATION_VARIANTS = ("v05_plain", "v05_crst_only", "v05_absorb_only", "v05_full")
+NEW_MAIN_ABLATION_VARIANTS = ("v05_plain", "v05_crst_only", "v05_absorb_only")
 PROTOCOL = "unified_full_graph_nc_v1"
-BRANCH = "risa_v05"
+BRANCH = "risa_v05_ablation"
 OUTPUT_ROOT = ROOT / "outputs/risa_v05_v1"
 
 
@@ -41,7 +44,7 @@ def expected_checkpoint_paths(output_dir: Path, num_runs: int) -> list[Path]:
 
 
 def phase_seeds(phase: str) -> tuple[int, ...]:
-    if phase in {"smoke", "compatibility"}:
+    if phase in {"smoke", "compatibility", "ablation-smoke"}:
         return (42,)
     if phase == "formal":
         return SEEDS
@@ -54,6 +57,10 @@ def jobs_for_phase(phase: str, datasets: tuple[str, ...] | None = None,
         if datasets not in (None, ("Movies",)) or variants not in (None, ("v05_full",)):
             raise ValueError("smoke is fixed to Movies x v05_full")
         return [("Movies", "v05_full")]
+    if phase == "ablation-smoke":
+        if datasets not in (None, ("Movies",)) or variants not in (None, NEW_MAIN_ABLATION_VARIANTS):
+            raise ValueError("ablation-smoke is fixed to Movies x the three new main-ablation variants")
+        return [("Movies", variant) for variant in NEW_MAIN_ABLATION_VARIANTS]
     if phase == "compatibility":
         chosen = datasets or COMPATIBILITY_DATASETS
         if any(name not in COMPATIBILITY_DATASETS for name in chosen):
@@ -63,7 +70,7 @@ def jobs_for_phase(phase: str, datasets: tuple[str, ...] | None = None,
         return [(name, "v05_full") for name in chosen]
     if phase == "formal":
         chosen_data = datasets or NC_DATASETS
-        chosen_variants = variants or ("v05_full",)
+        chosen_variants = variants or NEW_MAIN_ABLATION_VARIANTS
         if any(name not in NC_DATASETS for name in chosen_data):
             raise ValueError(f"datasets must be in {NC_DATASETS}")
         if any(name not in VARIANTS for name in chosen_variants):
@@ -76,7 +83,7 @@ def build_command(dataset: str, variant: str, phase: str, gpu: str,
                   output_dir: Path, run_dir: Path) -> list[str]:
     if dataset not in NC_DATASETS or variant not in VARIANTS:
         raise ValueError("unsupported NC dataset or v0.5 variant")
-    if phase not in {"smoke", "compatibility", "formal"}:
+    if phase not in {"smoke", "compatibility", "formal", "ablation-smoke"}:
         raise ValueError(f"unsupported phase {phase!r}")
     formal = phase == "formal"
     checkpoint = output_dir / "best.pt"
@@ -234,7 +241,7 @@ def _run_job(dataset: str, variant: str, phase: str, gpu: str) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Model-v0.5 NC jobs")
-    parser.add_argument("--phase", choices=("smoke", "compatibility", "formal"), default="smoke")
+    parser.add_argument("--phase", choices=("smoke", "ablation-smoke", "compatibility", "formal"), default="smoke")
     parser.add_argument("--datasets", nargs="+", choices=NC_DATASETS, default=None)
     parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=None)
     parser.add_argument("--gpu", default=os.environ.get("GPU_ID", "0"))
@@ -279,8 +286,8 @@ def main() -> None:
         "phase": args.phase, "job_count": len(jobs), "runs_total": len(jobs) * len(seeds),
         "completed": len(results), "test_evaluation": False, "lp_evaluation": False,
     }, indent=2))
-    if args.phase == "compatibility":
-        print("Compatibility phase complete; no formal 300-epoch jobs were launched.")
+    if args.phase in {"compatibility", "ablation-smoke"}:
+        print(f"{args.phase} phase complete; no formal 300-epoch jobs were launched.")
 
 
 if __name__ == "__main__":

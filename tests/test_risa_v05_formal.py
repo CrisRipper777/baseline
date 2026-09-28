@@ -31,12 +31,15 @@ def test_compatibility_defaults_are_four_non_movies_seed42_one_epoch():
     assert "task.protocol_version=unified_full_graph_nc_v1" in command
 
 
-def test_formal_defaults_are_five_jobs_one_variant_and_fifteen_runs():
+def test_formal_defaults_are_five_datasets_and_three_new_variants():
     jobs = runner.jobs_for_phase("formal")
-    assert jobs == [(dataset, "v05_full") for dataset in runner.NC_DATASETS]
+    assert jobs == [
+        (dataset, variant) for dataset in runner.NC_DATASETS
+        for variant in runner.NEW_MAIN_ABLATION_VARIANTS
+    ]
     assert runner.phase_seeds("formal") == (42, 43, 44)
-    assert len(jobs) == 5
-    assert len(jobs) * len(runner.phase_seeds("formal")) == 15
+    assert len(jobs) == 15
+    assert len(jobs) * len(runner.phase_seeds("formal")) == 45
     command = runner.build_command(
         "Movies", "v05_full", "formal", "0", Path("/tmp/Movies"), Path("/tmp/hydra"),
     )
@@ -50,11 +53,29 @@ def test_formal_defaults_are_five_jobs_one_variant_and_fifteen_runs():
     assert "task.evaluate_test=false" in command
 
 
-def test_formal_cli_allows_explicit_ablation_but_default_is_full_only():
-    assert runner.jobs_for_phase("formal") == [(dataset, "v05_full") for dataset in runner.NC_DATASETS]
+def test_formal_default_is_main_ablation_and_legacy_variants_remain_explicit():
+    assert runner.jobs_for_phase("formal") == [
+        (dataset, variant) for dataset in runner.NC_DATASETS
+        for variant in runner.NEW_MAIN_ABLATION_VARIANTS
+    ]
     assert runner.jobs_for_phase(
         "formal", ("Movies",), ("v05_no_crst", "v05_no_imci"),
     ) == [("Movies", "v05_no_crst"), ("Movies", "v05_no_imci")]
+
+
+def test_main_ablation_smoke_is_fixed_to_three_new_movies_variants():
+    assert runner.jobs_for_phase("ablation-smoke") == [
+        ("Movies", "v05_plain"), ("Movies", "v05_crst_only"),
+        ("Movies", "v05_absorb_only"),
+    ]
+    assert runner.phase_seeds("ablation-smoke") == (42,)
+    for _, variant in runner.jobs_for_phase("ablation-smoke"):
+        command = runner.build_command(
+            "Movies", variant, "ablation-smoke", "0", Path("/tmp/out"), Path("/tmp/hydra"),
+        )
+        assert "task.epochs=1" in command
+        assert "num_runs=1" in command
+        assert "task.evaluate_test=false" in command
 
 
 def test_formal_checkpoint_base_and_run_names():
@@ -186,3 +207,71 @@ def test_streamed_full_graph_angle_moments_match_analyze_mean():
         assert streamed[modality]["std_abs_theta"] >= 0
         assert 0 <= streamed[modality]["angle_saturation_ratio"] <= 1
 
+
+
+def test_analyzer_respects_optional_crst_and_imci_modules():
+    from types import SimpleNamespace
+    from omegaconf import OmegaConf
+    from src.models.risa_v05 import Model
+
+    cfg = SimpleNamespace(model=OmegaConf.create({
+        "hidden_dim": 256, "dropout": 0.2, "max_order": 3,
+        "relation_dim": 32, "edge_chunk_size": 2, "rotation_group_size": 2,
+        "max_rotation_angle": 1.57079632679, "iamr_num_heads": 4,
+        "iamr_ff_mult": 2, "node_chunk_size": 2, "variant": "v05_plain",
+    }))
+    info = {"input_dim": 6, "text_dim": 3, "visual_dim": 3,
+            "num_nodes": 4, "num_classes": 2}
+    plain = Model(cfg, info).eval()
+    # A missing P_rel/relation module must be safe when CRST is absent.
+    streamed = analyzer._stream_angle_statistics(plain, {}, plain.max_rotation_angle)
+    assert streamed["text"]["mean_abs_theta"] == 0.0
+    assert analyzer._imci_stats(
+        {"attention_weights": {"text": None}}, "text",
+    )["mean_hop_attention"] == [None, None, None]
+
+
+def test_main_ablation_paired_contrasts_match_dataset_seed_pairs():
+    records = []
+    values = {
+        "v05_plain": (0.50, 0.40), "v05_crst_only": (0.55, 0.45),
+        "v05_absorb_only": (0.60, 0.50), "v05_full": (0.65, 0.55),
+    }
+    for seed in (42, 43):
+        for variant, (acc, f1) in values.items():
+            records.append({"dataset": "Movies", "seed": seed, "variant": variant,
+                            "val_acc": acc + seed / 10000, "val_macro_f1": f1})
+    contrasts = analyzer.paired_contrasts(records)
+    full_plain = contrasts["full_minus_plain"]
+    assert abs(full_plain["mean_paired_acc_delta_percentage_points"] - 15.0) < 1e-8
+    assert abs(full_plain["mean_paired_macro_f1_delta"] - 0.15) < 1e-8
+    assert full_plain["positive_datasets"]["acc"] == ["Movies"]
+    assert full_plain["positive_seed_pairs"]["acc"] == {"count": 2, "total": 2}
+
+
+def test_report_main_variant_order_and_filenames(tmp_path):
+    records = []
+    for variant in ("v05_full", "v05_absorb_only", "v05_plain", "v05_crst_only"):
+        for seed in (42,):
+            records.append({
+                "dataset": "Movies", "seed": seed, "variant": variant,
+                "best_epoch": 1, "val_acc": 0.5, "val_macro_f1": 0.4,
+                "val_cross_entropy": 0.8,
+                "crst": {}, "imci": {},
+            })
+    analyzer._write_reports(records, tmp_path)
+    import json
+    report = json.loads((tmp_path / "risa_v05_main_ablation.json").read_text())
+    assert report["variants"] == list(runner.MAIN_ABLATION_VARIANTS)
+    assert (tmp_path / "risa_v05_main_ablation.csv").is_file()
+    assert (tmp_path / "risa_v05_main_ablation.md").is_file()
+
+
+def test_every_supported_variant_builds_with_test_evaluation_disabled(tmp_path):
+    for variant in runner.VARIANTS:
+        command = runner.build_command(
+            "Movies", variant, "formal", "0", tmp_path / variant, tmp_path / "hydra" / variant,
+        )
+        assert "task.evaluate_test=false" in command
+        assert not any(item.lower() in {"task.evaluate_test=true", "task.test=true"}
+                       for item in command)

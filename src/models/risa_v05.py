@@ -127,6 +127,12 @@ class Model(nn.Module):
         "v05_no_crst",
         "v05_no_relation_context",
         "v05_no_imci",
+        "v05_plain",
+        "v05_crst_only",
+        "v05_absorb_only",
+    )
+    MAIN_ABLATION_VARIANTS = (
+        "v05_plain", "v05_crst_only", "v05_absorb_only", "v05_full",
     )
     requires_full_lp_sampler_depth = False
 
@@ -146,6 +152,10 @@ class Model(nn.Module):
         self.variant = str(model_values.get("variant", "v05_full")).strip().lower()
         if self.variant not in self.VARIANTS:
             raise ValueError(f"variant must be one of {self.VARIANTS}, got {self.variant!r}")
+        self.use_crst = self.variant not in {"v05_no_crst", "v05_plain", "v05_absorb_only"}
+        self.use_context_absorption = self.variant not in {
+            "v05_no_imci", "v05_plain", "v05_crst_only",
+        }
         if (self.hidden_dim, self.dropout_p, self.max_order, self.relation_dim) != (256, 0.2, 3, 32):
             raise ValueError("RISA v0.5 fixes hidden_dim=256, dropout=.2, max_order=3, relation_dim=32")
         if self.rotation_group_size != 2 or self.hidden_dim % self.rotation_group_size:
@@ -165,7 +175,7 @@ class Model(nn.Module):
         self.input_dim = self.backbone.input_dim
         self.out_dim = self.backbone.out_dim
 
-        if self.variant != "v05_no_crst":
+        if self.use_crst:
             self.relation_encoder_text = ContextualRelationEncoder(self.hidden_dim, self.relation_dim)
             self.relation_encoder_visual = ContextualRelationEncoder(self.hidden_dim, self.relation_dim)
             self.shared_relation_encoder = nn.Sequential(
@@ -186,7 +196,7 @@ class Model(nn.Module):
                 self.max_rotation_angle,
             )
 
-        if self.variant != "v05_no_imci":
+        if self.use_context_absorption:
             self.imci_text = IntrinsicGuidedReconciler(
                 self.hidden_dim, self.iamr_num_heads, self.dropout_p,
                 self.iamr_ff_mult, self.node_chunk_size,
@@ -278,7 +288,7 @@ class Model(nn.Module):
                                "base_message", "rotated_message", "context_deviation")}
             for m in ("text", "visual")
         }
-        if self.variant == "v05_no_crst":
+        if not self.use_crst:
             c1 = {m: torch.sparse.mm(p, h) for m, h in states_h.items()}
             empty_stats = {
                 "mean_abs_angle": 0.0, "p95_abs_angle": 0.0,
@@ -395,8 +405,12 @@ class Model(nn.Module):
     def _integrate(self, modality: str, h0: torch.Tensor,
                    contexts: tuple[torch.Tensor, torch.Tensor, torch.Tensor],
                    need_weights: bool) -> tuple[torch.Tensor, torch.Tensor | None]:
-        if self.variant == "v05_no_imci":
-            return (h0 + contexts[0] + contexts[1] + contexts[2]) / 4.0, None
+        if not self.use_context_absorption:
+            if self.variant == "v05_no_imci":
+                # Historical development variant: keep its original uniform readout.
+                return (h0 + contexts[0] + contexts[1] + contexts[2]) / 4.0, None
+            # Main ablations without context absorption use terminal order-3 state.
+            return contexts[2], None
         return getattr(self, f"imci_{modality}")(h0, contexts, need_weights=need_weights)
 
     def analyze(self, x: torch.Tensor, edge_index: torch.Tensor,

@@ -176,7 +176,73 @@ def test_smoke_command_disables_test_and_uses_only_requested_nc_path(tmp_path):
 def test_variant_surface_and_nc_dataset_staging():
     from scripts.run_risa_v05 import COMPATIBILITY_DATASETS, NC_DATASETS, SEEDS
 
-    assert Model.VARIANTS == ("v05_full", "v05_no_crst", "v05_no_relation_context", "v05_no_imci")
+    assert Model.VARIANTS == (
+        "v05_full", "v05_no_crst", "v05_no_relation_context", "v05_no_imci",
+        "v05_plain", "v05_crst_only", "v05_absorb_only",
+    )
     assert NC_DATASETS == ("Movies", "Toys", "Grocery", "ele-fashion", "Reddit-S")
     assert COMPATIBILITY_DATASETS == ("Toys", "Grocery", "ele-fashion", "Reddit-S")
     assert SEEDS == (42, 43, 44)
+
+
+def test_v05_plain_uses_plain_propagation_and_terminal_order_three():
+    x, edge = _graph()
+    model = Model(_cfg("v05_plain"), _info()).eval()
+    result = model.analyze(x, edge, collect_attention=True)
+    assert model.use_crst is False and model.use_context_absorption is False
+    assert not hasattr(model, "relation_encoder_text")
+    assert not hasattr(model, "imci_text")
+    for modality in ("text", "visual"):
+        expected_c1 = torch.sparse.mm(result["P"], result[f"H0_{modality}"])
+        torch.testing.assert_close(result[f"C1_{modality}"], expected_c1, rtol=0, atol=0)
+        torch.testing.assert_close(result[f"Z_{modality}"], result[f"C3_{modality}"], rtol=0, atol=0)
+        assert result["attention_weights"][modality] is None
+
+
+def test_v05_crst_only_uses_crst_and_terminal_readout_without_imci():
+    x, edge = _graph()
+    model = Model(_cfg("v05_crst_only"), _info()).eval()
+    with torch.no_grad():
+        model.rotation_text.angle_head.weight.fill_(0.01)
+    result = model.analyze(x, edge, collect_attention=True)
+    assert model.use_crst is True and model.use_context_absorption is False
+    assert hasattr(model, "relation_encoder_text")
+    assert not hasattr(model, "imci_text")
+    ordinary = torch.sparse.mm(result["P"], result["H0_text"])
+    assert not torch.equal(result["C1_text"], ordinary)
+    torch.testing.assert_close(result["Z_text"], result["C3_text"], rtol=0, atol=0)
+    assert result["attention_weights"]["text"] is None
+
+
+def test_v05_absorb_only_uses_plain_first_hop_and_imci():
+    x, edge = _graph()
+    model = Model(_cfg("v05_absorb_only"), _info()).eval()
+    result = model.analyze(x, edge, collect_attention=True)
+    assert model.use_crst is False and model.use_context_absorption is True
+    assert not hasattr(model, "relation_encoder_text")
+    assert hasattr(model, "imci_text")
+    for modality in ("text", "visual"):
+        expected_c1 = torch.sparse.mm(result["P"], result[f"H0_{modality}"])
+        torch.testing.assert_close(result[f"C1_{modality}"], expected_c1, rtol=0, atol=0)
+        assert result["attention_weights"][modality] is not None
+
+
+def test_v05_full_strict_loads_existing_checkpoint_when_available():
+    checkpoint = ROOT / "outputs/risa_v05_v1/formal/Movies/v05_full/best_run1.pt"
+    if not checkpoint.is_file():
+        import pytest
+        pytest.skip("existing formal Full checkpoint is unavailable")
+    payload = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    model = Model(_cfg("v05_full"), payload["data_info"])
+    assert set(model.state_dict()) == set(payload["model_state"])
+    model.load_state_dict(payload["model_state"], strict=True)
+
+
+def test_historical_no_relation_context_still_zeroes_loo_context():
+    x, edge = _graph()
+    model = Model(_cfg("v05_no_relation_context"), _info()).eval()
+    result = model.analyze(x, edge, collect_edge_state=True)
+    for modality in ("text", "visual"):
+        assert torch.equal(result["context_deviation"][modality],
+                           torch.zeros_like(result["context_deviation"][modality]))
+        assert result["relation_states"][modality].shape[-1] == model.relation_dim

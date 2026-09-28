@@ -16,9 +16,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.run_risa_v05 import NC_DATASETS, OUTPUT_ROOT, PROTOCOL, SEEDS, VARIANTS
+from scripts.run_risa_v05 import (
+    MAIN_ABLATION_VARIANTS, NC_DATASETS, OUTPUT_ROOT, PROTOCOL, SEEDS, VARIANTS,
+)
 
-RESULT_DIR = ROOT / "results/risa_v05/formal_analysis"
+RESULT_DIR = ROOT / "results/risa_v05/main_ablation"
 
 
 def _config(dataset: str, device: str, variant: str):
@@ -71,7 +73,7 @@ def validation_task_metrics(checkpoint_metrics: dict[str, Any],
 def _stream_angle_statistics(model, diagnostic: dict[str, Any],
                              max_rotation_angle: float) -> dict[str, dict[str, float]]:
     modalities = ("text", "visual")
-    if model.variant == "v05_no_crst":
+    if not model.use_crst:
         return {m: {"mean_abs_theta": 0.0, "std_abs_theta": 0.0,
                     "angle_saturation_ratio": 0.0} for m in modalities}
 
@@ -290,18 +292,89 @@ def aggregate_records(records: list[dict[str, Any]]) -> dict[str, Any]:
     return aggregate
 
 
+def paired_contrasts(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Descriptive matched dataset/seed differences for the paper's 2x2 ablation."""
+    definitions = (
+        ("crst_only_minus_plain", "v05_crst_only", "v05_plain",
+         "CRST contribution without context absorption"),
+        ("absorb_only_minus_plain", "v05_absorb_only", "v05_plain",
+         "Context absorption contribution with ordinary propagation"),
+        ("full_minus_absorb_only", "v05_full", "v05_absorb_only",
+         "CRST contribution when context absorption is enabled"),
+        ("full_minus_crst_only", "v05_full", "v05_crst_only",
+         "Context absorption contribution when CRST is enabled"),
+        ("full_minus_plain", "v05_full", "v05_plain",
+         "Overall reciprocal structure-attribute interaction effect"),
+    )
+    indexed = {(row["dataset"], int(row["seed"]), row["variant"]): row
+               for row in records}
+    output: dict[str, Any] = {}
+    for name, left, right, interpretation in definitions:
+        by_dataset: dict[str, list[tuple[float, float]]] = defaultdict(list)
+        for (dataset, seed, variant), left_row in indexed.items():
+            if variant != left:
+                continue
+            right_row = indexed.get((dataset, seed, right))
+            if right_row is None:
+                continue
+            by_dataset[dataset].append((
+                100.0 * (float(left_row["val_acc"]) - float(right_row["val_acc"])),
+                float(left_row["val_macro_f1"]) - float(right_row["val_macro_f1"]),
+            ))
+        pairs = [pair for values in by_dataset.values() for pair in values]
+        acc_deltas = [pair[0] for pair in pairs]
+        f1_deltas = [pair[1] for pair in pairs]
+        per_dataset = {}
+        for dataset in sorted(by_dataset):
+            values = by_dataset[dataset]
+            per_dataset[dataset] = {
+                "matched_seed_pairs": len(values),
+                "mean_acc_delta_percentage_points": statistics.fmean(v[0] for v in values),
+                "mean_macro_f1_delta": statistics.fmean(v[1] for v in values),
+                "positive_acc_seed_pairs": sum(v[0] > 0 for v in values),
+                "positive_macro_f1_seed_pairs": sum(v[1] > 0 for v in values),
+            }
+        positive_acc_datasets = [dataset for dataset, values in sorted(by_dataset.items())
+                                 if statistics.fmean(v[0] for v in values) > 0]
+        positive_f1_datasets = [dataset for dataset, values in sorted(by_dataset.items())
+                                if statistics.fmean(v[1] for v in values) > 0]
+        output[name] = {
+            "left_variant": left, "right_variant": right,
+            "interpretation": interpretation,
+            "matched_seed_pairs": len(pairs),
+            "mean_paired_acc_delta_percentage_points": (
+                statistics.fmean(acc_deltas) if acc_deltas else None
+            ),
+            "mean_paired_macro_f1_delta": statistics.fmean(f1_deltas) if f1_deltas else None,
+            "positive_datasets": {
+                "acc": positive_acc_datasets, "macro_f1": positive_f1_datasets,
+            },
+            "positive_seed_pairs": {
+                "acc": {"count": sum(value > 0 for value in acc_deltas), "total": len(acc_deltas)},
+                "macro_f1": {"count": sum(value > 0 for value in f1_deltas), "total": len(f1_deltas)},
+            },
+            "per_dataset": per_dataset,
+            "inference": "descriptive paired contrasts; no significance claim",
+        }
+    return output
+
+
 def _write_reports(records: list[dict[str, Any]], output_dir: Path) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     aggregate = aggregate_records(records)
+    present = {row["variant"] for row in records}
+    ordered_variants = [name for name in MAIN_ABLATION_VARIANTS if name in present]
+    ordered_variants.extend(name for name in VARIANTS if name in present and name not in ordered_variants)
     report = {
         "protocol_version": PROTOCOL,
         "datasets": list(dict.fromkeys(row["dataset"] for row in records)),
         "seeds": sorted({row["seed"] for row in records}),
-        "variants": sorted({row["variant"] for row in records}),
+        "variants": ordered_variants,
         "test_evaluated": False, "lp_evaluated": False,
         "records": records, "aggregate": aggregate,
+        "paired_contrasts": paired_contrasts(records),
     }
-    (output_dir / "formal_risa_v05.json").write_text(
+    (output_dir / "risa_v05_main_ablation.json").write_text(
         json.dumps(report, indent=2), encoding="utf-8",
     )
     columns = [
@@ -324,13 +397,13 @@ def _write_reports(records: list[dict[str, Any]], output_dir: Path) -> None:
             f"imci_{modality}_per_hop_attention_std_across_nodes_heads_{hop}"
             for hop in (1, 2, 3)
         )
-    with (output_dir / "formal_risa_v05.csv").open("w", newline="", encoding="utf-8") as handle:
+    with (output_dir / "risa_v05_main_ablation.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=columns, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(records)
 
     lines = [
-        "# RISA v0.5 formal validation analysis", "",
+        "# RISA v0.5 main ablation validation analysis", "",
         f"- Protocol: {PROTOCOL}",
         "- Test and LP evaluation: disabled.",
         "- Val Acc / Macro-F1: read from validation-selected checkpoints.",
@@ -371,7 +444,27 @@ def _write_reports(records: list[dict[str, Any]], output_dir: Path) -> None:
                     stats = _mean_std(values)
                     lines.append(f"| {key} | {stats['mean']:.6g} ± {stats['std']:.6g} |")
             lines.append("")
-    (output_dir / "formal_risa_v05.md").write_text("\n".join(lines), encoding="utf-8")
+    lines.extend(["## Paired contrasts", "", "Descriptive matched dataset/seed differences; no significance claims.", ""])
+    lines.extend([
+        "| Contrast | Mean Acc delta (pp) | Mean Macro-F1 delta | Positive datasets (Acc / F1) | Positive seed pairs (Acc / F1) |",
+        "|---|---:|---:|---|---:|",
+    ])
+    for name, contrast in report["paired_contrasts"].items():
+        acc = contrast["mean_paired_acc_delta_percentage_points"]
+        f1 = contrast["mean_paired_macro_f1_delta"]
+        acc_text = "N/A" if acc is None else f"{acc:.4f}"
+        f1_text = "N/A" if f1 is None else f"{f1:.6f}"
+        positive_datasets = contrast["positive_datasets"]
+        positive_pairs = contrast["positive_seed_pairs"]
+        lines.append(
+            f"| {name} | {acc_text} | {f1_text} | "
+            f"{', '.join(positive_datasets['acc']) or '—'} / "
+            f"{', '.join(positive_datasets['macro_f1']) or '—'} | "
+            f"{positive_pairs['acc']['count']}/{positive_pairs['acc']['total']} / "
+            f"{positive_pairs['macro_f1']['count']}/{positive_pairs['macro_f1']['total']} |"
+        )
+    lines.append("")
+    (output_dir / "risa_v05_main_ablation.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def grouped_rows(records: list[dict[str, Any]], dataset: str,
@@ -392,7 +485,8 @@ def checkpoint_path(checkpoint_root: Path, dataset: str, variant: str, seed: int
 def main() -> None:
     parser = argparse.ArgumentParser(description="Post-hoc analysis of v0.5 formal NC checkpoints")
     parser.add_argument("--datasets", nargs="+", choices=NC_DATASETS, default=list(NC_DATASETS))
-    parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=["v05_full"])
+    parser.add_argument("--variants", nargs="+", choices=VARIANTS,
+                        default=list(MAIN_ABLATION_VARIANTS))
     parser.add_argument("--seeds", nargs="+", type=int, choices=SEEDS, default=list(SEEDS))
     parser.add_argument("--checkpoint-root", type=Path, default=OUTPUT_ROOT / "formal")
     parser.add_argument("--output-dir", type=Path, default=RESULT_DIR)
@@ -421,9 +515,9 @@ def main() -> None:
     _write_reports(records, args.output_dir.resolve())
     print(json.dumps({
         "analyzed_checkpoints": len(records),
-        "report_json": str((args.output_dir / "formal_risa_v05.json").resolve()),
-        "report_markdown": str((args.output_dir / "formal_risa_v05.md").resolve()),
-        "report_csv": str((args.output_dir / "formal_risa_v05.csv").resolve()),
+        "report_json": str((args.output_dir / "risa_v05_main_ablation.json").resolve()),
+        "report_markdown": str((args.output_dir / "risa_v05_main_ablation.md").resolve()),
+        "report_csv": str((args.output_dir / "risa_v05_main_ablation.csv").resolve()),
         "test_evaluated": False, "lp_evaluated": False,
     }, indent=2))
 
