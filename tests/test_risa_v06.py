@@ -230,10 +230,47 @@ def test_v06_smoke_and_formal_dry_run_respect_requested_protocol():
     assert "task.training_mode=full_graph" in command
     assert "task.epochs=1" in command
     assert not any("test=true" in item.lower() for item in command)
+    formal_command = build_command(
+        "Movies", "v06_full", "0", output, output / "formal-hydra", phase="formal",
+    )
+    assert "task.epochs=300" in formal_command
+    assert "num_runs=3" in formal_command
+    assert "task.early_stop_min_epoch=30" in formal_command
+    assert "task.evaluate_test=false" in formal_command
+    assert "model.variant=v06_full" in formal_command
+    assert any("best.pt" in item for item in formal_command)
     dry = formal_dry_run()
     assert dry["runs_total"] == 9
     assert [(job["dataset"], job["variant"]) for job in dry["jobs"]] == [
         (dataset, "v06_full") for dataset in ("Movies", "Grocery", "ele-fashion")
     ]
     assert all(job["seeds"] == [42, 43, 44] for job in dry["jobs"])
+    assert all(job["epochs"] == 300 and job["num_runs"] == 3 for job in dry["jobs"])
+    assert all(len(job["checkpoint_paths"]) == 3 for job in dry["jobs"])
+    assert all("task.evaluate_test=false" in job["command"] for job in dry["jobs"])
     assert dry["launched"] is False
+
+
+def test_formal_summary_uses_population_standard_deviation_and_paired_seed_deltas():
+    import pytest
+    from scripts.analyze_risa_v06_formal import mean_std, _paired_comparison
+
+    summary = mean_std([1.0, 2.0, 3.0])
+    assert summary["mean"] == 2.0
+    assert summary["std"] == pytest.approx((2.0 / 3.0) ** 0.5)
+    current = [
+        {"seed": 42, "val_acc": 0.6, "val_macro_f1": 0.5},
+        {"seed": 43, "val_acc": 0.7, "val_macro_f1": 0.6},
+        {"seed": 44, "val_acc": 0.8, "val_macro_f1": 0.7},
+    ]
+    baseline = [
+        {"seed": 42, "val_acc": 0.5, "val_macro_f1": 0.4},
+        {"seed": 43, "val_acc": 0.6, "val_macro_f1": 0.5},
+        {"seed": 44, "val_acc": 0.7, "val_macro_f1": 0.6},
+    ]
+    comparison = _paired_comparison(current, baseline)
+    assert comparison["val_acc"]["mean_delta_percentage_points"] == pytest.approx(10.0)
+    assert comparison["val_macro_f1"]["mean_delta_percentage_points"] == pytest.approx(10.0)
+    assert comparison["val_acc"]["paired_seed_deltas"] == pytest.approx(
+        {"42": 0.1, "43": 0.1, "44": 0.1}
+    )

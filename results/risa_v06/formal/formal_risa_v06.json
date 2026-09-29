@@ -1,0 +1,726 @@
+{
+  "report": "RISA v0.6 formal screening summary",
+  "generated_at_utc": "2026-09-29T02:35:07.470124+00:00",
+  "protocol_version": "unified_full_graph_nc_v1",
+  "phase": "formal",
+  "variant": "v06_full",
+  "datasets": [
+    "Movies",
+    "Grocery",
+    "ele-fashion"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "runs_expected": 9,
+  "runs_validated": 9,
+  "all_checkpoints_valid": true,
+  "selection": "best_val_accuracy",
+  "test_evaluated": false,
+  "lp_evaluated": false,
+  "aggregation": "mean ± population standard deviation (ddof=0)",
+  "parameter_counts": {
+    "Movies": {
+      "model": 1796288,
+      "classifier": 5140
+    },
+    "Grocery": {
+      "model": 1796288,
+      "classifier": 5140
+    },
+    "ele-fashion": {
+      "model": 1665216,
+      "classifier": 3084
+    }
+  },
+  "peak_process_gpu_memory_mib_max": 18534,
+  "per_dataset": {
+    "Movies": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metrics": {
+        "val_acc": {
+          "mean": 0.5582883358001709,
+          "std": 0.0028595087656426627
+        },
+        "val_macro_f1": {
+          "mean": 0.4540913868910605,
+          "std": 0.01610029720910134
+        }
+      },
+      "best_epoch": {
+        "mean": 73.66666666666667,
+        "std": 15.326085243430198,
+        "min": 57,
+        "max": 94,
+        "per_seed": {
+          "42": 94,
+          "43": 57,
+          "44": 70
+        }
+      },
+      "peak_process_gpu_memory_mib": 5516,
+      "checkpoint_audit": [
+        {
+          "seed": 42,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run1.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 94
+        },
+        {
+          "seed": 43,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run2.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 57
+        },
+        {
+          "seed": 44,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run3.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 70
+        }
+      ],
+      "run_metrics_audit": "passed"
+    },
+    "Grocery": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metrics": {
+        "val_acc": {
+          "mean": 0.8302586674690247,
+          "std": 0.0016793157289520964
+        },
+        "val_macro_f1": {
+          "mean": 0.7585909604733937,
+          "std": 0.004564828961693941
+        }
+      },
+      "best_epoch": {
+        "mean": 111.33333333333333,
+        "std": 9.568466729604882,
+        "min": 98,
+        "max": 120,
+        "per_seed": {
+          "42": 98,
+          "43": 120,
+          "44": 116
+        }
+      },
+      "peak_process_gpu_memory_mib": 5338,
+      "checkpoint_audit": [
+        {
+          "seed": 42,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run1.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 98
+        },
+        {
+          "seed": 43,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run2.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 120
+        },
+        {
+          "seed": 44,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run3.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 116
+        }
+      ],
+      "run_metrics_audit": "passed"
+    },
+    "ele-fashion": {
+      "n_seeds": 3,
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "metrics": {
+        "val_acc": {
+          "mean": 0.8816269636154175,
+          "std": 0.00042855313488641847
+        },
+        "val_macro_f1": {
+          "mean": 0.7681636097799317,
+          "std": 0.0008903396191082264
+        }
+      },
+      "best_epoch": {
+        "mean": 152.66666666666666,
+        "std": 6.236095644623235,
+        "min": 146,
+        "max": 161,
+        "per_seed": {
+          "42": 146,
+          "43": 161,
+          "44": 151
+        }
+      },
+      "peak_process_gpu_memory_mib": 18534,
+      "checkpoint_audit": [
+        {
+          "seed": 42,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run1.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 146
+        },
+        {
+          "seed": 43,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run2.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 161
+        },
+        {
+          "seed": 44,
+          "path": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run3.pt",
+          "selection": "best_val_accuracy",
+          "protocol_version": "unified_full_graph_nc_v1",
+          "test_metrics_absent": true,
+          "finite_metrics_and_weights": true,
+          "metrics_match_run_metrics": true,
+          "best_epoch": 151
+        }
+      ],
+      "run_metrics_audit": "passed"
+    }
+  },
+  "paired_v05_comparisons": {
+    "Movies": {
+      "v05_full": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.5619875987370809,
+          "current_mean": 0.5582883358001709,
+          "paired_seed_deltas": {
+            "42": 0.0008998513221740723,
+            "43": -0.008098423480987549,
+            "44": -0.003899216651916504
+          },
+          "mean_delta": -0.0036992629369099936,
+          "std_delta": 0.003676250215859634,
+          "mean_delta_percentage_points": -0.3699262936909994,
+          "std_delta_percentage_points": 0.3676250215859634
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.4610448413075814,
+          "current_mean": 0.4540913868910605,
+          "paired_seed_deltas": {
+            "42": 0.021356276730516766,
+            "43": -0.012254491142454915,
+            "44": -0.029962148837624658
+          },
+          "mean_delta": -0.006953454416520936,
+          "std_delta": 0.021283341584057293,
+          "mean_delta_percentage_points": -0.6953454416520937,
+          "std_delta_percentage_points": 2.128334158405729
+        }
+      },
+      "v05_absorb_only": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.5655869046847025,
+          "current_mean": 0.5582883358001709,
+          "paired_seed_deltas": {
+            "42": 0.0002999305725097656,
+            "43": -0.008098423480987549,
+            "44": -0.014097213745117188
+          },
+          "mean_delta": -0.007298568884531657,
+          "std_delta": 0.005904758908837754,
+          "mean_delta_percentage_points": -0.7298568884531658,
+          "std_delta_percentage_points": 0.5904758908837754
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.4727092225624605,
+          "current_mean": 0.4540913868910605,
+          "paired_seed_deltas": {
+            "42": 0.012300321127949654,
+            "43": -0.030394445007007054,
+            "44": -0.03775938313514282
+          },
+          "mean_delta": -0.018617835671400074,
+          "std_delta": 0.02206822592642642,
+          "mean_delta_percentage_points": -1.8617835671400074,
+          "std_delta_percentage_points": 2.206822592642642
+        }
+      },
+      "v05_plain": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.5452909469604492,
+          "current_mean": 0.5582883358001709,
+          "paired_seed_deltas": {
+            "42": 0.020096004009246826,
+            "43": 0.014097154140472412,
+            "44": 0.004799008369445801
+          },
+          "mean_delta": 0.01299738883972168,
+          "std_delta": 0.006293204360714522,
+          "mean_delta_percentage_points": 1.299738883972168,
+          "std_delta_percentage_points": 0.6293204360714522
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.4431567231707178,
+          "current_mean": 0.4540913868910605,
+          "paired_seed_deltas": {
+            "42": 0.03712915336251832,
+            "43": 0.01333817783716107,
+            "44": -0.017663340038651443
+          },
+          "mean_delta": 0.010934663720342649,
+          "std_delta": 0.022433412481707087,
+          "mean_delta_percentage_points": 1.093466372034265,
+          "std_delta_percentage_points": 2.243341248170709
+        }
+      },
+      "v05_crst_only": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.5459908048311869,
+          "current_mean": 0.5582883358001709,
+          "paired_seed_deltas": {
+            "42": 0.009298145771026611,
+            "43": 0.016196727752685547,
+            "44": 0.011397719383239746
+          },
+          "mean_delta": 0.012297530968983969,
+          "std_delta": 0.002887311783972187,
+          "mean_delta_percentage_points": 1.229753096898397,
+          "std_delta_percentage_points": 0.28873117839721874
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.4334481024016723,
+          "current_mean": 0.4540913868910605,
+          "paired_seed_deltas": {
+            "42": 0.030091248432967066,
+            "43": 0.014966402415747426,
+            "44": 0.016872202619449883
+          },
+          "mean_delta": 0.020643284489388125,
+          "std_delta": 0.006725872216720737,
+          "mean_delta_percentage_points": 2.0643284489388125,
+          "std_delta_percentage_points": 0.6725872216720736
+        }
+      }
+    },
+    "Grocery": {
+      "v05_full": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8301610549290975,
+          "current_mean": 0.8302586674690247,
+          "paired_seed_deltas": {
+            "42": 0.00468522310256958,
+            "43": 0.0,
+            "44": -0.004392385482788086
+          },
+          "mean_delta": 9.761253992716472e-05,
+          "std_delta": 0.0037065609004577342,
+          "mean_delta_percentage_points": 0.009761253992716473,
+          "std_delta_percentage_points": 0.37065609004577343
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.7647275127675507,
+          "current_mean": 0.7585909604733937,
+          "paired_seed_deltas": {
+            "42": 0.011260065471685898,
+            "43": -0.004034614755437316,
+            "44": -0.025635107598719453
+          },
+          "mean_delta": -0.006136552294156957,
+          "std_delta": 0.015135544369382074,
+          "mean_delta_percentage_points": -0.6136552294156956,
+          "std_delta_percentage_points": 1.5135544369382075
+        }
+      },
+      "v05_absorb_only": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8285017212231954,
+          "current_mean": 0.8302586674690247,
+          "paired_seed_deltas": {
+            "42": 0.0026354193687438965,
+            "43": 0.0026354193687438965,
+            "44": 0.0
+          },
+          "mean_delta": 0.0017569462458292644,
+          "std_delta": 0.0012423486046061196,
+          "mean_delta_percentage_points": 0.17569462458292645,
+          "std_delta_percentage_points": 0.12423486046061197
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.7634412980318003,
+          "current_mean": 0.7585909604733937,
+          "paired_seed_deltas": {
+            "42": -0.004001521314518142,
+            "43": -0.003217622871679371,
+            "44": -0.00733186848902212
+          },
+          "mean_delta": -0.004850337558406544,
+          "std_delta": 0.0017836518740816766,
+          "mean_delta_percentage_points": -0.4850337558406544,
+          "std_delta_percentage_points": 0.17836518740816767
+        }
+      },
+      "v05_plain": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.7985358635584513,
+          "current_mean": 0.8302586674690247,
+          "paired_seed_deltas": {
+            "42": 0.031625211238861084,
+            "43": 0.03806734085083008,
+            "44": 0.02547585964202881
+          },
+          "mean_delta": 0.031722803910573326,
+          "std_delta": 0.005140913862020891,
+          "mean_delta_percentage_points": 3.1722803910573325,
+          "std_delta_percentage_points": 0.514091386202089
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.6997677966557552,
+          "current_mean": 0.7585909604733937,
+          "paired_seed_deltas": {
+            "42": 0.06390300044040953,
+            "43": 0.07896613878295144,
+            "44": 0.033600352229554376
+          },
+          "mean_delta": 0.05882316381763845,
+          "std_delta": 0.018865616033543323,
+          "mean_delta_percentage_points": 5.882316381763845,
+          "std_delta_percentage_points": 1.8865616033543322
+        }
+      },
+      "v05_crst_only": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8013665278752645,
+          "current_mean": 0.8302586674690247,
+          "paired_seed_deltas": {
+            "42": 0.029282569885253906,
+            "43": 0.0307466983795166,
+            "44": 0.02664715051651001
+          },
+          "mean_delta": 0.028892139593760174,
+          "std_delta": 0.0016962507734525163,
+          "mean_delta_percentage_points": 2.8892139593760175,
+          "std_delta_percentage_points": 0.16962507734525162
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.7101281106136828,
+          "current_mean": 0.7585909604733937,
+          "paired_seed_deltas": {
+            "42": 0.03964189498756454,
+            "43": 0.05284808751220993,
+            "44": 0.05289856707935814
+          },
+          "mean_delta": 0.04846284985971087,
+          "std_delta": 0.006237391051233222,
+          "mean_delta_percentage_points": 4.846284985971087,
+          "std_delta_percentage_points": 0.6237391051233222
+        }
+      }
+    },
+    "ele-fashion": {
+      "v05_full": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8792744874954224,
+          "current_mean": 0.8816269636154175,
+          "paired_seed_deltas": {
+            "42": 0.001943349838256836,
+            "43": 0.0040912628173828125,
+            "44": 0.0010228157043457031
+          },
+          "mean_delta": 0.002352476119995117,
+          "std_delta": 0.0012856594046592553,
+          "mean_delta_percentage_points": 0.23524761199951172,
+          "std_delta_percentage_points": 0.12856594046592554
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.7628275721563537,
+          "current_mean": 0.7681636097799317,
+          "paired_seed_deltas": {
+            "42": 0.007475090210372182,
+            "43": 0.0038176246194895347,
+            "44": 0.004715398040872287
+          },
+          "mean_delta": 0.005336037623578001,
+          "std_delta": 0.0015563116131500313,
+          "mean_delta_percentage_points": 0.5336037623578,
+          "std_delta_percentage_points": 0.15563116131500312
+        }
+      },
+      "v05_absorb_only": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8803313970565796,
+          "current_mean": 0.8816269636154175,
+          "paired_seed_deltas": {
+            "42": 0.002250194549560547,
+            "43": -0.00020456314086914062,
+            "44": 0.0018410682678222656
+          },
+          "mean_delta": 0.0012955665588378906,
+          "std_delta": 0.001073821187957467,
+          "mean_delta_percentage_points": 0.12955665588378906,
+          "std_delta_percentage_points": 0.1073821187957467
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.7580255873833669,
+          "current_mean": 0.7681636097799317,
+          "paired_seed_deltas": {
+            "42": 0.013135113731518433,
+            "43": 0.004163736672421647,
+            "44": 0.013115216785754003
+          },
+          "mean_delta": 0.010138022396564694,
+          "std_delta": 0.0042244657577329425,
+          "mean_delta_percentage_points": 1.0138022396564694,
+          "std_delta_percentage_points": 0.42244657577329425
+        }
+      },
+      "v05_plain": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8329412539800009,
+          "current_mean": 0.8816269636154175,
+          "paired_seed_deltas": {
+            "42": 0.04776519536972046,
+            "43": 0.05093586444854736,
+            "44": 0.04735606908798218
+          },
+          "mean_delta": 0.048685709635416664,
+          "std_delta": 0.0015998424070084066,
+          "mean_delta_percentage_points": 4.868570963541666,
+          "std_delta_percentage_points": 0.15998424070084066
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.684909056092466,
+          "current_mean": 0.7681636097799317,
+          "paired_seed_deltas": {
+            "42": 0.07904771668012522,
+            "43": 0.09373015889779102,
+            "44": 0.07698578548448098
+          },
+          "mean_delta": 0.08325455368746575,
+          "std_delta": 0.007455048332319885,
+          "mean_delta_percentage_points": 8.325455368746574,
+          "std_delta_percentage_points": 0.7455048332319885
+        }
+      },
+      "v05_crst_only": {
+        "seeds": [
+          42,
+          43,
+          44
+        ],
+        "val_acc": {
+          "baseline_mean": 0.8522382378578186,
+          "current_mean": 0.8816269636154175,
+          "paired_seed_deltas": {
+            "42": 0.027411282062530518,
+            "43": 0.030786573886871338,
+            "44": 0.029968321323394775
+          },
+          "mean_delta": 0.029388725757598877,
+          "std_delta": 0.001437613065648101,
+          "mean_delta_percentage_points": 2.9388725757598877,
+          "std_delta_percentage_points": 0.1437613065648101
+        },
+        "val_macro_f1": {
+          "baseline_mean": 0.7047027855014072,
+          "current_mean": 0.7681636097799317,
+          "paired_seed_deltas": {
+            "42": 0.06046281200919046,
+            "43": 0.06323466741942596,
+            "44": 0.06668499340695688
+          },
+          "mean_delta": 0.06346082427852444,
+          "std_delta": 0.002545223700759994,
+          "mean_delta_percentage_points": 6.346082427852444,
+          "std_delta_percentage_points": 0.25452237007599937
+        }
+      }
+    }
+  },
+  "comparison_sources": {
+    "v05_full": "results/risa_v05/formal_analysis/formal_risa_v05.json",
+    "v05_ablation_variants": "results/risa_v05/main_ablation/risa_v05_main_ablation.json"
+  },
+  "analysis_notes": [
+    "Against v0.5 Full, v0.6 is dataset-dependent: both validation metrics decrease on Movies, Grocery accuracy is nearly unchanged while Macro-F1 is lower, and both metrics improve on ele-fashion.",
+    "Across three seeds, Val Accuracy has low spread (SD 0.0004 to 0.0029); Val Macro-F1 varies more on Movies (SD 0.0161) than Grocery (0.0046) or ele-fashion (0.0009).",
+    "These are paired validation-set comparisons over three seeds; no test set was evaluated, so they do not establish test-set generalization or statistical significance."
+  ],
+  "per_seed_records": [
+    {
+      "dataset": "Movies",
+      "variant": "v06_full",
+      "seed": 42,
+      "best_epoch": 94,
+      "val_acc": 0.5620875954627991,
+      "val_macro_f1": 0.4767305827920567,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run1.pt"
+    },
+    {
+      "dataset": "Movies",
+      "variant": "v06_full",
+      "seed": 43,
+      "best_epoch": 57,
+      "val_acc": 0.5575884580612183,
+      "val_macro_f1": 0.44066716022049535,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run2.pt"
+    },
+    {
+      "dataset": "Movies",
+      "variant": "v06_full",
+      "seed": 44,
+      "best_epoch": 70,
+      "val_acc": 0.5551889538764954,
+      "val_macro_f1": 0.44487641766062935,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run3.pt"
+    },
+    {
+      "dataset": "Grocery",
+      "variant": "v06_full",
+      "seed": 42,
+      "best_epoch": 98,
+      "val_acc": 0.8322108387947083,
+      "val_macro_f1": 0.7643851113138289,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run1.pt"
+    },
+    {
+      "dataset": "Grocery",
+      "variant": "v06_full",
+      "seed": 43,
+      "best_epoch": 120,
+      "val_acc": 0.8304538726806641,
+      "val_macro_f1": 0.7581591146982583,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run2.pt"
+    },
+    {
+      "dataset": "Grocery",
+      "variant": "v06_full",
+      "seed": 44,
+      "best_epoch": 116,
+      "val_acc": 0.8281112909317017,
+      "val_macro_f1": 0.7532286554080938,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run3.pt"
+    },
+    {
+      "dataset": "ele-fashion",
+      "variant": "v06_full",
+      "seed": 42,
+      "best_epoch": 146,
+      "val_acc": 0.8810473680496216,
+      "val_macro_f1": 0.7671723810431398,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run1.pt"
+    },
+    {
+      "dataset": "ele-fashion",
+      "variant": "v06_full",
+      "seed": 43,
+      "best_epoch": 161,
+      "val_acc": 0.8817633390426636,
+      "val_macro_f1": 0.7679867985765733,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run2.pt"
+    },
+    {
+      "dataset": "ele-fashion",
+      "variant": "v06_full",
+      "seed": 44,
+      "best_epoch": 151,
+      "val_acc": 0.8820701837539673,
+      "val_macro_f1": 0.769331649720082,
+      "checkpoint": "/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run3.pt"
+    }
+  ]
+}

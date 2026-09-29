@@ -1,0 +1,10 @@
+dataset,variant,seed,best_epoch,val_acc,val_macro_f1,checkpoint
+Movies,v06_full,42,94,0.5620875954627991,0.4767305827920567,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run1.pt
+Movies,v06_full,43,57,0.5575884580612183,0.44066716022049535,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run2.pt
+Movies,v06_full,44,70,0.5551889538764954,0.44487641766062935,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Movies/v06_full/best_run3.pt
+Grocery,v06_full,42,98,0.8322108387947083,0.7643851113138289,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run1.pt
+Grocery,v06_full,43,120,0.8304538726806641,0.7581591146982583,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run2.pt
+Grocery,v06_full,44,116,0.8281112909317017,0.7532286554080938,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/Grocery/v06_full/best_run3.pt
+ele-fashion,v06_full,42,146,0.8810473680496216,0.7671723810431398,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run1.pt
+ele-fashion,v06_full,43,161,0.8817633390426636,0.7679867985765733,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run2.pt
+ele-fashion,v06_full,44,151,0.8820701837539673,0.769331649720082,/hdd1/DataInHere/YHF/baseline/outputs/risa_v06_v1/formal/ele-fashion/v06_full/best_run3.pt
